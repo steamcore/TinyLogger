@@ -1,0 +1,28 @@
+root = true
+
+[*]
+end_of_line = crlf
+indent_style = tab
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+charset = utf-8
+indent_style = tab
+
+# CA1303: Do not pass literals as localized parameters
+dotnet_diagnostic.CA1303.severity = none
+
+# CA1062: Validate arguments of public methods
+dotnet_diagnostic.CA1062.severity = none
+
+[*.{csproj,props,targets}]
+indent_style = space
+indent_size = 2
+
+[*.md]
+charset = utf-8
+
+[*.ps1]
+charset = utf-8
+indent_style = tab
