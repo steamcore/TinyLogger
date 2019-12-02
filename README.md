@@ -1,5 +1,7 @@
 # TinyLogger
 
+[![NuGet](https://img.shields.io/nuget/v/TinyLogger.svg?maxAge=259200)](https://www.nuget.org/packages/TinyLogger/)
+
 Tiny extendable logger that plugins into Microsoft.Extensions.Logging
 
 Because sometimes you don't want to use a full logging framework but still want readable console output
