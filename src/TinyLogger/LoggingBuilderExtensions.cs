@@ -1,17 +1,23 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using TinyLogger;
+using TinyLogger.Console;
 
 namespace Microsoft.Extensions.Logging
 {
 	public static class LoggingBuilderExtensions
 	{
 		/// <summary>
-		/// Add TinyLogger with default options and console renderer.
+		/// Add TinyLogger with a message template and console renderer.
 		/// </summary>
-		public static ILoggingBuilder AddTinyConsoleLogger(this ILoggingBuilder logging)
+		public static ILoggingBuilder AddTinyConsoleLogger(this ILoggingBuilder logging, string? template = null, IConsoleTheme? theme = null)
 		{
-			return logging.AddTinyLogger(new TinyLoggerOptions().AddConsole());
+			return logging.AddTinyLogger(options =>
+			{
+				options.AddConsole(theme ?? new DefaultConsoleTheme());
+				options.Template = template ?? MessageTemplates.Default;
+			});
 		}
 
 		/// <summary>
@@ -20,18 +26,9 @@ namespace Microsoft.Extensions.Logging
 		/// <param name="configureOptions">A callback to configure options</param>
 		public static ILoggingBuilder AddTinyLogger(this ILoggingBuilder logging, Action<TinyLoggerOptions> configureOptions)
 		{
-			var options = new TinyLoggerOptions();
-			configureOptions(options);
-			return logging.AddTinyLogger(options);
-		}
-
-		/// <summary>
-		/// Add TinyLogger with specified options.
-		/// </summary>
-		/// <param name="options">The options to use</param>
-		public static ILoggingBuilder AddTinyLogger(this ILoggingBuilder logging, TinyLoggerOptions options)
-		{
-			logging.Services.AddSingleton<ILoggerProvider>(_ => new TinyLoggerProvider(options));
+			logging.Services.AddOptions<TinyLoggerOptions>().Configure(configureOptions);
+			logging.Services.AddSingleton<IValidateOptions<TinyLoggerOptions>, TinyLoggerOptionsValidator>();
+			logging.Services.AddSingleton<ILoggerProvider, TinyLoggerProvider>();
 			return logging;
 		}
 	}

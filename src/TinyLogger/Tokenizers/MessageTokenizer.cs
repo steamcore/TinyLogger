@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,11 @@ namespace TinyLogger.Tokenizers
 		private readonly IObjectTokenizer? objectTokenizer;
 		private readonly IReadOnlyList<MessageToken> tokenizedMessageTemplate;
 
-		public MessageTokenizer(string messageTemplate, IObjectTokenizer? objectTokenizer)
+		public MessageTokenizer(IOptions<TinyLoggerOptions> options)
 		{
-			this.objectTokenizer = objectTokenizer;
+			objectTokenizer = options.Value.ObjectTokenizer;
 
-			tokenizedMessageTemplate = TemplateTokenizer.Tokenize(messageTemplate).ToList();
+			tokenizedMessageTemplate = TemplateTokenizer.Tokenize(options.Value.Template).ToList();
 		}
 
 		public IReadOnlyList<MessageToken> Tokenize<TState>(TState state, Exception exception, Func<TState, Exception, string> formatter)

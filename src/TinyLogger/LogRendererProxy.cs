@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -14,15 +15,15 @@ namespace TinyLogger
 
 		private bool disposed;
 
-		public LogRendererProxy(TinyLoggerOptions options)
+		public LogRendererProxy(IOptions<TinyLoggerOptions> options)
 		{
 			messageEnumerable = new ReactiveEnumerable<Func<TokenizedMessage>>(
-				options.MaxQueueDepth,
-				message => MessageArbiter(options, message)
+				options.Value.MaxQueueDepth,
+				message => MessageArbiter(options.Value, message)
 			);
 
 			renderTask = Task.WhenAll(
-				options.Renderers
+				options.Value.Renderers
 					.Select(renderer => RenderWorker(messageEnumerable, renderer)
 				)
 			);
