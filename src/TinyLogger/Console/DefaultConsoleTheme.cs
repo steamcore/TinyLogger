@@ -7,7 +7,7 @@ namespace TinyLogger.Console
 	{
 		private static readonly ConsoleColor? none = null;
 
-		public (ConsoleColor? foreground, ConsoleColor? background) GetColors(object? value, LogLevel logLevel)
+		public virtual (ConsoleColor? foreground, ConsoleColor? background) GetColors(object? value, LogLevel logLevel)
 		{
 			return (value, logLevel) switch
 			{
