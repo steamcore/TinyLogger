@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using TinyLogger;
 
-namespace ConsoleApp
+namespace ConsoleSample
 {
 	public class Program
 	{

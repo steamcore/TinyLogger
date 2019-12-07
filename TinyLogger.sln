@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyLogger", "src\TinyLogge
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{7E2C9496-4085-4B77-978A-DE764AE14789}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "samples\ConsoleApp\ConsoleApp.csproj", "{B8215ECC-8CDD-4546-9A9B-B0EBF4CCE693}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleSample", "samples\ConsoleSample\ConsoleSample.csproj", "{B8215ECC-8CDD-4546-9A9B-B0EBF4CCE693}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{191BFFBF-9868-4A7F-BAA6-41E740E7CC39}"
 EndProject
