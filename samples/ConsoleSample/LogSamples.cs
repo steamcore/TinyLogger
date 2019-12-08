@@ -32,10 +32,10 @@ namespace ConsoleSample
 		{
 			var eventId = new EventId(0, "SimpleExamples");
 
-			logger.LogInformation(eventId, "Example {number}", 1234);
+			logger.LogInformation(eventId, "Example {true} / {false}", true, false);
+			logger.LogInformation(eventId, "Example {int} / {long} / {float} / {double} / {decimal}", 1234, 1234L, 123.4f, 123.4, 123.4M);
 			logger.LogInformation(eventId, "Example {string}", "foobar");
-			logger.LogInformation(eventId, "Example {datetime}", DateTime.UtcNow);
-			logger.LogInformation(eventId, "Example {datetime:o}", DateTime.UtcNow);
+			logger.LogInformation(eventId, "Example {datetime} / {timespan}", DateTime.UtcNow, TimeSpan.FromMilliseconds(123456789));
 			logger.LogInformation(eventId, "Example {guid}", Guid.NewGuid());
 			logger.LogInformation(eventId, "Example {url}", new Uri("https://www.example.com/"));
 		}

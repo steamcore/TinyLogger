@@ -11,15 +11,29 @@ namespace TinyLogger.Console
 		{
 			return (value, logLevel) switch
 			{
+				(bool b, _) => (b ? ConsoleColor.Green : ConsoleColor.Red, none),
+
+				(byte _, _) => (ConsoleColor.Magenta, none),
+				(sbyte _, _) => (ConsoleColor.Magenta, none),
+				(short _, _) => (ConsoleColor.Magenta, none),
+				(ushort _, _) => (ConsoleColor.Magenta, none),
 				(int _, _) => (ConsoleColor.Magenta, none),
+				(uint _, _) => (ConsoleColor.Magenta, none),
+				(long _, _) => (ConsoleColor.Magenta, none),
+				(ulong _, _) => (ConsoleColor.Magenta, none),
 				(float _, _) => (ConsoleColor.Magenta, none),
 				(double _, _) => (ConsoleColor.Magenta, none),
 				(decimal _, _) => (ConsoleColor.Magenta, none),
+
+				(char _, _) _ => (ConsoleColor.Yellow, none),
 				(string _, _) _ => (ConsoleColor.Yellow, none),
 
 				(DateTime _, _) _ => (ConsoleColor.Cyan, none),
+				(DateTimeOffset _, _) _ => (ConsoleColor.Cyan, none),
 				(TimeSpan _, _) _ => (ConsoleColor.Cyan, none),
+
 				(Guid _, _) _ => (ConsoleColor.DarkMagenta, none),
+
 				(Uri _, _) _ => (ConsoleColor.Blue, none),
 
 				(Exception _, LogLevel.Warning) => (ConsoleColor.Yellow, none),
