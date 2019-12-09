@@ -1,5 +1,6 @@
 using System;
 using TinyLogger.Console;
+using TinyLogger.Console.TrueColor;
 using TinyLogger.Files;
 
 namespace TinyLogger
@@ -11,8 +12,7 @@ namespace TinyLogger
 		/// </summary>
 		public static TinyLoggerOptions AddConsole(this TinyLoggerOptions options)
 		{
-			options.Renderers.Add(new ConsoleRenderer());
-			return options;
+			return AddConsole(options, new DefaultConsoleTheme());
 		}
 
 		/// <summary>
@@ -20,7 +20,55 @@ namespace TinyLogger
 		/// </summary>
 		public static TinyLoggerOptions AddConsole(this TinyLoggerOptions options, IConsoleTheme theme)
 		{
-			options.Renderers.Add(new ConsoleRenderer(theme));
+			// Honor no-color.org
+			if (Environment.GetEnvironmentVariable("NO_COLOR") != null)
+			{
+				options.Renderers.Add(new PlainTextConsoleRenderer());
+			}
+			else if (AnsiSupport.TryEnable())
+			{
+				options.Renderers.Add(new AnsiConsoleRenderer(theme));
+			}
+			else
+			{
+				options.Renderers.Add(new WindowsConsoleRenderer(theme));
+			}
+
+			return options;
+		}
+
+		/// <summary>
+		/// Render messages to the console using plain text.
+		/// </summary>
+		public static TinyLoggerOptions AddPlainTextConsole(this TinyLoggerOptions options)
+		{
+			options.Renderers.Add(new PlainTextConsoleRenderer());
+			return options;
+		}
+
+		/// <summary>
+		/// Render messages to the console using the default RGB color theme.
+		/// </summary>
+		public static TinyLoggerOptions AddTrueColorConsole(this TinyLoggerOptions options)
+		{
+			return AddTrueColorConsole(options, new DefaultTrueColorConsoleTheme());
+		}
+
+		/// <summary>
+		/// Render messages to the console using a specific RGB color theme.
+		/// </summary>
+		public static TinyLoggerOptions AddTrueColorConsole(this TinyLoggerOptions options, ITrueColorConsoleTheme theme)
+		{
+			// Honor no-color.org
+			if (Environment.GetEnvironmentVariable("NO_COLOR") != null || AnsiSupport.TryEnable() == false)
+			{
+				options.Renderers.Add(new PlainTextConsoleRenderer());
+			}
+			else
+			{
+				options.Renderers.Add(new TrueColorConsoleRenderer(theme));
+			}
+
 			return options;
 		}
 
