@@ -42,7 +42,7 @@ builder.AddTinyLogger(options =>
 Notice the different colors for numbers, strings, dates, uris, easily readable lists and dictionaries,
 and so on. Colors are selected based on the underlying data type, even in dictionaries.
 
-![Screenshot of sample output](https://blob.steamcore.se/tinylogger/tinylogger-screenshot-20191202-2.png "Screenshot of sample output")
+![Screenshot of sample output](https://blob.steamcore.se/tinylogger/tinylogger-screenshot-20191210.png "Screenshot of sample output")
 
 ## Benefits and drawbacks
 
