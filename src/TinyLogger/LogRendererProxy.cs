@@ -11,17 +11,17 @@ namespace TinyLogger
 	{
 		private readonly List<Channel<TokenizedMessage>> channels = new List<Channel<TokenizedMessage>>();
 		private readonly List<Task> workerTasks = new List<Task>();
-		private readonly IOptions<TinyLoggerOptions> options;
+		private readonly TinyLoggerOptions options;
 
 		private bool disposed;
 
-		public LogRendererProxy(IOptions<TinyLoggerOptions> options)
+		public LogRendererProxy(TinyLoggerOptions options)
 		{
 			this.options = options;
 
-			foreach (var renderer in options.Value.Renderers)
+			foreach (var renderer in options.Renderers)
 			{
-				var channel = Channel.CreateBounded<TokenizedMessage>(options.Value.MaxQueueDepth);
+				var channel = Channel.CreateBounded<TokenizedMessage>(options.MaxQueueDepth);
 
 				channels.Add(channel);
 				workerTasks.Add(RenderWorker(channel.Reader, renderer));
@@ -62,7 +62,7 @@ namespace TinyLogger
 				if (channel.Writer.TryWrite(message))
 					continue;
 
-				if (options.Value.BackPressureArbiter == null || options.Value.BackPressureArbiter(message))
+				if (options.BackPressureArbiter == null || options.BackPressureArbiter(message))
 				{
 					await channel.Writer.WriteAsync(message).ConfigureAwait(false);
 				}

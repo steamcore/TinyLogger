@@ -24,7 +24,7 @@ namespace TinyLogger
 			this.messageTokenizer = messageTokenizer ?? throw new ArgumentNullException(nameof(messageTokenizer));
 			this.options = options ?? throw new ArgumentNullException(nameof(options));
 
-			rendererProxy = new LogRendererProxy(options);
+			rendererProxy = new LogRendererProxy(options.Value);
 		}
 
 		public void Dispose()
