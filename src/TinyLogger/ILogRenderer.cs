@@ -10,6 +10,6 @@ namespace TinyLogger
 		/// </summary>
 		/// <param name="message">Callback to tokenize and retreive a log message.</param>
 		/// <returns>Async Task</returns>
-		Task Render(Func<TokenizedMessage> message);
+		Task Render(TokenizedMessage message);
 	}
 }

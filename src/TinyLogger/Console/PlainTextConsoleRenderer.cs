@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Threading.Tasks;
 using SystemConsole = System.Console;
@@ -10,11 +10,11 @@ namespace TinyLogger.Console
 	/// </summary>
 	public class PlainTextConsoleRenderer : ILogRenderer
 	{
-		public Task Render(Func<TokenizedMessage> message)
+		public Task Render(TokenizedMessage message)
 		{
 			var sb = new StringBuilder(128);
 
-			foreach (var token in message().Message)
+			foreach (var token in message.MessageTokens)
 			{
 				sb.Append(token.ToString());
 			}

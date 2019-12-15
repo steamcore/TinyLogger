@@ -15,9 +15,9 @@ namespace TinyLogger.Console.TrueColor
 			this.theme = theme;
 		}
 
-		public Task Render(Func<TokenizedMessage> message)
+		public Task Render(TokenizedMessage message)
 		{
-			Render(theme, message());
+			Render(theme, message);
 			return Task.CompletedTask;
 		}
 
@@ -27,7 +27,7 @@ namespace TinyLogger.Console.TrueColor
 
 			var sb = new StringBuilder(128);
 
-			foreach (var token in message.Message)
+			foreach (var token in message.MessageTokens)
 			{
 				if (token.Type != MessageTokenType.ObjectToken)
 				{

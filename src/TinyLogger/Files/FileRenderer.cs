@@ -39,7 +39,7 @@ namespace TinyLogger.Files
 			disposed = true;
 		}
 
-		public async Task Render(Func<TokenizedMessage> message)
+		public async Task Render(TokenizedMessage message)
 		{
 			if (disposed)
 				return;
@@ -53,7 +53,7 @@ namespace TinyLogger.Files
 				openFileName = fileName;
 			}
 
-			foreach (var token in message().Message)
+			foreach (var token in message.MessageTokens)
 			{
 				await streamWriter.WriteAsync(token.ToString()).ConfigureAwait(false);
 			}

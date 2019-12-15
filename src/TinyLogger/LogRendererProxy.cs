@@ -10,7 +10,7 @@ namespace TinyLogger
 {
 	internal class LogRendererProxy : ILogRenderer, IDisposable
 	{
-		private readonly List<Channel<Func<TokenizedMessage>>> channels = new List<Channel<Func<TokenizedMessage>>>();
+		private readonly List<Channel<TokenizedMessage>> channels = new List<Channel<TokenizedMessage>>();
 		private readonly List<Task> workerTasks = new List<Task>();
 		private readonly IOptions<TinyLoggerOptions> options;
 
@@ -22,7 +22,7 @@ namespace TinyLogger
 
 			foreach (var renderer in options.Value.Renderers)
 			{
-				var channel = Channel.CreateBounded<Func<TokenizedMessage>>(options.Value.MaxQueueDepth);
+				var channel = Channel.CreateBounded<TokenizedMessage>(options.Value.MaxQueueDepth);
 
 				channels.Add(channel);
 				workerTasks.Add(RenderWorker(channel.Reader, renderer));
@@ -53,7 +53,7 @@ namespace TinyLogger
 			disposed = true;
 		}
 
-		public async Task Render(Func<TokenizedMessage> message)
+		public async Task Render(TokenizedMessage message)
 		{
 			if (disposed)
 				return;
@@ -70,18 +70,18 @@ namespace TinyLogger
 			}
 		}
 
-		private bool KeepMessage(Func<TokenizedMessage> message)
+		private bool KeepMessage(TokenizedMessage message)
 		{
 			return options.Value.QueueDepthExceededBehavior switch
 			{
 				QueueDepthExceededBehavior.KeepAll => true,
 				QueueDepthExceededBehavior.DiscardAll => false,
-				_ => message().LogLevel >= LogLevel.Warning
+				_ => message.LogLevel >= LogLevel.Warning
 			};
 		}
 
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Must not crash but can't handle or log errors")]
-		private static async Task RenderWorker(ChannelReader<Func<TokenizedMessage>> reader, ILogRenderer renderer)
+		private static async Task RenderWorker(ChannelReader<TokenizedMessage> reader, ILogRenderer renderer)
 		{
 			while (await reader.WaitToReadAsync().ConfigureAwait(false))
 			{

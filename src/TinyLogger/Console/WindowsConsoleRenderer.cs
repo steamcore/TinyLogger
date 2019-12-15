@@ -16,15 +16,15 @@ namespace TinyLogger.Console
 			this.theme = theme;
 		}
 
-		public Task Render(Func<TokenizedMessage> message)
+		public Task Render(TokenizedMessage message)
 		{
-			Render(theme, message());
+			Render(theme, message);
 			return Task.CompletedTask;
 		}
 
 		private static void Render(IConsoleTheme theme, TokenizedMessage message)
 		{
-			foreach (var token in message.Message)
+			foreach (var token in message.MessageTokens)
 			{
 				ConsoleColor? foreground = null;
 				ConsoleColor? background = null;

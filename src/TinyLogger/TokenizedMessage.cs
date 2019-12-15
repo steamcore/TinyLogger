@@ -6,13 +6,17 @@ namespace TinyLogger
 {
 	public class TokenizedMessage
 	{
-		public LogLevel LogLevel { get; }
-		public IReadOnlyList<MessageToken> Message { get; }
+		private readonly Func<IReadOnlyList<MessageToken>> getMessageTokens;
+		private IReadOnlyList<MessageToken>? messageTokens;
 
-		public TokenizedMessage(LogLevel logLevel, IReadOnlyList<MessageToken> message)
+		public LogLevel LogLevel { get; }
+		public IReadOnlyList<MessageToken> MessageTokens => messageTokens ?? (messageTokens = getMessageTokens());
+
+		public TokenizedMessage(LogLevel logLevel, Func<IReadOnlyList<MessageToken>> getMessageTokens)
 		{
 			LogLevel = logLevel;
-			Message = message;
+
+			this.getMessageTokens = getMessageTokens;
 		}
 	}
 }

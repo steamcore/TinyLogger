@@ -34,17 +34,10 @@ namespace TinyLogger
 
 		public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
 		{
-			TokenizedMessage? renderedMessage = null;
+			renderer.Render(new TokenizedMessage(logLevel, GetMessageTokens)).GetAwaiter().GetResult();
 
-			renderer.Render(GetTokenizeMessage).GetAwaiter().GetResult();
-
-			TokenizedMessage GetTokenizeMessage()
+			IReadOnlyList<MessageToken> GetMessageTokens()
 			{
-				if (renderedMessage != null)
-				{
-					return renderedMessage;
-				}
-
 				// Tokenize actual log message using a callback in case it is not needed (depends on the log template)
 				Func<object> getMessage = () => messageTokenizer.Tokenize(state, exception, formatter);
 
@@ -70,9 +63,7 @@ namespace TinyLogger
 				}
 
 				// Do the work
-				var tokens = messageTokenizer.Tokenize(data);
-				renderedMessage = new TokenizedMessage(logLevel, tokens);
-				return renderedMessage;
+				return messageTokenizer.Tokenize(data);
 			}
 		}
 	}
