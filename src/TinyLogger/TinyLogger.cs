@@ -12,14 +12,14 @@ namespace TinyLogger
 		private readonly IMessageTokenizer messageTokenizer;
 		private readonly IReadOnlyList<ILogExtender> extenders;
 		private readonly ILogRenderer renderer;
-		private readonly MessageToken categoryName;
+		private readonly string categoryName;
 
 		public TinyLogger(IMessageTokenizer messageTokenizer, IReadOnlyList<ILogExtender> extenders, ILogRenderer renderer, string categoryName)
 		{
 			this.messageTokenizer = messageTokenizer;
 			this.extenders = extenders;
 			this.renderer = renderer;
-			this.categoryName = MessageToken.FromLiteral(categoryName);
+			this.categoryName = categoryName;
 		}
 
 		public IDisposable BeginScope<TState>(TState state)
@@ -34,7 +34,7 @@ namespace TinyLogger
 
 		public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
 		{
-			renderer.Render(new TokenizedMessage(logLevel, GetMessageTokens)).GetAwaiter().GetResult();
+			renderer.Render(new TokenizedMessage(categoryName, logLevel, GetMessageTokens)).GetAwaiter().GetResult();
 
 			IReadOnlyList<MessageToken> GetMessageTokens()
 			{
@@ -44,7 +44,7 @@ namespace TinyLogger
 				// Setup built in log fields
 				var data = new Dictionary<string, object?>
 				{
-					{ "categoryName", categoryName },
+					{ "categoryName", MessageToken.FromLiteral(categoryName) },
 					{ "eventId", eventId },
 					{ "exception", exception },
 					{ "exception_message", exception != null ? MessageToken.FromObject(exception, valueTransform: x => ((Exception)x).Message) : null },
