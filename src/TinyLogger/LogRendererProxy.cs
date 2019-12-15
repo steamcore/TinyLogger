@@ -1,32 +1,32 @@
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace TinyLogger
 {
 	internal class LogRendererProxy : ILogRenderer, IDisposable
 	{
-		private readonly ReactiveEnumerable<Func<TokenizedMessage>> messageEnumerable;
-		private readonly Task renderTask;
+		private readonly List<Channel<Func<TokenizedMessage>>> channels = new List<Channel<Func<TokenizedMessage>>>();
+		private readonly List<Task> workerTasks = new List<Task>();
+		private readonly IOptions<TinyLoggerOptions> options;
 
 		private bool disposed;
 
 		public LogRendererProxy(IOptions<TinyLoggerOptions> options)
 		{
-			messageEnumerable = new ReactiveEnumerable<Func<TokenizedMessage>>(
-				options.Value.MaxQueueDepth,
-				message => MessageArbiter(options.Value, message)
-			);
+			this.options = options;
 
-			renderTask = Task.WhenAll(
-				options.Value.Renderers
-					.Select(renderer => RenderWorker(messageEnumerable, renderer)
-				)
-			);
+			foreach (var renderer in options.Value.Renderers)
+			{
+				var channel = Channel.CreateBounded<Func<TokenizedMessage>>(options.Value.MaxQueueDepth);
+
+				channels.Add(channel);
+				workerTasks.Add(RenderWorker(channel.Reader, renderer));
+			}
 		}
 
 		public void Dispose()
@@ -42,51 +42,58 @@ namespace TinyLogger
 
 			if (disposing)
 			{
-				messageEnumerable.OnComplete();
-				renderTask.ConfigureAwait(false).GetAwaiter().GetResult();
+				foreach (var channel in channels)
+				{
+					channel.Writer.Complete();
+				}
+
+				Task.WhenAll(workerTasks).GetAwaiter().GetResult();
 			}
 
 			disposed = true;
 		}
 
-		public Task Render(Func<TokenizedMessage> message)
+		public async Task Render(Func<TokenizedMessage> message)
 		{
-			if (!disposed)
-			{
-				messageEnumerable.OnNext(message);
-			}
+			if (disposed)
+				return;
 
-			return Task.CompletedTask;
+			foreach (var channel in channels)
+			{
+				if (channel.Writer.TryWrite(message))
+					continue;
+
+				if (KeepMessage(message))
+				{
+					await channel.Writer.WriteAsync(message).ConfigureAwait(false);
+				}
+			}
 		}
 
-		private static bool MessageArbiter(TinyLoggerOptions options, Func<TokenizedMessage> message)
+		private bool KeepMessage(Func<TokenizedMessage> message)
 		{
-			if (options.QueueDepthExceededBehavior == QueueDepthExceededBehavior.KeepAll)
+			return options.Value.QueueDepthExceededBehavior switch
 			{
-				return true;
-			}
-
-			if (options.QueueDepthExceededBehavior == QueueDepthExceededBehavior.DiscardAll)
-			{
-				return false;
-			}
-
-			return message().LogLevel >= LogLevel.Warning;
+				QueueDepthExceededBehavior.KeepAll => true,
+				QueueDepthExceededBehavior.DiscardAll => false,
+				_ => message().LogLevel >= LogLevel.Warning
+			};
 		}
 
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Must not crash but can't handle or log errors")]
-		private static async Task RenderWorker(IAsyncEnumerable<Func<TokenizedMessage>> messages, ILogRenderer renderer)
+		private static async Task RenderWorker(ChannelReader<Func<TokenizedMessage>> reader, ILogRenderer renderer)
 		{
-			await Task.Yield();
-
-			await foreach (var message in messages)
+			while (await reader.WaitToReadAsync().ConfigureAwait(false))
 			{
-				try
+				while (reader.TryRead(out var message))
 				{
-					await renderer.Render(message).ConfigureAwait(false);
-				}
-				catch (Exception)
-				{
+					try
+					{
+						await renderer.Render(message).ConfigureAwait(false);
+					}
+					catch (Exception)
+					{
+					}
 				}
 			}
 		}

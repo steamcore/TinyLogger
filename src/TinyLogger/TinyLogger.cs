@@ -36,7 +36,9 @@ namespace TinyLogger
 		{
 			TokenizedMessage? renderedMessage = null;
 
-			renderer.Render(() =>
+			renderer.Render(GetTokenizeMessage).GetAwaiter().GetResult();
+
+			TokenizedMessage GetTokenizeMessage()
 			{
 				if (renderedMessage != null)
 				{
@@ -71,7 +73,7 @@ namespace TinyLogger
 				var tokens = messageTokenizer.Tokenize(data);
 				renderedMessage = new TokenizedMessage(logLevel, tokens);
 				return renderedMessage;
-			});
+			}
 		}
 	}
 }
