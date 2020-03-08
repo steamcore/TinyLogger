@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Shouldly;
 using Xunit;
 
 namespace TinyLogger.Tokenizers
@@ -12,7 +13,7 @@ namespace TinyLogger.Tokenizers
 		{
 			var result = TemplateTokenizer.Tokenize(input);
 
-			Assert.Equal(expectedTokens, result);
+			result.ShouldBe(expectedTokens);
 		}
 
 		public static IEnumerable<object[]> GetTestData()

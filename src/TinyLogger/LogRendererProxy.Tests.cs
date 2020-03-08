@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Shouldly;
 using Xunit;
 
 namespace TinyLogger
@@ -20,7 +21,7 @@ namespace TinyLogger
 
 			await RenderMessages(options, messageCount);
 
-			Assert.Equal(messageCount, renderer.Count);
+			renderer.Count.ShouldBe(messageCount);
 		}
 
 		[Theory]
@@ -33,7 +34,7 @@ namespace TinyLogger
 
 			await RenderMessages(options, messageCount);
 
-			Assert.Equal(messageCount, renderer.Count);
+			renderer.Count.ShouldBe(messageCount);
 		}
 
 		[Theory]
@@ -54,7 +55,7 @@ namespace TinyLogger
 
 			for (var i = 0; i < rendererCount; i++)
 			{
-				Assert.Equal(messageCount, renderers[i].Count);
+				renderers[i].Count.ShouldBe(messageCount);
 			}
 		}
 
