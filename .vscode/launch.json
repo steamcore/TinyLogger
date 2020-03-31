@@ -1,0 +1,15 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+	  {
+		"name": "Debug console sample",
+		"type": "coreclr",
+		"request": "launch",
+		"preLaunchTask": "Build TinyLogger",
+		"program": "${workspaceFolder}/samples/ConsoleSample/bin/Debug/netcoreapp3.1/ConsoleSample.dll",
+		"args": [],
+		"cwd": "${workspaceFolder}/samples/ConsoleSample",
+		"stopAtEntry": false
+	  }
+	]
+  }

@@ -1,0 +1,19 @@
+{
+	"tasks": [
+	  {
+		"label": "Build TinyLogger",
+		"command": "dotnet",
+		"args": [
+		  "build",
+		  "/property:GenerateFullPaths=true",
+		  "/consoleloggerparameters:NoSummary"
+		],
+		"type": "process",
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		},
+		"problemMatcher": "$msCompile"
+	  }
+	]
+  }
