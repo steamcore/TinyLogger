@@ -25,7 +25,7 @@ namespace TinyLogger
 			{
 				options.Renderers.Add(new PlainTextConsoleRenderer());
 			}
-			else if (AnsiSupport.TryEnable())
+			else if (AnsiSupport.TryEnable() || Environment.GetEnvironmentVariable("ANSI_COLOR") != null)
 			{
 				options.Renderers.Add(new AnsiConsoleRenderer(theme));
 			}

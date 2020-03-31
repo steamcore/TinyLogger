@@ -9,7 +9,10 @@
 		"program": "${workspaceFolder}/samples/ConsoleSample/bin/Debug/netcoreapp3.1/ConsoleSample.dll",
 		"args": [],
 		"cwd": "${workspaceFolder}/samples/ConsoleSample",
-		"stopAtEntry": false
+		"stopAtEntry": false,
+		"env": {
+			"ANSI_COLOR": "1"
+		}
 	  }
 	]
   }
