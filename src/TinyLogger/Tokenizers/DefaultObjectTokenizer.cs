@@ -10,19 +10,20 @@ namespace TinyLogger.Tokenizers
 		{
 			return value switch
 			{
+				string str => str,
 				IDictionary dictionary => TokenizeDictionary(dictionary),
-				ICollection collection => TokenizeCollection(collection),
+				IEnumerable enumerable => TokenizeEnumerable(enumerable),
 
 				_ => value
 			};
 		}
 
-		private static IReadOnlyList<MessageToken> TokenizeCollection(ICollection collection)
+		private static IReadOnlyList<MessageToken> TokenizeEnumerable(IEnumerable enumerable)
 		{
 			var separator = Environment.NewLine;
 			var result = new List<MessageToken>();
 
-			foreach (var item in collection)
+			foreach (var item in enumerable)
 			{
 				result.Add(MessageToken.FromLiteral(separator + "- "));
 				result.Add(MessageToken.FromObject(item));
