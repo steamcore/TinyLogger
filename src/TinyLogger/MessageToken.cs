@@ -82,9 +82,9 @@ namespace TinyLogger
 			);
 		}
 
-		public bool Equals(MessageToken other)
+		public bool Equals(MessageToken? other)
 		{
-			if (Type != other.Type)
+			if (Type != other?.Type)
 				return false;
 
 			return (Value == null && other.Value == null || Value?.Equals(other.Value) == true)
