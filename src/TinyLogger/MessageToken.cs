@@ -44,7 +44,7 @@ namespace TinyLogger
 		/// </summary>
 		public MessageTokenType Type { get; }
 
-		public MessageToken(object? value, MessageTokenType type, int? alignment = null, string? format = null, Func<object, object>? valueTransform= null)
+		public MessageToken(object? value, MessageTokenType type, int? alignment = null, string? format = null, Func<object, object>? valueTransform = null)
 		{
 			Value = value;
 			Type = type;
