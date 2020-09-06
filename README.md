@@ -1,6 +1,7 @@
 # TinyLogger
 
 [![NuGet](https://img.shields.io/nuget/v/TinyLogger.svg?maxAge=259200)](https://www.nuget.org/packages/TinyLogger/)
+![Build](https://github.com/steamcore/TinyLogger/workflows/Build/badge.svg)
 
 Tiny extendable logger that plugins into Microsoft.Extensions.Logging
 
