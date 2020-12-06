@@ -54,11 +54,6 @@ namespace TinyLogger
 			ValueTransform = valueTransform;
 		}
 
-		public string GetFormatString()
-		{
-			return $"{{0{(Alignment != null ? "," + Alignment : null)}{(Format != null ? ":" + Format : null)}}}";
-		}
-
 		public override string ToString()
 		{
 			var value = Value != null && ValueTransform != null ? ValueTransform(Value) : Value;
@@ -103,6 +98,11 @@ namespace TinyLogger
 		public override int GetHashCode()
 		{
 			return Value?.GetHashCode() ?? 0;
+		}
+
+		private string GetFormatString()
+		{
+			return $"{{0{(Alignment != null ? "," + Alignment : null)}{(Format != null ? ":" + Format : null)}}}";
 		}
 
 		public static bool operator ==(MessageToken left, MessageToken right)

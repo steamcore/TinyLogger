@@ -6,6 +6,7 @@ using TinyLogger.Tokenizers;
 
 namespace TinyLogger
 {
+	[SuppressMessage("Design", "CA1002:Do not expose generic lists", Justification = "Options class, they should be modified")]
 	[SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Options class, they should be modified")]
 	public class TinyLoggerOptions
 	{

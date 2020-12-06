@@ -7,7 +7,7 @@
       "request": "launch",
       "type": "coreclr",
       "cwd": "${workspaceFolder}/samples/ConsoleSample",
-      "program": "./bin/Debug/netcoreapp3.1/ConsoleSample.dll",
+      "program": "./bin/Debug/net5.0/ConsoleSample.dll",
       "args": [],
       "env": {
         "ANSI_COLOR": "1"
