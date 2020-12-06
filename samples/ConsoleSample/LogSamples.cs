@@ -1,7 +1,7 @@
-using Figgle;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using Figgle;
+using Microsoft.Extensions.Logging;
 
 namespace ConsoleSample
 {

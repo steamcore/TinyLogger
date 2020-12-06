@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Extensions.Logging;
 using TinyLogger;
 
@@ -6,7 +5,7 @@ namespace ConsoleSample
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		public static void Main()
 		{
 			using var loggerFactory = LoggerFactory.Create(builder =>
 			{

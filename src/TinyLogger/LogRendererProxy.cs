@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 
 namespace TinyLogger
 {
@@ -62,14 +61,14 @@ namespace TinyLogger
 				if (channel.Writer.TryWrite(message))
 					continue;
 
-				if (options.BackPressureArbiter == null || options.BackPressureArbiter(message))
+				if (options.BackPressureArbiter is null || options.BackPressureArbiter(message))
 				{
 					await channel.Writer.WriteAsync(message).ConfigureAwait(false);
 				}
 			}
 		}
 
-		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Must not crash but can't handle or log errors")]
+		[SuppressMessage("Design", "RCS1075:Avoid empty catch clause that catches System.Exception.", Justification = "Must not crash but can't handle or log errors")]
 		private static async Task RenderWorker(ChannelReader<TokenizedMessage> reader, ILogRenderer renderer)
 		{
 			while (await reader.WaitToReadAsync().ConfigureAwait(false))

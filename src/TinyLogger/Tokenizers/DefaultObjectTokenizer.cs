@@ -39,7 +39,7 @@ namespace TinyLogger.Tokenizers
 
 			foreach (var key in dictionary.Keys)
 			{
-				if (key == null)
+				if (key is null)
 					continue;
 
 				var dictionaryValue = dictionary[key];

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Shouldly;
 using Xunit;
@@ -9,7 +8,7 @@ namespace TinyLogger.Tokenizers
 	{
 		[Theory]
 		[MemberData(nameof(GetTestData))]
-		public void Tokenize_should_return_expected_tokens(string input, List<MessageToken> expectedTokens)
+		public void Tokenize_should_return_expected_tokens(string input, IReadOnlyList<MessageToken> expectedTokens)
 		{
 			var result = TemplateTokenizer.Tokenize(input);
 

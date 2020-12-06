@@ -82,9 +82,9 @@ namespace TinyLogger
 			if (Type != other?.Type)
 				return false;
 
-			return (Value == null && other.Value == null || Value?.Equals(other.Value) == true)
-				&& (Alignment == null && other.Alignment == null || Alignment?.Equals(other.Alignment) == true)
-				&& (Format == null && other.Format == null || Format?.Equals(other.Format, StringComparison.Ordinal) == true);
+			return (Value is null && other.Value is null || Value?.Equals(other.Value) == true)
+				&& (Alignment is null && other.Alignment is null || Alignment?.Equals(other.Alignment) == true)
+				&& (Format is null && other.Format is null || Format?.Equals(other.Format, StringComparison.Ordinal) == true);
 		}
 
 		public override bool Equals(object? obj)

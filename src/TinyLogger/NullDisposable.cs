@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace TinyLogger
 {
-	internal class NullDisposable : IDisposable, IAsyncDisposable
+	internal sealed class NullDisposable : IDisposable, IAsyncDisposable
 	{
 		public static readonly IDisposable Instance = new NullDisposable();
 

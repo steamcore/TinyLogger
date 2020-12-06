@@ -1,16 +1,16 @@
+using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 
 namespace GenericHostSample
 {
-	class Program
+	public class Program
 	{
-		static async Task Main(string[] args)
+		public static async Task Main(string[] args)
 		{
 			using var host = CreateHostBuilder(args).Build();
 
-			await host.StartAsync();
+			await host.RunAsync();
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>

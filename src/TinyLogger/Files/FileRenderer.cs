@@ -46,7 +46,7 @@ namespace TinyLogger.Files
 
 			var fileName = getFileName();
 
-			if (openFileName != fileName || streamWriter == null)
+			if (openFileName != fileName || streamWriter is null)
 			{
 				streamWriter?.Dispose();
 				streamWriter = new StreamWriter(File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read));

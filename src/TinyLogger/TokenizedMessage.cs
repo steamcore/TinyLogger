@@ -11,7 +11,7 @@ namespace TinyLogger
 
 		public string CategoryName { get; }
 		public LogLevel LogLevel { get; }
-		public IReadOnlyList<MessageToken> MessageTokens => messageTokens ?? (messageTokens = getMessageTokens());
+		public IReadOnlyList<MessageToken> MessageTokens => messageTokens ??= getMessageTokens();
 
 		public TokenizedMessage(string categoryName, LogLevel logLevel, Func<IReadOnlyList<MessageToken>> getMessageTokens)
 		{

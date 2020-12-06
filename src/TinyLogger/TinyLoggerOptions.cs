@@ -21,18 +21,20 @@ namespace TinyLogger
 		};
 
 		/// <summary>
+		/// <para>
 		/// If log messages are generated faster than they can be rendered a decision must be made whether to wait
 		/// and block the thread until the log renderes have caught up or to start discarding log messages.
-		///
-		/// Return true to block thread and keep message, false to discard message and move along.
+		/// </para>
+		/// <para>Return true to block thread and keep message, false to discard message and move along.</para>
 		/// </summary>
-		public Func<TokenizedMessage, bool> BackPressureArbiter { get; set; } = message => true;
+		public Func<TokenizedMessage, bool> BackPressureArbiter { get; set; } = _ => true;
 
 		/// <summary>
+		/// <para>
 		/// Maximum number of log messages that can be queued up to be rendered if log messages come in faster than
 		/// they can be rendered.
-		///
-		/// Use BackPressureArbiter options to control what to do when this limit is reached.
+		/// </para>
+		/// <para>Use BackPressureArbiter options to control what to do when this limit is reached.</para>
 		/// </summary>
 		public int MaxQueueDepth { get; set; } = 100;
 

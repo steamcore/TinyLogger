@@ -63,12 +63,11 @@ namespace TinyLogger
 		{
 			var message = new TokenizedMessage(string.Empty, LogLevel.Debug, () => Array.Empty<MessageToken>());
 
-			using (var proxy = new LogRendererProxy(options))
+			using var proxy = new LogRendererProxy(options);
+
+			for (var i = 0; i < messageCount; i++)
 			{
-				for (var i = 0; i < messageCount; i++)
-				{
-					await proxy.Render(message);
-				}
+				await proxy.Render(message);
 			}
 		}
 

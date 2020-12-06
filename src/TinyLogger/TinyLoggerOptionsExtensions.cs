@@ -60,7 +60,7 @@ namespace TinyLogger
 		public static TinyLoggerOptions AddTrueColorConsole(this TinyLoggerOptions options, ITrueColorConsoleTheme theme)
 		{
 			// Honor no-color.org
-			if (Environment.GetEnvironmentVariable("NO_COLOR") != null || AnsiSupport.TryEnable() == false)
+			if (Environment.GetEnvironmentVariable("NO_COLOR") != null || !AnsiSupport.TryEnable())
 			{
 				options.Renderers.Add(new PlainTextConsoleRenderer());
 			}

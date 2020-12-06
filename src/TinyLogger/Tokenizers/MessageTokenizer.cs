@@ -1,7 +1,7 @@
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Options;
 
 namespace TinyLogger.Tokenizers
 {
@@ -19,7 +19,7 @@ namespace TinyLogger.Tokenizers
 
 		public IReadOnlyList<MessageToken> Tokenize<TState>(TState state, Exception exception, Func<TState, Exception, string> formatter)
 		{
-			if (TryGetDictionary(state, out var values) && values != null && values.Count > 1 && values.ContainsKey("{OriginalFormat}") && values["{OriginalFormat}"] is string originalFormat)
+			if (TryGetDictionary(state, out var values) && values?.Count > 1 && values.ContainsKey("{OriginalFormat}") && values["{OriginalFormat}"] is string originalFormat)
 			{
 				return Tokenize(TemplateTokenizer.Tokenize(originalFormat), values);
 			}
@@ -30,7 +30,7 @@ namespace TinyLogger.Tokenizers
 			{
 				if (state is IReadOnlyList<KeyValuePair<string, object?>> fields)
 				{
-					dictionary = fields.ToDictionary(x => x.Key, x => x.Value);
+					dictionary = fields.ToDictionary(x => x.Key, x => (object?)x.Value);
 					return true;
 				}
 
@@ -94,7 +94,7 @@ namespace TinyLogger.Tokenizers
 
 			var tokenized = objectTokenizer?.Tokenize(value);
 
-			if (tokenized == null || tokenized == value)
+			if (tokenized is null || tokenized == value)
 			{
 				result.Add(MessageToken.FromObject(value, messageToken.Alignment, messageToken.Format));
 			}
