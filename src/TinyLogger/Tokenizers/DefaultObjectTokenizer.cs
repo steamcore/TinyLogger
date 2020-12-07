@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace TinyLogger.Tokenizers
 {
@@ -13,7 +14,9 @@ namespace TinyLogger.Tokenizers
 				string str => str,
 				IDictionary dictionary => TokenizeDictionary(dictionary),
 				IEnumerable enumerable => TokenizeEnumerable(enumerable),
-
+#if NET
+				ITuple tuple => TokenizeTuple(tuple),
+#endif
 				_ => value
 			};
 		}
@@ -49,5 +52,28 @@ namespace TinyLogger.Tokenizers
 
 			return result;
 		}
+
+#if NET
+		private static IReadOnlyList<MessageToken> TokenizeTuple(ITuple tuple)
+		{
+			var result = new List<MessageToken>
+			{
+				MessageToken.FromLiteral("(")
+			};
+
+			for (var i = 0; i < tuple.Length; i++)
+			{
+				if (i > 0)
+				{
+					result.Add(MessageToken.FromLiteral(", "));
+				}
+
+				result.Add(MessageToken.FromObject(tuple[i]));
+			}
+
+			result.Add(MessageToken.FromLiteral(")"));
+			return result;
+		}
+#endif
 	}
 }

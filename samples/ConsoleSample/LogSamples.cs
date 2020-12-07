@@ -66,6 +66,11 @@ namespace ConsoleSample
 					{ "timestamp", DateTime.UtcNow }
 				}
 			);
+
+			logger.LogInformation(eventId,
+				"Example tuple {tuple}",
+				("foobar", 123, new Uri("https://www.example.com"))
+			);
 		}
 
 		public void LogAllLevels()
