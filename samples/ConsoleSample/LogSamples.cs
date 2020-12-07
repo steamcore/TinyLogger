@@ -38,6 +38,7 @@ namespace ConsoleSample
 			logger.LogInformation(eventId, "Example {datetime} / {timespan}", DateTime.UtcNow, TimeSpan.FromMilliseconds(123456789));
 			logger.LogInformation(eventId, "Example {guid}", Guid.NewGuid());
 			logger.LogInformation(eventId, "Example {url}", new Uri("https://www.example.com/"));
+			logger.LogInformation(eventId, "Example {version}", new Version("1.4.0.0"));
 		}
 
 		public void LogComplexExamples()

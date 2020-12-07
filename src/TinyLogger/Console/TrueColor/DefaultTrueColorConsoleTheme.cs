@@ -50,9 +50,12 @@ namespace TinyLogger.Console.TrueColor
 				(string _, _) _ => (BrightYellow, null),
 
 				(DateTime _, _) _ => (BrightCyan, null),
+				(DateTimeOffset _, _) _ => (BrightCyan, null),
 				(TimeSpan _, _) _ => (BrightCyan, null),
+
 				(Guid _, _) _ => (Purple, null),
 				(Uri _, _) _ => (BrightBlue, null),
+				(Version _, _) _ => (Cyan, null),
 
 				(Exception _, LogLevel.Warning) => (BrightYellow, null),
 				(Exception _, LogLevel.Error) => (BrightRed, null),

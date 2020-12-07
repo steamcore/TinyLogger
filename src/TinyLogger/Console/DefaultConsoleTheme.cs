@@ -31,8 +31,8 @@ namespace TinyLogger.Console
 				(TimeSpan _, _) _ => (ConsoleColor.Cyan, null),
 
 				(Guid _, _) _ => (ConsoleColor.DarkMagenta, null),
-
 				(Uri _, _) _ => (ConsoleColor.Blue, null),
+				(Version _, _) => (ConsoleColor.DarkCyan, null),
 
 				(Exception _, LogLevel.Warning) => (ConsoleColor.Yellow, null),
 				(Exception _, LogLevel.Error) => (ConsoleColor.Red, null),
