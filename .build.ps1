@@ -23,6 +23,7 @@ task Package {
         dotnet pack .\src\TinyLogger\TinyLogger.csproj `
             --configuration Release `
             --output $outputPath `
+            /p:ContinuousIntegrationBuild="true" `
             /p:EnableSourcelink="true" `
             /p:Version=$Version
     }
