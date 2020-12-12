@@ -4,22 +4,28 @@
 #>
 param (
     [string]
-	$Version
+    $Version
 )
 
 task Test {
-	exec { dotnet test .\test\TinyLogger.Tests\TinyLogger.Tests.csproj }
+    exec { dotnet test .\test\TinyLogger.Tests\TinyLogger.Tests.csproj }
 }
 
 task AssertVersion {
-	if (-not $Version) {
-		throw "Specify version with -Version parameter"
-	}
+    if (-not $Version) {
+        throw "Specify version with -Version parameter"
+    }
 }
 
 task Package {
-	$outputPath = (Get-Item ".").FullName
-	exec { dotnet pack .\src\TinyLogger\TinyLogger.csproj --configuration Release --output $outputPath /p:Version=$Version /p:EnableSourcelink="true" }
+    $outputPath = (Get-Item ".").FullName
+    exec {
+        dotnet pack .\src\TinyLogger\TinyLogger.csproj `
+            --configuration Release `
+            --output $outputPath `
+            /p:EnableSourcelink="true" `
+            /p:Version=$Version
+    }
 }
 
 task . AssertVersion, Test, Package
