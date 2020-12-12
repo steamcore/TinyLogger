@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1DCCD6F8-06A5-45D2-81E8-AA1DFC8D57D0}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyLogger", "src\TinyLogger\TinyLogger.csproj", "{C996C1A7-085D-4F8E-97F5-A42E26E5FDAA}"
 EndProject
@@ -12,10 +16,20 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleSample", "samples\ConsoleSample\ConsoleSample.csproj", "{B8215ECC-8CDD-4546-9A9B-B0EBF4CCE693}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{191BFFBF-9868-4A7F-BAA6-41E740E7CC39}"
+	ProjectSection(SolutionItems) = preProject
+		test\Directory.Build.props = test\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyLogger.Tests", "test\TinyLogger.Tests\TinyLogger.Tests.csproj", "{71E740DE-03B7-4E9D-BA2F-BC7BA1A4047B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenericHostSample", "samples\GenericHostSample\GenericHostSample.csproj", "{B0DB35E0-2D8A-4686-8EBD-C4F04EFE4C34}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{29200C92-226C-49E0-AEEB-05E303A75108}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		global.json = global.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
