@@ -8,23 +8,17 @@ namespace TinyLogger
 {
 	internal class LogRendererProxy : ILogRenderer, IDisposable
 	{
+		private readonly object _lock = new object();
 		private readonly List<Channel<TokenizedMessage>> channels = new List<Channel<TokenizedMessage>>();
 		private readonly List<Task> workerTasks = new List<Task>();
 		private readonly TinyLoggerOptions options;
 
 		private bool disposed;
+		private bool initialized;
 
 		public LogRendererProxy(TinyLoggerOptions options)
 		{
 			this.options = options;
-
-			foreach (var renderer in options.Renderers)
-			{
-				var channel = Channel.CreateBounded<TokenizedMessage>(options.MaxQueueDepth);
-
-				channels.Add(channel);
-				workerTasks.Add(RenderWorker(channel.Reader, renderer));
-			}
 		}
 
 		public void Dispose()
@@ -56,6 +50,8 @@ namespace TinyLogger
 			if (disposed)
 				return;
 
+			EnsureInitialized();
+
 			foreach (var channel in channels)
 			{
 				if (channel.Writer.TryWrite(message))
@@ -65,6 +61,28 @@ namespace TinyLogger
 				{
 					await channel.Writer.WriteAsync(message).ConfigureAwait(false);
 				}
+			}
+		}
+
+		private void EnsureInitialized()
+		{
+			if (initialized)
+				return;
+
+			lock (_lock)
+			{
+				if (initialized)
+					return;
+
+				foreach (var renderer in options.Renderers)
+				{
+					var channel = Channel.CreateBounded<TokenizedMessage>(options.MaxQueueDepth);
+
+					channels.Add(channel);
+					workerTasks.Add(RenderWorker(channel.Reader, renderer));
+				}
+
+				initialized = true;
 			}
 		}
 

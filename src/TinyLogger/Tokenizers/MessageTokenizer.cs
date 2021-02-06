@@ -8,13 +8,13 @@ namespace TinyLogger.Tokenizers
 	public class MessageTokenizer : IMessageTokenizer
 	{
 		private readonly IObjectTokenizer? objectTokenizer;
-		private readonly IReadOnlyList<MessageToken> tokenizedMessageTemplate;
+		private readonly Lazy<IReadOnlyList<MessageToken>> tokenizedMessageTemplate;
 
 		public MessageTokenizer(IOptions<TinyLoggerOptions> options)
 		{
 			objectTokenizer = options.Value.ObjectTokenizer;
 
-			tokenizedMessageTemplate = TemplateTokenizer.Tokenize(options.Value.Template).ToList();
+			tokenizedMessageTemplate = new Lazy<IReadOnlyList<MessageToken>>(() => TemplateTokenizer.Tokenize(options.Value.Template).ToList());
 		}
 
 		public IReadOnlyList<MessageToken> Tokenize<TState>(TState state, Exception exception, Func<TState, Exception, string> formatter)
@@ -41,7 +41,7 @@ namespace TinyLogger.Tokenizers
 
 		public IReadOnlyList<MessageToken> Tokenize(IReadOnlyDictionary<string, object?> data)
 		{
-			return Tokenize(tokenizedMessageTemplate, data);
+			return Tokenize(tokenizedMessageTemplate.Value, data);
 		}
 
 		public IReadOnlyList<MessageToken> Tokenize(IEnumerable<MessageToken> messageTokens, IReadOnlyDictionary<string, object?> data)
