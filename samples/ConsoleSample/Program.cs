@@ -25,8 +25,11 @@ namespace ConsoleSample
 					//options.AddPlainTextConsole();
 					//options.AddTrueColorConsole();
 
-					// Render to file with rolling name by uncommenting this, when the timestamp changes the file changes
-					//options.AddFile(() => $"example-{DateTime.Now.ToString("yyyyMMdd-HHmm")}.log");
+					// Render to a single file by uncommenting this
+					//options.AddFile("consolesample.log");
+
+					// Render to files with rolling names by uncommenting this, when the timestamp changes the file changes
+					//options.AddRollingFile(() => $"example-{DateTime.Now:yyyyMMdd-HHmm}.log");
 				});
 			});
 
