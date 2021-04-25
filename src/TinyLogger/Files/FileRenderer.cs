@@ -1,23 +1,22 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
+using TinyLogger.IO;
 
 namespace TinyLogger.Files
 {
 	/// <summary>
 	/// Renders log messages in plain text to a file.
 	/// </summary>
+	[Obsolete("Use FileRenderer or RollingFileRenderer in TinyLogger.IO")]
 	public class FileRenderer : ILogRenderer, IDisposable
 	{
-		private readonly Func<string> getFileName;
+		private readonly RollingFileRenderer innerRenderer;
 
 		private bool disposed;
-		private string? openFileName;
-		private StreamWriter? streamWriter;
 
 		public FileRenderer(Func<string> getFileName)
 		{
-			this.getFileName = getFileName;
+			innerRenderer = new RollingFileRenderer(getFileName);
 		}
 
 		public void Dispose()
@@ -33,30 +32,15 @@ namespace TinyLogger.Files
 
 			if (disposing)
 			{
-				streamWriter?.Dispose();
+				innerRenderer.Dispose();
 			}
 
 			disposed = true;
 		}
 
-		public async Task Render(TokenizedMessage message)
+		public Task Render(TokenizedMessage message)
 		{
-			if (disposed)
-				return;
-
-			var fileName = getFileName();
-
-			if (openFileName != fileName || streamWriter is null)
-			{
-				streamWriter?.Dispose();
-				streamWriter = new StreamWriter(File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read));
-				openFileName = fileName;
-			}
-
-			foreach (var token in message.MessageTokens)
-			{
-				await streamWriter.WriteAsync(token.ToString()).ConfigureAwait(false);
-			}
+			return innerRenderer.Render(message);
 		}
 	}
 }

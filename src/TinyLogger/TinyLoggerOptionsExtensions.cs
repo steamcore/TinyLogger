@@ -1,7 +1,8 @@
 using System;
+using System.IO;
 using TinyLogger.Console;
 using TinyLogger.Console.TrueColor;
-using TinyLogger.Files;
+using TinyLogger.IO;
 
 namespace TinyLogger
 {
@@ -78,16 +79,55 @@ namespace TinyLogger
 		/// <param name="fileName">The file name to write to.</param>
 		public static TinyLoggerOptions AddFile(this TinyLoggerOptions options, string fileName)
 		{
-			return options.AddFile(() => fileName);
+			return options.AddFile(fileName, FileMode.Append);
 		}
 
 		/// <summary>
 		/// Render messages in plain text to a file.
 		/// </summary>
+		/// <param name="fileName">The file name to write to.</param>
+		public static TinyLoggerOptions AddFile(this TinyLoggerOptions options, string fileName, FileMode fileMode)
+		{
+			options.Renderers.Add(new FileRenderer(fileName, fileMode));
+			return options;
+		}
+
+		/// <summary>
+		/// Render messages in plain text to a file with a rolling filename.
+		/// </summary>
 		/// <param name="getFileName">Retrieve a filename to write to, if the value changes a new file with that file name will be created.</param>
+		[Obsolete("Use AddRollingFile")]
 		public static TinyLoggerOptions AddFile(this TinyLoggerOptions options, Func<string> getFileName)
 		{
-			options.Renderers.Add(new FileRenderer(getFileName));
+			return options.AddRollingFile(getFileName);
+		}
+
+		/// <summary>
+		/// Render messages in plain text to a file with a rolling filename.
+		/// </summary>
+		/// <param name="getFileName">Retrieve a filename to write to, if the value changes a new file with that file name will be created.</param>
+		public static TinyLoggerOptions AddRollingFile(this TinyLoggerOptions options, Func<string> getFileName)
+		{
+			return options.AddRollingFile(getFileName, FileMode.Append);
+		}
+
+		/// <summary>
+		/// Render messages in plain text to a file with a rolling filename.
+		/// </summary>
+		/// <param name="getFileName">Retrieve a filename to write to, if the value changes a new file with that file name will be created.</param>
+		public static TinyLoggerOptions AddRollingFile(this TinyLoggerOptions options, Func<string> getFileName, FileMode fileMode)
+		{
+			options.Renderers.Add(new RollingFileRenderer(getFileName, fileMode));
+			return options;
+		}
+
+		/// <summary>
+		/// Render messages in plain text to a stream.
+		/// </summary>
+		/// <param name="stream">The Stream to write to.</param>
+		public static TinyLoggerOptions AddStream(this TinyLoggerOptions options, Stream stream)
+		{
+			options.Renderers.Add(new StreamRenderer(stream));
 			return options;
 		}
 	}
