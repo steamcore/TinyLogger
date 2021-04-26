@@ -79,16 +79,17 @@ namespace TinyLogger
 		/// <param name="fileName">The file name to write to.</param>
 		public static TinyLoggerOptions AddFile(this TinyLoggerOptions options, string fileName)
 		{
-			return options.AddFile(fileName, FileMode.Append);
+			return options.AddFile(fileName, LogFileMode.Append);
 		}
 
 		/// <summary>
 		/// Render messages in plain text to a file.
 		/// </summary>
 		/// <param name="fileName">The file name to write to.</param>
-		public static TinyLoggerOptions AddFile(this TinyLoggerOptions options, string fileName, FileMode fileMode)
+		/// <param name="logFileMode">Append or truncate log file</param>
+		public static TinyLoggerOptions AddFile(this TinyLoggerOptions options, string fileName, LogFileMode logFileMode)
 		{
-			options.Renderers.Add(new FileRenderer(fileName, fileMode));
+			options.Renderers.Add(new FileRenderer(fileName, logFileMode));
 			return options;
 		}
 
@@ -108,16 +109,17 @@ namespace TinyLogger
 		/// <param name="getFileName">Retrieve a filename to write to, if the value changes a new file with that file name will be created.</param>
 		public static TinyLoggerOptions AddRollingFile(this TinyLoggerOptions options, Func<string> getFileName)
 		{
-			return options.AddRollingFile(getFileName, FileMode.Append);
+			return options.AddRollingFile(getFileName, LogFileMode.Append);
 		}
 
 		/// <summary>
 		/// Render messages in plain text to a file with a rolling filename.
 		/// </summary>
 		/// <param name="getFileName">Retrieve a filename to write to, if the value changes a new file with that file name will be created.</param>
-		public static TinyLoggerOptions AddRollingFile(this TinyLoggerOptions options, Func<string> getFileName, FileMode fileMode)
+		/// <param name="logFileMode">Append or truncate log file</param>
+		public static TinyLoggerOptions AddRollingFile(this TinyLoggerOptions options, Func<string> getFileName, LogFileMode logFileMode)
 		{
-			options.Renderers.Add(new RollingFileRenderer(getFileName, fileMode));
+			options.Renderers.Add(new RollingFileRenderer(getFileName, logFileMode));
 			return options;
 		}
 

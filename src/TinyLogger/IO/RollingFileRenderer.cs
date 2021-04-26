@@ -10,21 +10,21 @@ namespace TinyLogger.IO
 	public class RollingFileRenderer : ILogRenderer, IDisposable
 	{
 		private readonly Func<string> getFileName;
-		private readonly FileMode fileMode;
+		private readonly LogFileMode logFileMode;
 
 		private bool disposed;
 		private string? openFileName;
 		private StreamWriter? streamWriter;
 
 		public RollingFileRenderer(Func<string> getFileName)
-			: this(getFileName, FileMode.Append)
+			: this(getFileName, LogFileMode.Append)
 		{
 		}
 
-		public RollingFileRenderer(Func<string> getFileName, FileMode fileMode)
+		public RollingFileRenderer(Func<string> getFileName, LogFileMode logFileMode)
 		{
 			this.getFileName = getFileName;
-			this.fileMode = fileMode;
+			this.logFileMode = logFileMode;
 		}
 
 		public void Dispose()
@@ -56,7 +56,7 @@ namespace TinyLogger.IO
 			if (openFileName != fileName || streamWriter is null)
 			{
 				streamWriter?.Dispose();
-				streamWriter = new StreamWriter(File.Open(fileName, fileMode, FileAccess.Write, FileShare.Read));
+				streamWriter = new StreamWriter(LogFile.OpenFile(fileName, logFileMode));
 				openFileName = fileName;
 			}
 
