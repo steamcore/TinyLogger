@@ -38,6 +38,11 @@ namespace TinyLogger.Files
 			disposed = true;
 		}
 
+		public Task Flush()
+		{
+			return innerRenderer.Flush();
+		}
+
 		public Task Render(TokenizedMessage message)
 		{
 			return innerRenderer.Render(message);

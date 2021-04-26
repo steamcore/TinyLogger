@@ -46,6 +46,11 @@ namespace TinyLogger.IO
 			disposed = true;
 		}
 
+		public Task Flush()
+		{
+			return streamWriter?.FlushAsync() ?? Task.CompletedTask;
+		}
+
 		public async Task Render(TokenizedMessage message)
 		{
 			if (disposed)

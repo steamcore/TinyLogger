@@ -9,6 +9,11 @@ namespace TinyLogger.Console
 	/// </summary>
 	public class PlainTextConsoleRenderer : ILogRenderer
 	{
+		public Task Flush()
+		{
+			return Task.CompletedTask;
+		}
+
 		public Task Render(TokenizedMessage message)
 		{
 			var sb = new StringBuilder(128);

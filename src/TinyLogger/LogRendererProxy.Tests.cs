@@ -75,6 +75,11 @@ namespace TinyLogger
 		{
 			public int Count { get; private set; }
 
+			public Task Flush()
+			{
+				return Task.CompletedTask;
+			}
+
 			public Task Render(TokenizedMessage message)
 			{
 				Count++;

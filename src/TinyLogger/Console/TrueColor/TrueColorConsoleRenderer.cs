@@ -14,6 +14,11 @@ namespace TinyLogger.Console.TrueColor
 			this.theme = theme;
 		}
 
+		public Task Flush()
+		{
+			return Task.CompletedTask;
+		}
+
 		public Task Render(TokenizedMessage message)
 		{
 			Render(theme, message);
