@@ -44,10 +44,10 @@ Notice the different colors for numbers, strings, dates, uris, easily readable l
 and so on. Colors are selected based on the underlying data type, even in dictionaries.
 
 **Sample with TinyLogger**
-![Screenshot of sample output with TinyLogger](https://blob.steamcore.se/tinylogger/tinylogger-screenshot-20200309-after.png "Screenshot of sample output with TinyLogger")
+![Screenshot of sample output with TinyLogger](https://raw.githubusercontent.com/steamcore/TinyLogger/4af5e6190a9fd563be7f3b5be9efecfb8efd3d7e/screenshots/tinylogger-screenshot-20200309-after.png "Screenshot of sample output with TinyLogger")
 
 **Sample with standard console logger for comparison**
-![Screenshot of sample output with standard console logger](https://blob.steamcore.se/tinylogger/tinylogger-screenshot-20200309-before.png "Screenshot of sample output with standard console logger")
+![Screenshot of sample output with standard console logger](https://raw.githubusercontent.com/steamcore/TinyLogger/4af5e6190a9fd563be7f3b5be9efecfb8efd3d7e/screenshots/tinylogger-screenshot-20200309-before.png "Screenshot of sample output with standard console logger")
 
 ## Benefits and drawbacks
 
