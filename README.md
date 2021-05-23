@@ -12,7 +12,7 @@ and log files.
 
 If builder is an instance of `ILoggingBuilder` you can simply add the console logger like this:
 
-```
+```csharp
 builder.AddTinyConsoleLogger();
 ```
 
@@ -21,7 +21,7 @@ builder.AddTinyConsoleLogger();
 For more configuration options and file logging, use `AddTinyLogger` method instead. Checkout the sample
 `ConsoleApp` for a complete example.
 
-```
+```csharp
 builder.AddTinyLogger(options =>
 {
 	// Optionally extend log fields with new or modified data
