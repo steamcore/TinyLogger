@@ -33,8 +33,11 @@ builder.AddTinyLogger(options =>
 	// Render to console
 	options.AddConsole();
 
+	// Render to a file with a set name
+	options.AddFile("example.log");
+
 	// Render to file with rolling name, when the timestamp changes the file changes
-	options.AddFile(() => $"example-{DateTime.Now.ToString("yyyyMMdd-HHmm")}.log");
+	options.AddRollingFile(() => $"example-{DateTime.Now.ToString("yyyyMMdd-HHmm")}.log");
 });
 ```
 
