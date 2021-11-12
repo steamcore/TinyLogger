@@ -14,7 +14,7 @@ public class MessageTokenizer : IMessageTokenizer
 		tokenizedMessageTemplate = new Lazy<IReadOnlyList<MessageToken>>(() => TemplateTokenizer.Tokenize(options.Value.Template).ToList());
 	}
 
-	public IReadOnlyList<MessageToken> Tokenize<TState>(TState state, Exception exception, Func<TState, Exception, string> formatter)
+	public IReadOnlyList<MessageToken> Tokenize<TState>(TState state, Exception? exception, Func<TState, Exception?, string> formatter)
 	{
 		if (TryGetDictionary(state, out var values) && values?.Count > 1 && values.ContainsKey("{OriginalFormat}") && values["{OriginalFormat}"] is string originalFormat)
 		{

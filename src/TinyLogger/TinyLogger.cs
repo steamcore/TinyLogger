@@ -30,7 +30,7 @@ internal class TinyLogger : ILogger
 		return logLevel != LogLevel.None;
 	}
 
-	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
 	{
 		renderer.Render(new TokenizedMessage(categoryName, logLevel, GetMessageTokens)).GetAwaiter().GetResult();
 
