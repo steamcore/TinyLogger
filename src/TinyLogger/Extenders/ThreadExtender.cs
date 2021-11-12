@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace TinyLogger.Extenders
 {
@@ -8,7 +7,7 @@ namespace TinyLogger.Extenders
 	{
 		public void Extend(Dictionary<string, object?> data)
 		{
-			data["threadId"] = (Func<object>)(() => MessageToken.FromLiteral(Thread.CurrentThread.ManagedThreadId));
+			data["threadId"] = (Func<object>)(() => MessageToken.FromLiteral(Environment.CurrentManagedThreadId));
 		}
 	}
 }

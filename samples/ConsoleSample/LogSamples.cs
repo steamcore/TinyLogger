@@ -25,7 +25,7 @@ namespace ConsoleSample
 
 		public void LogIntro()
 		{
-			logger.LogInformation(new EventId(0, "Intro"), Environment.NewLine + FiggleFonts.Slant.Render("TinyLogger"));
+			logger.LogInformation(new EventId(0, "Intro"), "{figgle}", Environment.NewLine + FiggleFonts.Slant.Render("TinyLogger"));
 		}
 
 		public void LogSimpleExamples()
