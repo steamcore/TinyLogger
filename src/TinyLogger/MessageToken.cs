@@ -88,7 +88,7 @@ public class MessageToken : IEquatable<MessageToken>
 
 	public override bool Equals(object? obj)
 	{
-		if (!(obj is MessageToken other))
+		if (obj is not MessageToken other)
 			return false;
 
 		return Equals(other);
@@ -114,7 +114,7 @@ public class MessageToken : IEquatable<MessageToken>
 		return !(left == right);
 	}
 
-	private static readonly Regex formatMatcher = new Regex(@"^{(?<value>[^,:]+)(,(?<alignment>[\d\-]+))?(:(?<format>[^}]+))?}$", RegexOptions.ExplicitCapture);
+	private static readonly Regex formatMatcher = new(@"^{(?<value>[^,:]+)(,(?<alignment>[\d\-]+))?(:(?<format>[^}]+))?}$", RegexOptions.ExplicitCapture);
 
 	/// <summary>
 	/// Create a token from a format string, examples:

@@ -6,7 +6,7 @@ namespace TinyLogger.IO;
 public class StreamRenderer : ILogRenderer, IDisposable
 {
 	private readonly Func<StreamWriter> createStreamWriter;
-	private readonly object streamWriterLock = new object();
+	private readonly object streamWriterLock = new();
 
 	private bool disposed;
 	private StreamWriter? streamWriter;

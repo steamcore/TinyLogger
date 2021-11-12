@@ -5,9 +5,9 @@ namespace TinyLogger;
 
 internal class LogRendererProxy : ILogRenderer, IDisposable
 {
-	private readonly object _lock = new object();
-	private readonly List<Channel<TokenizedMessage>> channels = new List<Channel<TokenizedMessage>>();
-	private readonly List<Task> workerTasks = new List<Task>();
+	private readonly object _lock = new();
+	private readonly List<Channel<TokenizedMessage>> channels = new();
+	private readonly List<Task> workerTasks = new();
 	private readonly TinyLoggerOptions options;
 
 	private bool disposed;
