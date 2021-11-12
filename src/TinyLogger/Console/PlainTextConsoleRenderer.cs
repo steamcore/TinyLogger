@@ -1,30 +1,29 @@
 using System.Text;
 using SystemConsole = System.Console;
 
-namespace TinyLogger.Console
+namespace TinyLogger.Console;
+
+/// <summary>
+/// Renders log messages to the console in plain text.
+/// </summary>
+public class PlainTextConsoleRenderer : ILogRenderer
 {
-	/// <summary>
-	/// Renders log messages to the console in plain text.
-	/// </summary>
-	public class PlainTextConsoleRenderer : ILogRenderer
+	public Task Flush()
 	{
-		public Task Flush()
+		return Task.CompletedTask;
+	}
+
+	public Task Render(TokenizedMessage message)
+	{
+		var sb = new StringBuilder(128);
+
+		foreach (var token in message.MessageTokens)
 		{
-			return Task.CompletedTask;
+			sb.Append(token.ToString());
 		}
 
-		public Task Render(TokenizedMessage message)
-		{
-			var sb = new StringBuilder(128);
+		SystemConsole.Write(sb.ToString());
 
-			foreach (var token in message.MessageTokens)
-			{
-				sb.Append(token.ToString());
-			}
-
-			SystemConsole.Write(sb.ToString());
-
-			return Task.CompletedTask;
-		}
+		return Task.CompletedTask;
 	}
 }

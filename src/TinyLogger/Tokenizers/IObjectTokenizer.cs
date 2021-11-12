@@ -1,7 +1,6 @@
-namespace TinyLogger.Tokenizers
+namespace TinyLogger.Tokenizers;
+
+public interface IObjectTokenizer
 {
-	public interface IObjectTokenizer
-	{
-		object Tokenize(object value);
-	}
+	object Tokenize(object value);
 }

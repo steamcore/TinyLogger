@@ -1,53 +1,52 @@
 using System.Collections;
 
-namespace TinyLogger.Tokenizers
+namespace TinyLogger.Tokenizers;
+
+public class InlineObjectTokenizer : IObjectTokenizer
 {
-	public class InlineObjectTokenizer : IObjectTokenizer
+	public virtual object Tokenize(object value)
 	{
-		public virtual object Tokenize(object value)
+		return value switch
 		{
-			return value switch
-			{
-				IDictionary dictionary => TokenizeDictionary(dictionary),
-				ICollection collection => TokenizeCollection(collection),
+			IDictionary dictionary => TokenizeDictionary(dictionary),
+			ICollection collection => TokenizeCollection(collection),
 
-				_ => value
-			};
+			_ => value
+		};
+	}
+
+	private static IReadOnlyList<MessageToken> TokenizeCollection(ICollection collection)
+	{
+		var separator = "";
+		var result = new List<MessageToken>();
+
+		foreach (var item in collection)
+		{
+			result.Add(MessageToken.FromLiteral(separator));
+			result.Add(MessageToken.FromObject(item));
+			separator = ", ";
 		}
 
-		private static IReadOnlyList<MessageToken> TokenizeCollection(ICollection collection)
+		return result;
+	}
+
+	private static IReadOnlyList<MessageToken> TokenizeDictionary(IDictionary dictionary)
+	{
+		var separator = "";
+		var result = new List<MessageToken>();
+
+		foreach (var key in dictionary.Keys)
 		{
-			var separator = "";
-			var result = new List<MessageToken>();
+			if (key is null)
+				continue;
 
-			foreach (var item in collection)
-			{
-				result.Add(MessageToken.FromLiteral(separator));
-				result.Add(MessageToken.FromObject(item));
-				separator = ", ";
-			}
-
-			return result;
+			var dictionaryValue = dictionary[key];
+			result.Add(MessageToken.FromLiteral(separator + $"[{key}, "));
+			result.Add(MessageToken.FromObject(dictionaryValue));
+			result.Add(MessageToken.FromLiteral("]"));
+			separator = ", ";
 		}
 
-		private static IReadOnlyList<MessageToken> TokenizeDictionary(IDictionary dictionary)
-		{
-			var separator = "";
-			var result = new List<MessageToken>();
-
-			foreach (var key in dictionary.Keys)
-			{
-				if (key is null)
-					continue;
-
-				var dictionaryValue = dictionary[key];
-				result.Add(MessageToken.FromLiteral(separator + $"[{key}, "));
-				result.Add(MessageToken.FromObject(dictionaryValue));
-				result.Add(MessageToken.FromLiteral("]"));
-				separator = ", ";
-			}
-
-			return result;
-		}
+		return result;
 	}
 }

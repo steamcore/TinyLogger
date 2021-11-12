@@ -1,8 +1,7 @@
-namespace TinyLogger.IO
+namespace TinyLogger.IO;
+
+public enum LogFileMode
 {
-	public enum LogFileMode
-	{
-		Append,
-		Truncate
-	}
+	Append,
+	Truncate
 }

@@ -1,67 +1,66 @@
 using SystemConsole = System.Console;
 
-namespace TinyLogger.Console
+namespace TinyLogger.Console;
+
+/// <summary>
+/// Renders log messages to the console in color by using the legacy Windows API.
+/// </summary>
+public class WindowsConsoleRenderer : ILogRenderer
 {
-	/// <summary>
-	/// Renders log messages to the console in color by using the legacy Windows API.
-	/// </summary>
-	public class WindowsConsoleRenderer : ILogRenderer
+	private readonly IConsoleTheme theme;
+
+	public WindowsConsoleRenderer(IConsoleTheme theme)
 	{
-		private readonly IConsoleTheme theme;
+		this.theme = theme;
+	}
 
-		public WindowsConsoleRenderer(IConsoleTheme theme)
-		{
-			this.theme = theme;
-		}
+	public Task Flush()
+	{
+		return Task.CompletedTask;
+	}
 
-		public Task Flush()
-		{
-			return Task.CompletedTask;
-		}
+	public Task Render(TokenizedMessage message)
+	{
+		Render(theme, message);
+		return Task.CompletedTask;
+	}
 
-		public Task Render(TokenizedMessage message)
+	private static void Render(IConsoleTheme theme, TokenizedMessage message)
+	{
+		foreach (var token in message.MessageTokens)
 		{
-			Render(theme, message);
-			return Task.CompletedTask;
-		}
+			ConsoleColor? foreground = null;
+			ConsoleColor? background = null;
 
-		private static void Render(IConsoleTheme theme, TokenizedMessage message)
-		{
-			foreach (var token in message.MessageTokens)
+			if (token.Type == MessageTokenType.ObjectToken)
 			{
-				ConsoleColor? foreground = null;
-				ConsoleColor? background = null;
-
-				if (token.Type == MessageTokenType.ObjectToken)
-				{
-					(foreground, background) = theme.GetColors(token.Value, message.LogLevel);
-				}
-
-				RenderToken(token.ToString(), foreground, background);
+				(foreground, background) = theme.GetColors(token.Value, message.LogLevel);
 			}
 
-			static void RenderToken(string message, ConsoleColor? foreground = null, ConsoleColor? background = null)
+			RenderToken(token.ToString(), foreground, background);
+		}
+
+		static void RenderToken(string message, ConsoleColor? foreground = null, ConsoleColor? background = null)
+		{
+			try
 			{
-				try
+				if (background != null)
 				{
-					if (background != null)
-					{
-						SystemConsole.BackgroundColor = background.Value;
-					}
-
-					if (foreground != null)
-					{
-						SystemConsole.ForegroundColor = foreground.Value;
-					}
-
-					SystemConsole.Write(message);
+					SystemConsole.BackgroundColor = background.Value;
 				}
-				finally
+
+				if (foreground != null)
 				{
-					if (background != null || foreground != null)
-					{
-						SystemConsole.ResetColor();
-					}
+					SystemConsole.ForegroundColor = foreground.Value;
+				}
+
+				SystemConsole.Write(message);
+			}
+			finally
+			{
+				if (background != null || foreground != null)
+				{
+					SystemConsole.ResetColor();
 				}
 			}
 		}

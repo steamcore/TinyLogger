@@ -1,78 +1,77 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace TinyLogger.IO
+namespace TinyLogger.IO;
+
+/// <summary>
+/// Render messages in plain text to a file with a rolling filename.
+/// </summary>
+public class RollingFileRenderer : ILogRenderer, IDisposable
 {
-	/// <summary>
-	/// Render messages in plain text to a file with a rolling filename.
-	/// </summary>
-	public class RollingFileRenderer : ILogRenderer, IDisposable
+	private readonly Func<string> getFileName;
+	private readonly LogFileMode logFileMode;
+
+	private bool disposed;
+	private string? openFileName;
+	private StreamWriter? streamWriter;
+
+	public RollingFileRenderer(Func<string> getFileName)
+		: this(getFileName, LogFileMode.Append)
 	{
-		private readonly Func<string> getFileName;
-		private readonly LogFileMode logFileMode;
+	}
 
-		private bool disposed;
-		private string? openFileName;
-		private StreamWriter? streamWriter;
+	public RollingFileRenderer(Func<string> getFileName, LogFileMode logFileMode)
+	{
+		this.getFileName = getFileName;
+		this.logFileMode = logFileMode;
+	}
 
-		public RollingFileRenderer(Func<string> getFileName)
-			: this(getFileName, LogFileMode.Append)
+	public void Dispose()
+	{
+		Dispose(true);
+		GC.SuppressFinalize(this);
+	}
+
+	protected virtual void Dispose(bool disposing)
+	{
+		if (disposed)
+			return;
+
+		if (disposing)
 		{
+			streamWriter?.Dispose();
 		}
 
-		public RollingFileRenderer(Func<string> getFileName, LogFileMode logFileMode)
-		{
-			this.getFileName = getFileName;
-			this.logFileMode = logFileMode;
-		}
+		disposed = true;
+	}
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+	public Task Flush()
+	{
+		return streamWriter?.FlushAsync() ?? Task.CompletedTask;
+	}
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposed)
-				return;
+	[SuppressMessage("Performance", "CA1849: Call async methods when in an async method", Justification = "False positive")]
+	public async Task Render(TokenizedMessage message)
+	{
+		if (disposed)
+			return;
 
-			if (disposing)
+		var fileName = getFileName();
+
+		if (openFileName != fileName || streamWriter is null)
+		{
+			if (streamWriter != null)
 			{
-				streamWriter?.Dispose();
+				await streamWriter.FlushAsync();
+				streamWriter.Dispose();
 			}
 
-			disposed = true;
+			streamWriter = new StreamWriter(LogFile.OpenFile(fileName, logFileMode));
+			openFileName = fileName;
 		}
 
-		public Task Flush()
+		foreach (var token in message.MessageTokens)
 		{
-			return streamWriter?.FlushAsync() ?? Task.CompletedTask;
-		}
-
-		[SuppressMessage("Performance", "CA1849: Call async methods when in an async method", Justification = "False positive")]
-		public async Task Render(TokenizedMessage message)
-		{
-			if (disposed)
-				return;
-
-			var fileName = getFileName();
-
-			if (openFileName != fileName || streamWriter is null)
-			{
-				if (streamWriter != null)
-				{
-					await streamWriter.FlushAsync();
-					streamWriter.Dispose();
-				}
-
-				streamWriter = new StreamWriter(LogFile.OpenFile(fileName, logFileMode));
-				openFileName = fileName;
-			}
-
-			foreach (var token in message.MessageTokens)
-			{
-				await streamWriter.WriteAsync(token.ToString()).ConfigureAwait(false);
-			}
+			await streamWriter.WriteAsync(token.ToString()).ConfigureAwait(false);
 		}
 	}
 }

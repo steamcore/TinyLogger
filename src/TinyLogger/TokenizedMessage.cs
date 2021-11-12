@@ -1,22 +1,21 @@
 using Microsoft.Extensions.Logging;
 
-namespace TinyLogger
+namespace TinyLogger;
+
+public class TokenizedMessage
 {
-	public class TokenizedMessage
+	private readonly Func<IReadOnlyList<MessageToken>> getMessageTokens;
+	private IReadOnlyList<MessageToken>? messageTokens;
+
+	public string CategoryName { get; }
+	public LogLevel LogLevel { get; }
+	public IReadOnlyList<MessageToken> MessageTokens => messageTokens ??= getMessageTokens();
+
+	public TokenizedMessage(string categoryName, LogLevel logLevel, Func<IReadOnlyList<MessageToken>> getMessageTokens)
 	{
-		private readonly Func<IReadOnlyList<MessageToken>> getMessageTokens;
-		private IReadOnlyList<MessageToken>? messageTokens;
+		CategoryName = categoryName;
+		LogLevel = logLevel;
 
-		public string CategoryName { get; }
-		public LogLevel LogLevel { get; }
-		public IReadOnlyList<MessageToken> MessageTokens => messageTokens ??= getMessageTokens();
-
-		public TokenizedMessage(string categoryName, LogLevel logLevel, Func<IReadOnlyList<MessageToken>> getMessageTokens)
-		{
-			CategoryName = categoryName;
-			LogLevel = logLevel;
-
-			this.getMessageTokens = getMessageTokens;
-		}
+		this.getMessageTokens = getMessageTokens;
 	}
 }
