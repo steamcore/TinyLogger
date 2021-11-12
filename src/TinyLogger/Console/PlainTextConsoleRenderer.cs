@@ -1,5 +1,4 @@
 using System.Text;
-using System.Threading.Tasks;
 using SystemConsole = System.Console;
 
 namespace TinyLogger.Console

@@ -1,6 +1,3 @@
-using System;
-using System.Threading.Tasks;
-
 namespace TinyLogger
 {
 	internal sealed class NullDisposable : IDisposable, IAsyncDisposable

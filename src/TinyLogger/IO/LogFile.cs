@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace TinyLogger.IO
 {
 	internal static class LogFile

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace TinyLogger.Tokenizers
 {
 	public static class TemplateTokenizer

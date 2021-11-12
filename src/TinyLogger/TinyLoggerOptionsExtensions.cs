@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using TinyLogger.Console;
 using TinyLogger.Console.TrueColor;
 using TinyLogger.IO;

@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace TinyLogger
 {
 	public interface ILogRenderer

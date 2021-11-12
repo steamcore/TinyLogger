@@ -17,6 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Using Include="Shouldly" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="../../src/**/*.Tests.cs" />
   </ItemGroup>
 

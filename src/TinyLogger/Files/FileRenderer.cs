@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using TinyLogger.IO;
 
 namespace TinyLogger.Files

@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using TinyLogger.Extenders;
 using TinyLogger.Tokenizers;

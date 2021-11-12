@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace TinyLogger.Extenders
 {
 	public class ThreadExtender : ILogExtender
