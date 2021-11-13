@@ -1,21 +1,13 @@
+#pragma warning disable CA1812 // Workaround for analyzer bug https://github.com/dotnet/roslyn-analyzers/issues/5628
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace GenericHostSample;
-
-public static class Program
-{
-	public static async Task Main(string[] args)
+using var host = Host.CreateDefaultBuilder(args)
+	.ConfigureLogging(builder =>
 	{
-		using var host = CreateHostBuilder(args).Build();
+		// Add TinyLogger, remember to disable the default Console logger in appsettings.json
+		builder.AddTinyConsoleLogger();
+	})
+	.Build();
 
-		await host.RunAsync();
-	}
-
-	public static IHostBuilder CreateHostBuilder(string[] args) =>
-		Host.CreateDefaultBuilder(args)
-			.ConfigureLogging(builder =>
-			{
-				builder.AddTinyConsoleLogger();
-			});
-}
+await host.RunAsync();
