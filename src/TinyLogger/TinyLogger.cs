@@ -37,7 +37,7 @@ internal class TinyLogger : ILogger
 		IReadOnlyList<MessageToken> GetMessageTokens()
 		{
 			// Tokenize actual log message using a callback in case it is not needed (depends on the log template)
-			Func<object> getMessage = () => messageTokenizer.Tokenize(state, exception, formatter);
+			var getMessage = () => messageTokenizer.Tokenize(state, exception, formatter);
 
 			// Setup built in log fields
 			var data = new Dictionary<string, object?>
