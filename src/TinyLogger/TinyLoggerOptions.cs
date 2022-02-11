@@ -11,7 +11,7 @@ public class TinyLoggerOptions
 	/// <summary>
 	/// Add log extenders to add data to a dictionary that is used when rending the Template.
 	/// </summary>
-	public List<ILogExtender> Extenders { get; set; } = new List<ILogExtender>
+	public List<ILogExtender> Extenders { get; set; } = new()
 	{
 		new LogLevelExtender(),
 		new ProcessExtender(),
@@ -44,7 +44,7 @@ public class TinyLoggerOptions
 	/// <summary>
 	/// The list of renderers to be used, for example ConsoleRenderer and FileRenderer.
 	/// </summary>
-	public List<ILogRenderer> Renderers { get; set; } = new List<ILogRenderer>();
+	public List<ILogRenderer> Renderers { get; set; } = new();
 
 	/// <summary>
 	/// Defines the structure of every log message, see MessageTemplates for examples.
