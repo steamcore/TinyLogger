@@ -43,6 +43,11 @@ public class LogSamples
 	{
 		var eventId = new EventId(0, "ComplexExamples");
 
+		logger.LogInformation(eventId,
+			"Example tuple {tuple}",
+			("foobar", 123, new Uri("https://www.example.com"))
+		);
+
 		logger.LogInformation(
 			eventId,
 			"Example list {list}",
@@ -65,9 +70,20 @@ public class LogSamples
 			}
 		);
 
-		logger.LogInformation(eventId,
-			"Example tuple {tuple}",
-			("foobar", 123, new Uri("https://www.example.com"))
+		logger.LogInformation(
+			eventId,
+			"Example lookup {lookup}",
+			new (string key, object value)[]
+			{
+				("someValue", 12),
+				("someValue", 34),
+				("someValue", 56),
+				("text", "lorem"),
+				("text", "ipsum"),
+				("timestamp", DateTime.UtcNow),
+				("timestamp", DateTime.UtcNow.AddDays(1))
+			}
+			.ToLookup(x => x.key, x => x.value)
 		);
 	}
 
