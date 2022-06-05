@@ -64,6 +64,10 @@ public class MessageTokenizer : IMessageTokenizer
 	{
 		if (value is null)
 		{
+			if (messageToken.Value is "null")
+			{
+				result.Add(MessageToken.FromLiteral("(null)", messageToken.Alignment, messageToken.Format));
+			}
 			return;
 		}
 
