@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29519.181
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32519.111
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1DCCD6F8-06A5-45D2-81E8-AA1DFC8D57D0}"
 	ProjectSection(SolutionItems) = preProject
@@ -30,6 +30,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{29200C
 		.gitignore = .gitignore
 		global.json = global.json
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyLogger.Benchmarks", "test\TinyLogger.Benchmarks\TinyLogger.Benchmarks.csproj", "{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +91,18 @@ Global
 		{B0DB35E0-2D8A-4686-8EBD-C4F04EFE4C34}.Release|x64.Build.0 = Release|Any CPU
 		{B0DB35E0-2D8A-4686-8EBD-C4F04EFE4C34}.Release|x86.ActiveCfg = Release|Any CPU
 		{B0DB35E0-2D8A-4686-8EBD-C4F04EFE4C34}.Release|x86.Build.0 = Release|Any CPU
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}.Debug|x64.Build.0 = Debug|Any CPU
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}.Debug|x86.Build.0 = Debug|Any CPU
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}.Release|x64.ActiveCfg = Release|Any CPU
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}.Release|x64.Build.0 = Release|Any CPU
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}.Release|x86.ActiveCfg = Release|Any CPU
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,6 +112,7 @@ Global
 		{B8215ECC-8CDD-4546-9A9B-B0EBF4CCE693} = {7E2C9496-4085-4B77-978A-DE764AE14789}
 		{71E740DE-03B7-4E9D-BA2F-BC7BA1A4047B} = {191BFFBF-9868-4A7F-BAA6-41E740E7CC39}
 		{B0DB35E0-2D8A-4686-8EBD-C4F04EFE4C34} = {7E2C9496-4085-4B77-978A-DE764AE14789}
+		{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A} = {191BFFBF-9868-4A7F-BAA6-41E740E7CC39}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1EF6C817-2657-4480-81FB-3325F13F7975}
