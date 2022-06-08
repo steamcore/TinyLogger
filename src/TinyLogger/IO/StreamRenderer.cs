@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace TinyLogger.IO;
 
 /// <summary>
@@ -55,10 +57,15 @@ public class StreamRenderer : ILogRenderer, IDisposable
 		if (disposed)
 			return;
 
-		foreach (var token in message.MessageTokens)
+		using var sb = Pooling.RentStringBuilder();
+		using var messageTokens = message.RentMessageTokenList();
+
+		foreach (var token in messageTokens.Value)
 		{
-			await GetStreamWriter().WriteAsync(token.ToString()).ConfigureAwait(false);
+			token.Write(sb.Value);
 		}
+
+		await sb.Value.WriteToStreamWriterAsync(GetStreamWriter()).ConfigureAwait(false);
 	}
 
 	private StreamWriter GetStreamWriter()

@@ -27,7 +27,9 @@ public class WindowsConsoleRenderer : ILogRenderer
 
 	private static void Render(IConsoleTheme theme, TokenizedMessage message)
 	{
-		foreach (var token in message.MessageTokens)
+		using var messageTokens = message.RentMessageTokenList();
+
+		foreach (var token in messageTokens.Value)
 		{
 			ConsoleColor? foreground = null;
 			ConsoleColor? background = null;

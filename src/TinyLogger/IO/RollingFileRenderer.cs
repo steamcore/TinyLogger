@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace TinyLogger.IO;
 
@@ -49,7 +49,6 @@ public class RollingFileRenderer : ILogRenderer, IDisposable
 		return streamWriter?.FlushAsync() ?? Task.CompletedTask;
 	}
 
-	[SuppressMessage("Performance", "CA1849: Call async methods when in an async method", Justification = "False positive")]
 	public async Task Render(TokenizedMessage message)
 	{
 		if (disposed)
@@ -62,16 +61,25 @@ public class RollingFileRenderer : ILogRenderer, IDisposable
 			if (streamWriter != null)
 			{
 				await streamWriter.FlushAsync();
+#if NET
+				await streamWriter.DisposeAsync();
+#else
 				streamWriter.Dispose();
+#endif
 			}
 
 			streamWriter = new StreamWriter(LogFile.OpenFile(fileName, logFileMode));
 			openFileName = fileName;
 		}
 
-		foreach (var token in message.MessageTokens)
+		using var sb = Pooling.RentStringBuilder();
+		using var messageTokens = message.RentMessageTokenList();
+
+		foreach (var token in messageTokens.Value)
 		{
-			await streamWriter.WriteAsync(token.ToString()).ConfigureAwait(false);
+			token.Write(sb.Value);
 		}
+
+		await sb.Value.WriteToStreamWriterAsync(streamWriter).ConfigureAwait(false);
 	}
 }

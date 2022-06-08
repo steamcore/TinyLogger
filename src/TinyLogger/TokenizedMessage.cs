@@ -4,18 +4,23 @@ namespace TinyLogger;
 
 public class TokenizedMessage
 {
-	private readonly Func<IReadOnlyList<MessageToken>> getMessageTokens;
-	private IReadOnlyList<MessageToken>? messageTokens;
+	private readonly Action<IList<MessageToken>> createMessageTokens;
 
 	public string CategoryName { get; }
 	public LogLevel LogLevel { get; }
-	public IReadOnlyList<MessageToken> MessageTokens => messageTokens ??= getMessageTokens();
 
-	public TokenizedMessage(string categoryName, LogLevel logLevel, Func<IReadOnlyList<MessageToken>> getMessageTokens)
+	public TokenizedMessage(string categoryName, LogLevel logLevel, Action<IList<MessageToken>> createMessageTokens)
 	{
 		CategoryName = categoryName;
 		LogLevel = logLevel;
 
-		this.getMessageTokens = getMessageTokens;
+		this.createMessageTokens = createMessageTokens;
+	}
+
+	public IPooledValue<List<MessageToken>> RentMessageTokenList()
+	{
+		var messageTokens = Pooling.RentMessageTokenList();
+		createMessageTokens(messageTokens.Value);
+		return messageTokens;
 	}
 }

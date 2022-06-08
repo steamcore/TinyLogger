@@ -12,11 +12,17 @@ public static class TemplateTokenizer
 
 	public static IReadOnlyList<MessageToken> Tokenize(string logFormat)
 	{
+		var result = new List<MessageToken>();
+		Tokenize(logFormat, result);
+		return result;
+	}
+
+	public static void Tokenize(string logFormat, IList<MessageToken> output)
+	{
 		var state = State.Literal;
 		var start = 0;
 		var lastOpen = -1;
 		var lastClose = -1;
-		var result = new List<MessageToken>();
 
 		for (var i = 0; i < logFormat.Length; i++)
 		{
@@ -77,14 +83,12 @@ public static class TemplateTokenizer
 
 		AddLiteral(start, logFormat.Length - start);
 
-		return result;
-
 		void AddLiteral(int index, int length)
 		{
 			if (length == 0)
 				return;
 
-			result.Add(MessageToken.FromLiteral(logFormat.Substring(index, length)));
+			output.Add(MessageToken.FromLiteral(logFormat.Substring(index, length)));
 		}
 
 		void AddValue(int index, int length)
@@ -92,7 +96,7 @@ public static class TemplateTokenizer
 			if (length == 0)
 				return;
 
-			result.Add(MessageToken.FromFormat(logFormat.Substring(index, length)));
+			output.Add(MessageToken.FromFormat(logFormat.Substring(index, length)));
 		}
 	}
 }

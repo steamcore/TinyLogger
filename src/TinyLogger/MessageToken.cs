@@ -1,5 +1,7 @@
 using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Primitives;
 
 namespace TinyLogger;
 
@@ -63,6 +65,20 @@ public class MessageToken : IEquatable<MessageToken>
 		}
 
 		return string.Format(CultureInfo.CurrentCulture, GetFormatString(), value);
+	}
+
+	public void Write(StringBuilder sb)
+	{
+		var value = Value != null && ValueTransform != null ? ValueTransform(Value) : Value;
+
+		if (value is string str)
+		{
+			sb.Append(str);
+		}
+		else
+		{
+			sb.AppendFormat(CultureInfo.CurrentCulture, GetFormatString(), value);
+		}
 	}
 
 	public MessageToken WithFormat(MessageToken formatToken)

@@ -14,14 +14,20 @@ public class MessageTokenizer : IMessageTokenizer
 		tokenizedMessageTemplate = new Lazy<IReadOnlyList<MessageToken>>(() => TemplateTokenizer.Tokenize(options.Value.Template).ToList());
 	}
 
-	public IReadOnlyList<MessageToken> Tokenize<TState>(TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+	public void Tokenize<TState>(TState state, Exception? exception, Func<TState, Exception?, string> formatter, IList<MessageToken> output)
 	{
 		if (TryGetDictionary(state, out var values) && values?.Count > 1 && values.ContainsKey("{OriginalFormat}") && values["{OriginalFormat}"] is string originalFormat)
 		{
-			return Tokenize(TemplateTokenizer.Tokenize(originalFormat), values);
+			using var template = Pooling.RentMessageTokenList();
+
+			TemplateTokenizer.Tokenize(originalFormat, template.Value);
+
+			Tokenize(template.Value, values, output);
+
+			return;
 		}
 
-		return new[] { MessageToken.FromLiteral(formatter(state, exception)) };
+		output.Add(MessageToken.FromLiteral(formatter(state, exception)));
 
 		static bool TryGetDictionary(TState state, out IReadOnlyDictionary<string, object?>? dictionary)
 		{
@@ -36,38 +42,42 @@ public class MessageTokenizer : IMessageTokenizer
 		}
 	}
 
-	public IReadOnlyList<MessageToken> Tokenize(IReadOnlyDictionary<string, object?> data)
+	public void Tokenize(IReadOnlyDictionary<string, object?> data, IList<MessageToken> output)
 	{
-		return Tokenize(tokenizedMessageTemplate.Value, data);
+		Tokenize(tokenizedMessageTemplate.Value, data, output);
 	}
 
-	public IReadOnlyList<MessageToken> Tokenize(IEnumerable<MessageToken> messageTokens, IReadOnlyDictionary<string, object?> data)
+	public void Tokenize(IEnumerable<MessageToken> messageTokens, IReadOnlyDictionary<string, object?> data, IList<MessageToken> output)
 	{
-		var result = new List<MessageToken>();
-
 		foreach (var messageToken in messageTokens)
 		{
 			if (messageToken.Type == MessageTokenType.LiteralToken)
 			{
-				result.Add(messageToken);
+				output.Add(messageToken);
 			}
 			else if (messageToken.Value is string key && data.ContainsKey(key))
 			{
-				AddTokens(objectTokenizer, result, messageToken, data[key]);
+				AddTokens(objectTokenizer, messageToken, data[key], output);
 			}
 		}
-
-		return result;
 	}
 
-	private static void AddTokens(IObjectTokenizer? objectTokenizer, List<MessageToken> result, MessageToken messageToken, object? value)
+	private static void AddTokens(IObjectTokenizer? objectTokenizer, MessageToken messageToken, object? value, IList<MessageToken> output)
 	{
 		if (value is null)
 		{
 			if (messageToken.Value is "null")
 			{
-				result.Add(MessageToken.FromLiteral("(null)", messageToken.Alignment, messageToken.Format));
+				output.Add(MessageToken.FromLiteral("(null)", messageToken.Alignment, messageToken.Format));
 			}
+
+			return;
+		}
+
+		if (value is Action<IList<MessageToken>> valueAction)
+		{
+			valueAction(output);
+
 			return;
 		}
 
@@ -82,26 +92,20 @@ public class MessageTokenizer : IMessageTokenizer
 		{
 			foreach (var token in valueTokens)
 			{
-				result.Add(hasFormat ? token.WithFormat(messageToken) : token);
+				output.Add(hasFormat ? token.WithFormat(messageToken) : token);
 			}
 			return;
 		}
 
 		if (value is MessageToken valueToken)
 		{
-			result.Add(hasFormat ? valueToken.WithFormat(messageToken) : valueToken);
+			output.Add(hasFormat ? valueToken.WithFormat(messageToken) : valueToken);
 			return;
 		}
 
-		var tokenized = objectTokenizer?.Tokenize(value);
-
-		if (tokenized is null || tokenized == value)
+		if (objectTokenizer is null || !objectTokenizer.TryToTokenize(value, output))
 		{
-			result.Add(MessageToken.FromObject(value, messageToken.Alignment, messageToken.Format));
-		}
-		else
-		{
-			AddTokens(objectTokenizer, result, messageToken, tokenized);
+			output.Add(MessageToken.FromObject(value, messageToken.Alignment, messageToken.Format));
 		}
 	}
 }

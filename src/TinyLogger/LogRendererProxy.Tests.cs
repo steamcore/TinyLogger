@@ -55,7 +55,7 @@ public class LogRendererProxyTests
 
 	private static async Task RenderMessages(TinyLoggerOptions options, int messageCount)
 	{
-		var message = new TokenizedMessage(string.Empty, LogLevel.Debug, () => Array.Empty<MessageToken>());
+		var message = new TokenizedMessage(string.Empty, LogLevel.Debug, _ => { });
 
 		using var proxy = new LogRendererProxy(options);
 

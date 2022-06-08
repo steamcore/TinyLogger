@@ -7,31 +7,30 @@ namespace TinyLogger.Tokenizers;
 
 public class InlineObjectTokenizer : IObjectTokenizer
 {
-	public virtual object Tokenize(object value)
+	public virtual bool TryToTokenize(object value, IList<MessageToken> output)
 	{
-		return AttemptTokenization(value) ?? value;
+		return AttemptTokenization(value, output);
 	}
 
-	internal static IReadOnlyList<MessageToken>? AttemptTokenization(object value)
+	internal static bool AttemptTokenization(object value, IList<MessageToken> output)
 	{
 		return value switch
 		{
 			// Special case for strings because strings implement IEnumerable
-			string => null,
+			string => false,
 
-			IDictionary d => TokenizeValue(d),
-			IEnumerable e => TokenizeValue(e),
+			IDictionary d => TokenizeValue(d, output),
+			IEnumerable e => TokenizeValue(e, output),
 #if NET
-			ITuple t => TokenizeValue(t),
+			ITuple t => TokenizeValue(t, output),
 #endif
-			_ => null
+			_ => false
 		};
 	}
 
-	internal static IReadOnlyList<MessageToken>? TokenizeValue(IDictionary dictionary)
+	internal static bool TokenizeValue(IDictionary dictionary, IList<MessageToken> output)
 	{
 		var separator = "";
-		var result = new List<MessageToken>();
 
 		foreach (var key in dictionary.Keys)
 		{
@@ -39,69 +38,62 @@ public class InlineObjectTokenizer : IObjectTokenizer
 				continue;
 
 			var dictionaryValue = dictionary[key];
-			result.Add(MessageToken.FromLiteral(separator + $"{{{key}, "));
-			result.Add(MessageToken.FromObject(dictionaryValue));
-			result.Add(MessageToken.FromLiteral("}"));
+			output.Add(MessageToken.FromLiteral(separator + $"{{{key}, "));
+			output.Add(MessageToken.FromObject(dictionaryValue));
+			output.Add(MessageToken.FromLiteral("}"));
 			separator = ", ";
 		}
 
-		return result;
+		return true;
 	}
 
-	internal static IReadOnlyList<MessageToken>? TokenizeValue(IEnumerable enumerable)
+	internal static bool TokenizeValue(IEnumerable enumerable, IList<MessageToken> output)
 	{
 		var separator = string.Empty;
-		var result = new List<MessageToken>
-		{
-			MessageToken.FromLiteral("[")
-		};
+
+		output.Add(MessageToken.FromLiteral("["));
 
 		foreach (var item in enumerable)
 		{
-			result.Add(MessageToken.FromLiteral(separator));
+			output.Add(MessageToken.FromLiteral(separator));
 
 			if (item is IGrouping<object, object> grouping)
 			{
-				result.Add(MessageToken.FromLiteral($"{{{grouping.Key}, "));
-				if (TokenizeValue(grouping) is IReadOnlyList<MessageToken> groupItems)
-				{
-					result.AddRange(groupItems);
-				}
-				result.Add(MessageToken.FromLiteral("}"));
+				output.Add(MessageToken.FromLiteral($"{{{grouping.Key}, "));
+				TokenizeValue(grouping, output);
+				output.Add(MessageToken.FromLiteral("}"));
 			}
 			else
 			{
-				result.Add(MessageToken.FromObject(item));
+				output.Add(MessageToken.FromObject(item));
 			}
 
 			separator = ", ";
 		}
 
-		result.Add(MessageToken.FromLiteral("]"));
+		output.Add(MessageToken.FromLiteral("]"));
 
-		return result;
+		return true;
 	}
 
 #if NET
-	internal static IReadOnlyList<MessageToken>? TokenizeValue(ITuple tuple)
+	internal static bool TokenizeValue(ITuple tuple, IList<MessageToken> output)
 	{
-		var result = new List<MessageToken>
-		{
-			MessageToken.FromLiteral("(")
-		};
+		output.Add(MessageToken.FromLiteral("("));
 
 		for (var i = 0; i < tuple.Length; i++)
 		{
 			if (i > 0)
 			{
-				result.Add(MessageToken.FromLiteral(", "));
+				output.Add(MessageToken.FromLiteral(", "));
 			}
 
-			result.Add(MessageToken.FromObject(tuple[i]));
+			output.Add(MessageToken.FromObject(tuple[i]));
 		}
 
-		result.Add(MessageToken.FromLiteral(")"));
-		return result;
+		output.Add(MessageToken.FromLiteral(")"));
+
+		return true;
 	}
 #endif
 }

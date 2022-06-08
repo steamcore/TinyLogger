@@ -1,6 +1,5 @@
 using System.Drawing;
 using System.Text;
-using SystemConsole = System.Console;
 
 namespace TinyLogger.Console.TrueColor;
 
@@ -28,44 +27,45 @@ public class TrueColorConsoleRenderer : ILogRenderer
 	{
 		const string Reset = "\x1b[0m";
 
-		var sb = new StringBuilder(128);
+		using var sb = Pooling.RentStringBuilder();
+		using var messageTokens = message.RentMessageTokenList();
 
-		foreach (var token in message.MessageTokens)
+		foreach (var token in messageTokens.Value)
 		{
 			if (token.Type != MessageTokenType.ObjectToken)
 			{
-				sb.Append(token.ToString());
+				sb.Value.Append(token.ToString());
 				continue;
 			}
 
 			switch (theme.GetColors(token.Value, message.LogLevel))
 			{
 				case (Color foreground, Color background):
-					AppendForeground(sb, foreground);
-					AppendBackground(sb, background);
-					sb.Append(token.ToString());
-					sb.Append(Reset);
+					AppendForeground(sb.Value, foreground);
+					AppendBackground(sb.Value, background);
+					sb.Value.Append(token.ToString());
+					sb.Value.Append(Reset);
 					break;
 
 				case (Color foreground, _):
-					AppendForeground(sb, foreground);
-					sb.Append(token.ToString());
-					sb.Append(Reset);
+					AppendForeground(sb.Value, foreground);
+					sb.Value.Append(token.ToString());
+					sb.Value.Append(Reset);
 					break;
 
 				case (_, Color background):
-					AppendBackground(sb, background);
-					sb.Append(token.ToString());
-					sb.Append(Reset);
+					AppendBackground(sb.Value, background);
+					sb.Value.Append(token.ToString());
+					sb.Value.Append(Reset);
 					break;
 
 				default:
-					sb.Append(token.ToString());
+					sb.Value.Append(token.ToString());
 					break;
 			}
 		}
 
-		SystemConsole.Write(sb.ToString());
+		sb.Value.WriteToConsole();
 
 		static void AppendForeground(StringBuilder sb, Color color)
 		{

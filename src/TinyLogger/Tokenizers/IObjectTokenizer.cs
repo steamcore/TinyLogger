@@ -2,5 +2,5 @@ namespace TinyLogger.Tokenizers;
 
 public interface IObjectTokenizer
 {
-	object Tokenize(object value);
+	bool TryToTokenize(object value, IList<MessageToken> output);
 }
