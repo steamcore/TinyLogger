@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Primitives;
 
 namespace TinyLogger;
 
@@ -18,7 +17,7 @@ public enum MessageTokenType
 	ObjectToken
 }
 
-public class MessageToken : IEquatable<MessageToken>
+public readonly struct MessageToken : IEquatable<MessageToken>
 {
 	/// <summary>
 	/// Alignment from format string
@@ -92,9 +91,9 @@ public class MessageToken : IEquatable<MessageToken>
 		);
 	}
 
-	public bool Equals(MessageToken? other)
+	public bool Equals(MessageToken other)
 	{
-		if (Type != other?.Type)
+		if (Type != other.Type)
 			return false;
 
 		return (Value is null && other.Value is null || Value?.Equals(other.Value) == true)
