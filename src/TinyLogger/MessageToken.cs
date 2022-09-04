@@ -141,19 +141,42 @@ public readonly struct MessageToken : IEquatable<MessageToken>
 	/// <param name="value">The value to be parsed</param>
 	public static MessageToken FromFormat(string value)
 	{
-		var match = formatMatcher.Match(value);
+		// Avoid calling the Regex if possible to reduce allocations
 
-		if (match.Success)
+		if (value[0] != '{' || value[value.Length - 1] != '}')
 		{
-			var valueStr = match.Groups["value"].Value;
-			var alignmentStr = match.Groups["alignment"].Value;
-			var formatStr = match.Groups["format"].Value;
+			return new MessageToken(value, MessageTokenType.LiteralToken);
+		}
 
+#if NET
+		if (value.Contains(':', StringComparison.Ordinal) || value.Contains(',', StringComparison.Ordinal))
+#else
+		if (value.Contains(':') || value.Contains(','))
+#endif
+		{
+			var match = formatMatcher.Match(value);
+
+			if (match.Success)
+			{
+				var valueStr = match.Groups["value"].Value;
+				var alignmentStr = match.Groups["alignment"].Value;
+				var formatStr = match.Groups["format"].Value;
+
+				return new MessageToken(
+					valueStr,
+					MessageTokenType.ObjectToken,
+					alignment: int.TryParse(alignmentStr, out var alignment) ? alignment : (int?)null,
+					format: !string.IsNullOrEmpty(formatStr) ? formatStr : null
+				);
+			}
+		}
+		else
+		{
 			return new MessageToken(
-				valueStr,
+				value.Substring(1, value.Length - 2),
 				MessageTokenType.ObjectToken,
-				alignment: int.TryParse(alignmentStr, out var alignment) ? alignment : (int?)null,
-				format: !string.IsNullOrEmpty(formatStr) ? formatStr : null
+				null,
+				null
 			);
 		}
 
