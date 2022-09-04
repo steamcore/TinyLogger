@@ -16,29 +16,34 @@ public class MessageTokenizer : IMessageTokenizer
 
 	public void Tokenize<TState>(TState state, Exception? exception, Func<TState, Exception?, string> formatter, IList<MessageToken> output)
 	{
-		if (TryGetDictionary(state, out var values) && values?.Count > 1 && values.ContainsKey("{OriginalFormat}") && values["{OriginalFormat}"] is string originalFormat)
+		using var data = Pooling.RentMetadataDictionary();
+
+		PopulateDictionary(state, data.Value);
+
+		if (data.Value.Count > 1 && data.Value.ContainsKey("{OriginalFormat}") && data.Value["{OriginalFormat}"] is string originalFormat)
 		{
 			using var template = Pooling.RentMessageTokenList();
 
 			TemplateTokenizer.Tokenize(originalFormat, template.Value);
 
-			Tokenize(template.Value, values, output);
+			Tokenize(template.Value, data.Value, output);
 
 			return;
 		}
 
 		output.Add(MessageToken.FromLiteral(formatter(state, exception)));
 
-		static bool TryGetDictionary(TState state, out IReadOnlyDictionary<string, object?>? dictionary)
+		static void PopulateDictionary(TState state, Dictionary<string, object?> dictionary)
 		{
-			if (state is IReadOnlyList<KeyValuePair<string, object?>> fields)
+			if (state is IReadOnlyList<KeyValuePair<string, object?>> logValues)
 			{
-				dictionary = fields.ToDictionary(x => x.Key, x => (object?)x.Value);
-				return true;
-			}
+				for (var i = 0; i < logValues.Count; i++)
+				{
+					var kvp = logValues[i];
 
-			dictionary = null;
-			return false;
+					dictionary[kvp.Key] = kvp.Value;
+				}
+			}
 		}
 	}
 
