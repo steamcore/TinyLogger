@@ -19,22 +19,13 @@ public class DefaultObjectTokenizer : IObjectTokenizer
 			// Special case for strings because strings implement IEnumerable
 			string => null,
 
-			_ => TokenizeValue((dynamic)value)
+			IDictionary d => TokenizeValue(d),
+			IEnumerable e => TokenizeValue(e),
+#if NET
+			ITuple t => TokenizeValue(t),
+#endif
+			_ => null
 		};
-	}
-
-	internal static IReadOnlyList<MessageToken>? TokenizeValue(IEnumerable enumerable)
-	{
-		var separator = Environment.NewLine;
-		var result = new List<MessageToken>();
-
-		foreach (var item in enumerable)
-		{
-			result.Add(MessageToken.FromLiteral(separator + "- "));
-			result.Add(MessageToken.FromObject(item));
-		}
-
-		return result;
 	}
 
 	internal static IReadOnlyList<MessageToken>? TokenizeValue(IDictionary dictionary)
@@ -50,6 +41,33 @@ public class DefaultObjectTokenizer : IObjectTokenizer
 			var dictionaryValue = dictionary[key];
 			result.Add(MessageToken.FromLiteral(separator + $"- {key}: "));
 			result.Add(MessageToken.FromObject(dictionaryValue));
+		}
+
+		return result;
+	}
+
+	internal static IReadOnlyList<MessageToken>? TokenizeValue(IEnumerable enumerable)
+	{
+		var separator = Environment.NewLine;
+		var result = new List<MessageToken>();
+
+		foreach (var item in enumerable)
+		{
+			result.Add(MessageToken.FromLiteral(separator + "- "));
+
+			if (item is IGrouping<object, object> grouping)
+			{
+				result.Add(MessageToken.FromLiteral($"{grouping.Key}: "));
+			}
+
+			if (InlineObjectTokenizer.AttemptTokenization(item) is IReadOnlyList<MessageToken> tokens)
+			{
+				result.AddRange(tokens);
+			}
+			else
+			{
+				result.Add(MessageToken.FromObject(item));
+			}
 		}
 
 		return result;
@@ -77,33 +95,4 @@ public class DefaultObjectTokenizer : IObjectTokenizer
 		return result;
 	}
 #endif
-
-	internal static IReadOnlyList<MessageToken>? TokenizeValue<TKey, TValue>(ILookup<TKey, TValue> lookup)
-	{
-		var separator = Environment.NewLine;
-		var result = new List<MessageToken>();
-
-		foreach (var item in lookup)
-		{
-			if (item is null)
-				continue;
-
-			result.Add(MessageToken.FromLiteral(separator + $"- {item.Key}: "));
-			if (InlineObjectTokenizer.AttemptTokenization(item) is IReadOnlyList<MessageToken> tokens)
-			{
-				result.AddRange(tokens);
-			}
-			else
-			{
-				result.Add(MessageToken.FromObject(item));
-			}
-		}
-
-		return result;
-	}
-
-	internal static IReadOnlyList<MessageToken>? TokenizeValue(object _)
-	{
-		return null;
-	}
 }
