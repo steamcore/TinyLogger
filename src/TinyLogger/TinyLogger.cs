@@ -54,9 +54,9 @@ internal class TinyLogger : ILogger
 			data.Value.Add("timestamp_utc", MessageToken.FromLiteral(DateTime.UtcNow));
 
 			// Extend log fields
-			foreach (var extender in extenders)
+			for (var i = 0; i < extenders.Count; i++)
 			{
-				extender.Extend(data.Value);
+				extenders[i].Extend(data.Value);
 			}
 
 			// Do the work

@@ -54,8 +54,10 @@ internal class LogRendererProxy : ILogRenderer, IDisposable
 
 		EnsureInitialized();
 
-		foreach (var channel in channels)
+		for (var i = 0; i < channels.Count; i++)
 		{
+			var channel = channels[i];
+
 			if (channel.Writer.TryWrite(message))
 				continue;
 

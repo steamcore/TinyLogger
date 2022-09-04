@@ -47,10 +47,12 @@ public class MessageTokenizer : IMessageTokenizer
 		Tokenize(tokenizedMessageTemplate.Value, data, output);
 	}
 
-	public void Tokenize(IEnumerable<MessageToken> messageTokens, IReadOnlyDictionary<string, object?> data, IList<MessageToken> output)
+	public void Tokenize(IReadOnlyList<MessageToken> messageTokens, IReadOnlyDictionary<string, object?> data, IList<MessageToken> output)
 	{
-		foreach (var messageToken in messageTokens)
+		for (var i = 0; i < messageTokens.Count; i++)
 		{
+			var messageToken = messageTokens[i];
+
 			if (messageToken.Type == MessageTokenType.LiteralToken)
 			{
 				output.Add(messageToken);
@@ -90,8 +92,10 @@ public class MessageTokenizer : IMessageTokenizer
 
 		if (value is IReadOnlyList<MessageToken> valueTokens)
 		{
-			foreach (var token in valueTokens)
+			for (var i = 0; i < valueTokens.Count; i++)
 			{
+				var token = valueTokens[i];
+
 				output.Add(hasFormat ? token.WithFormat(messageToken) : token);
 			}
 			return;

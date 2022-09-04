@@ -20,6 +20,7 @@ public class DefaultObjectTokenizer : IObjectTokenizer
 			string => false,
 
 			IDictionary d => TokenizeValue(d, output),
+			IReadOnlyList<object> l => TokenizeValue(l, output),
 			IEnumerable e => TokenizeValue(e, output),
 #if NET
 			ITuple t => TokenizeValue(t, output),
@@ -40,6 +41,30 @@ public class DefaultObjectTokenizer : IObjectTokenizer
 			var dictionaryValue = dictionary[key];
 			output.Add(MessageToken.FromLiteral(separator + $"- {key}: "));
 			output.Add(MessageToken.FromObject(dictionaryValue));
+		}
+
+		return true;
+	}
+
+	internal static bool TokenizeValue(IReadOnlyList<object> list, IList<MessageToken> output)
+	{
+		var separator = Environment.NewLine;
+
+		for (var i = 0; i < list.Count; i++)
+		{
+			var item = list[i];
+
+			output.Add(MessageToken.FromLiteral(separator + "- "));
+
+			if (item is IGrouping<object, object> grouping)
+			{
+				output.Add(MessageToken.FromLiteral($"{grouping.Key}: "));
+			}
+
+			if (!InlineObjectTokenizer.AttemptTokenization(item, output))
+			{
+				output.Add(MessageToken.FromObject(item));
+			}
 		}
 
 		return true;

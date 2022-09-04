@@ -20,6 +20,7 @@ public class InlineObjectTokenizer : IObjectTokenizer
 			string => false,
 
 			IDictionary d => TokenizeValue(d, output),
+			IReadOnlyList<object> l => TokenizeValue(l, output),
 			IEnumerable e => TokenizeValue(e, output),
 #if NET
 			ITuple t => TokenizeValue(t, output),
@@ -43,6 +44,37 @@ public class InlineObjectTokenizer : IObjectTokenizer
 			output.Add(MessageToken.FromLiteral("}"));
 			separator = ", ";
 		}
+
+		return true;
+	}
+
+	internal static bool TokenizeValue(IReadOnlyList<object> list, IList<MessageToken> output)
+	{
+		var separator = string.Empty;
+
+		output.Add(MessageToken.FromLiteral("["));
+
+		for (var i = 0; i < list.Count; i++)
+		{
+			var item = list[i];
+
+			output.Add(MessageToken.FromLiteral(separator));
+
+			if (item is IGrouping<object, object> grouping)
+			{
+				output.Add(MessageToken.FromLiteral($"{{{grouping.Key}, "));
+				TokenizeValue(grouping, output);
+				output.Add(MessageToken.FromLiteral("}"));
+			}
+			else
+			{
+				output.Add(MessageToken.FromObject(item));
+			}
+
+			separator = ", ";
+		}
+
+		output.Add(MessageToken.FromLiteral("]"));
 
 		return true;
 	}

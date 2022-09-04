@@ -32,8 +32,10 @@ public class AnsiConsoleRenderer : ILogRenderer
 		using var sb = Pooling.RentStringBuilder();
 		using var messageTokens = message.RentMessageTokenList();
 
-		foreach (var token in messageTokens.Value)
+		for (var i = 0; i < messageTokens.Value.Count; i++)
 		{
+			var token = messageTokens.Value[i];
+
 			if (token.Type != MessageTokenType.ObjectToken)
 			{
 				token.Write(sb.Value);
