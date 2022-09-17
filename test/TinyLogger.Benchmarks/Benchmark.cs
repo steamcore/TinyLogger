@@ -23,7 +23,7 @@ public partial class Benchmark : IDisposable
 
 	private readonly ILoggerFactory streamFactory;
 	private readonly ILogger stream;
-	private readonly MemoryStream memoryStream = new MemoryStream();
+	private readonly MemoryStream memoryStream = new();
 
 	public Benchmark()
 	{

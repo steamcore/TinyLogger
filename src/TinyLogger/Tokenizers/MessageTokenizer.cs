@@ -20,7 +20,7 @@ public class MessageTokenizer : IMessageTokenizer
 
 		PopulateDictionary(state, data.Value);
 
-		if (data.Value.Count > 1 && data.Value.ContainsKey("{OriginalFormat}") && data.Value["{OriginalFormat}"] is string originalFormat)
+		if (data.Value.Count > 1 && data.Value.TryGetValue("{OriginalFormat}", out var value) && value is string originalFormat)
 		{
 			using var template = Pooling.RentMessageTokenList();
 

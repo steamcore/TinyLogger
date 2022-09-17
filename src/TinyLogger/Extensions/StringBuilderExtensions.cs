@@ -30,7 +30,6 @@ internal static class StringBuilderExtensions
 			sb.CopyTo(0, buffer, 0, sb.Length);
 
 			await sw.WriteAsync(buffer, 0, sb.Length).ConfigureAwait(false);
-			;
 		}
 		finally
 		{
