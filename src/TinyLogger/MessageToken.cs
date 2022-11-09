@@ -17,7 +17,7 @@ public enum MessageTokenType
 	ObjectToken
 }
 
-public readonly struct MessageToken : IEquatable<MessageToken>
+public readonly partial struct MessageToken : IEquatable<MessageToken>
 {
 	/// <summary>
 	/// Alignment from format string
@@ -129,7 +129,13 @@ public readonly struct MessageToken : IEquatable<MessageToken>
 		return !(left == right);
 	}
 
+#if NET7_0_OR_GREATER
+	[GeneratedRegex(@"^{(?<value>[^,:]+)(,(?<alignment>[\d\-]+))?(:(?<format>[^}]+))?}$", RegexOptions.ExplicitCapture)]
+	private static partial Regex GetFormatMatcher();
+	private static readonly Regex formatMatcher = GetFormatMatcher();
+#else
 	private static readonly Regex formatMatcher = new(@"^{(?<value>[^,:]+)(,(?<alignment>[\d\-]+))?(:(?<format>[^}]+))?}$", RegexOptions.ExplicitCapture);
+#endif
 
 	/// <summary>
 	/// Create a token from a format string, examples:
