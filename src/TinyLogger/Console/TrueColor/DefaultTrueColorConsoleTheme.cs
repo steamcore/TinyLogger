@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 
 namespace TinyLogger.Console.TrueColor;
 
-[SuppressMessage("Performance", "CA1823:Avoid unused private fields", Justification = "Theme colors")]
 [SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Theme colors")]
 [SuppressMessage("Redundancy", "RCS1213:Remove unused member declaration.", Justification = "Theme colors")]
 public class DefaultTrueColorConsoleTheme : ITrueColorConsoleTheme
