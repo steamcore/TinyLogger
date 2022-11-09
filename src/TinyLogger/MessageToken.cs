@@ -149,7 +149,11 @@ public readonly partial struct MessageToken : IEquatable<MessageToken>
 	{
 		// Avoid calling the Regex if possible to reduce allocations
 
+#if NET6_0_OR_GREATER
+		if (value[0] != '{' || value[^1] != '}')
+#else
 		if (value[0] != '{' || value[value.Length - 1] != '}')
+#endif
 		{
 			return new MessageToken(value, MessageTokenType.LiteralToken);
 		}
@@ -179,7 +183,11 @@ public readonly partial struct MessageToken : IEquatable<MessageToken>
 		else
 		{
 			return new MessageToken(
+#if NET6_0_OR_GREATER
+				value[1..^1],
+#else
 				value.Substring(1, value.Length - 2),
+#endif
 				MessageTokenType.ObjectToken,
 				null,
 				null

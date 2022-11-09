@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace TinyLogger.Console;
 
-public static class AnsiSupport
+public static partial class AnsiSupport
 {
 	public static bool TryEnable()
 	{
@@ -26,13 +26,25 @@ public static class AnsiSupport
 		return true;
 	}
 
-	private static class NativeMethods
+	private static partial class NativeMethods
 	{
 		public const int STD_OUTPUT_HANDLE = -11;
 		public const int STD_ERROR_HANDLE = -12;
 
 		public const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 
+#if NET7_0_OR_GREATER
+		[LibraryImport("kernel32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static partial bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+
+		[LibraryImport("kernel32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static partial bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+
+		[LibraryImport("kernel32.dll", SetLastError = true)]
+		public static partial IntPtr GetStdHandle(int nStdHandle);
+#else
 		[DllImport("kernel32.dll")]
 		public static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
 
@@ -41,5 +53,6 @@ public static class AnsiSupport
 
 		[DllImport("kernel32.dll", SetLastError = true)]
 		public static extern IntPtr GetStdHandle(int nStdHandle);
+#endif
 	}
 }
