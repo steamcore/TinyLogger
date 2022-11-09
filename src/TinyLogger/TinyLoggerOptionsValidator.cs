@@ -4,7 +4,7 @@ namespace TinyLogger;
 
 public class TinyLoggerOptionsValidator : IValidateOptions<TinyLoggerOptions>
 {
-	public ValidateOptionsResult Validate(string name, TinyLoggerOptions options)
+	public ValidateOptionsResult Validate(string? name, TinyLoggerOptions options)
 	{
 		var failures = new List<string>();
 
