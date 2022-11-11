@@ -95,16 +95,6 @@ public static class TinyLoggerOptionsExtensions
 	/// Render messages in plain text to a file with a rolling filename.
 	/// </summary>
 	/// <param name="getFileName">Retrieve a filename to write to, if the value changes a new file with that file name will be created.</param>
-	[Obsolete("Use AddRollingFile")]
-	public static TinyLoggerOptions AddFile(this TinyLoggerOptions options, Func<string> getFileName)
-	{
-		return options.AddRollingFile(getFileName);
-	}
-
-	/// <summary>
-	/// Render messages in plain text to a file with a rolling filename.
-	/// </summary>
-	/// <param name="getFileName">Retrieve a filename to write to, if the value changes a new file with that file name will be created.</param>
 	public static TinyLoggerOptions AddRollingFile(this TinyLoggerOptions options, Func<string> getFileName)
 	{
 		return options.AddRollingFile(getFileName, LogFileMode.Append);
