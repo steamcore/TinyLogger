@@ -1,30 +1,27 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 
 namespace TinyLogger.Console.TrueColor;
 
-[SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Theme colors")]
-[SuppressMessage("Redundancy", "RCS1213:Remove unused member declaration.", Justification = "Theme colors")]
 public class DefaultTrueColorConsoleTheme : ITrueColorConsoleTheme
 {
-	private static readonly Color Black = GetColor("202020");
-	private static readonly Color Red = GetColor("CE5746");
-	private static readonly Color Green = GetColor("4BC54B");
-	private static readonly Color Yellow = GetColor("CFBE02");
-	private static readonly Color Blue = GetColor("436FE1");
-	private static readonly Color Purple = GetColor("D338D3");
-	private static readonly Color Cyan = GetColor("33BBC8");
-	private static readonly Color White = GetColor("DBDBDB");
-	private static readonly Color BrightBlack = GetColor("818383");
-	private static readonly Color BrightRed = GetColor("FF604A");
-	private static readonly Color BrightGreen = GetColor("3BF53B");
-	private static readonly Color BrightYellow = GetColor("ECDC23");
-	private static readonly Color BrightBlue = GetColor("7490FD");
-	private static readonly Color BrightPurple = GetColor("F935F8");
-	private static readonly Color BrightCyan = GetColor("14F0F0");
-	private static readonly Color BrightWhite = GetColor("FFFFFF");
+	public static readonly Color Black = GetColor("202020");
+	public static readonly Color Red = GetColor("CE5746");
+	public static readonly Color Green = GetColor("4BC54B");
+	public static readonly Color Yellow = GetColor("CFBE02");
+	public static readonly Color Blue = GetColor("436FE1");
+	public static readonly Color Purple = GetColor("D338D3");
+	public static readonly Color Cyan = GetColor("33BBC8");
+	public static readonly Color White = GetColor("DBDBDB");
+	public static readonly Color BrightBlack = GetColor("818383");
+	public static readonly Color BrightRed = GetColor("FF604A");
+	public static readonly Color BrightGreen = GetColor("3BF53B");
+	public static readonly Color BrightYellow = GetColor("ECDC23");
+	public static readonly Color BrightBlue = GetColor("7490FD");
+	public static readonly Color BrightPurple = GetColor("F935F8");
+	public static readonly Color BrightCyan = GetColor("14F0F0");
+	public static readonly Color BrightWhite = GetColor("FFFFFF");
 
 	public virtual (Color? foreground, Color? background) GetColors(object? value, LogLevel logLevel)
 	{

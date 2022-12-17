@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using TinyLogger.Extenders;
 using TinyLogger.Tokenizers;
 
@@ -8,6 +9,8 @@ public class TinyLoggerOptions
 	/// <summary>
 	/// Add log extenders to add data to a dictionary that is used when rending the Template.
 	/// </summary>
+	[SuppressMessage("Design", "CA1002:Do not expose generic lists", Justification = "It's supposed to be configurable")]
+	[SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "It's supposed to be configurable")]
 	public List<ILogExtender> Extenders { get; set; } = new()
 	{
 		new LogLevelExtender(),
@@ -41,6 +44,8 @@ public class TinyLoggerOptions
 	/// <summary>
 	/// The list of renderers to be used, for example ConsoleRenderer and FileRenderer.
 	/// </summary>
+	[SuppressMessage("Design", "CA1002:Do not expose generic lists", Justification = "It's supposed to be configurable")]
+	[SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "It's supposed to be configurable")]
 	public List<ILogRenderer> Renderers { get; set; } = new();
 
 	/// <summary>

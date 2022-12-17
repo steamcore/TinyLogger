@@ -65,7 +65,7 @@ public class LogRendererProxyTests
 		}
 	}
 
-	private class TestRenderer : ILogRenderer
+	private sealed class TestRenderer : ILogRenderer
 	{
 		public int Count { get; private set; }
 
