@@ -112,7 +112,7 @@ public class MessageTokenizer : IMessageTokenizer
 			return;
 		}
 
-		if (objectTokenizer is null || !objectTokenizer.TryToTokenize(value, output))
+		if (objectTokenizer?.TryToTokenize(value, output) != true)
 		{
 			output.Add(MessageToken.FromObject(value, messageToken.Alignment, messageToken.Format));
 		}
