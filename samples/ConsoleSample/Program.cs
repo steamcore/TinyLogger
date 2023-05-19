@@ -14,10 +14,16 @@ using var loggerFactory = LoggerFactory.Create(builder =>
 	builder.AddTinyLogger(options =>
 	{
 		// Optionally extend log fields with new or modified data
-		options.Extenders.Add(new SampleExceptionExtender());
+		options.Extenders.Add(new SampleEnvironmentExtender());
 
-		// Select a custom message template
+		// Select a message template
 		options.Template = MessageTemplates.DefaultTimestamped;
+
+		// Or use a custom template
+		//options.Template = "{timestamp_utc} {hostname} {logLevel_short} {categoryName} {eventId}{newLine}"
+		//	+ "{message}{newLine}"
+		//	+ "{exception_newLine}{exception}{exception_newLine}"
+		//	+ "{newLine}";
 
 		// Render to console
 		options.AddConsole();

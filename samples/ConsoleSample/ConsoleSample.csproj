@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ben.Demystifier" Version="0.4.1" />
     <PackageReference Include="Figgle" Version="0.5.1" />
   </ItemGroup>
 
