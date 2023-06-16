@@ -58,10 +58,6 @@ Because it is a logger provider like any other you are free to use other loggers
 get in your way. And since it is built on top of the standard logging abstractions from Microsoft there is
 no magic other than adding the logging provider and the simple configuration.
 
-For production scenarios you should probably use a more full featured logging framework since they tend to
-be battle tested. TinyLogger is more intended for development scenarios and as such does not have as many
-features, but that's why it's tiny.
-
 ## How it works
 
 When a log message is received it is passed to an internal message tokenizer which parses the original
