@@ -8,6 +8,9 @@ public class ProcessExtender : ILogExtender
 
 	public void Extend(Dictionary<string, object?> data)
 	{
-		data.Add("process_time", MessageToken.FromLiteral(DateTime.UtcNow - startTime));
+		if (data?.ContainsKey("process_time") == false)
+		{
+			data.Add("process_time", MessageToken.FromLiteral(DateTime.UtcNow - startTime));
+		}
 	}
 }

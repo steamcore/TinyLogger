@@ -19,7 +19,13 @@ public class TrueColorConsoleRenderer : ILogRenderer
 
 	public Task Render(TokenizedMessage message)
 	{
+		if (message is null)
+		{
+			return Task.CompletedTask;
+		}
+
 		Render(theme, message);
+
 		return Task.CompletedTask;
 	}
 

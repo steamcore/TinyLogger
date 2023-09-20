@@ -19,6 +19,9 @@ public static class TinyLoggerOptionsExtensions
 	/// </summary>
 	public static TinyLoggerOptions AddConsole(this TinyLoggerOptions options, IConsoleTheme theme)
 	{
+		if (options is null)
+			throw new ArgumentNullException(nameof(options));
+
 		// Honor no-color.org
 		if (Environment.GetEnvironmentVariable("NO_COLOR") != null)
 		{
@@ -41,7 +44,11 @@ public static class TinyLoggerOptionsExtensions
 	/// </summary>
 	public static TinyLoggerOptions AddPlainTextConsole(this TinyLoggerOptions options)
 	{
+		if (options is null)
+			throw new ArgumentNullException(nameof(options));
+
 		options.Renderers.Add(new PlainTextConsoleRenderer());
+
 		return options;
 	}
 
@@ -58,6 +65,9 @@ public static class TinyLoggerOptionsExtensions
 	/// </summary>
 	public static TinyLoggerOptions AddTrueColorConsole(this TinyLoggerOptions options, ITrueColorConsoleTheme theme)
 	{
+		if (options is null)
+			throw new ArgumentNullException(nameof(options));
+
 		// Honor no-color.org
 		if (Environment.GetEnvironmentVariable("NO_COLOR") != null || !AnsiSupport.TryEnable())
 		{
@@ -87,7 +97,11 @@ public static class TinyLoggerOptionsExtensions
 	/// <param name="logFileMode">Append or truncate log file</param>
 	public static TinyLoggerOptions AddFile(this TinyLoggerOptions options, string fileName, LogFileMode logFileMode)
 	{
+		if (options is null)
+			throw new ArgumentNullException(nameof(options));
+
 		options.Renderers.Add(new FileRenderer(fileName, logFileMode));
+
 		return options;
 	}
 
@@ -107,7 +121,11 @@ public static class TinyLoggerOptionsExtensions
 	/// <param name="logFileMode">Append or truncate log file</param>
 	public static TinyLoggerOptions AddRollingFile(this TinyLoggerOptions options, Func<string> getFileName, LogFileMode logFileMode)
 	{
+		if (options is null)
+			throw new ArgumentNullException(nameof(options));
+
 		options.Renderers.Add(new RollingFileRenderer(getFileName, logFileMode));
+
 		return options;
 	}
 
@@ -117,7 +135,11 @@ public static class TinyLoggerOptionsExtensions
 	/// <param name="stream">The Stream to write to.</param>
 	public static TinyLoggerOptions AddStream(this TinyLoggerOptions options, Stream stream)
 	{
+		if (options is null)
+			throw new ArgumentNullException(nameof(options));
+
 		options.Renderers.Add(new StreamRenderer(stream));
+
 		return options;
 	}
 }

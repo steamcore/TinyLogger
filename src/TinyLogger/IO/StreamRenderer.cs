@@ -37,7 +37,9 @@ public class StreamRenderer : ILogRenderer, IDisposable
 	protected virtual void Dispose(bool disposing)
 	{
 		if (disposed)
+		{
 			return;
+		}
 
 		if (disposing)
 		{
@@ -54,8 +56,10 @@ public class StreamRenderer : ILogRenderer, IDisposable
 
 	public async Task Render(TokenizedMessage message)
 	{
-		if (disposed)
+		if (disposed || message is null)
+		{
 			return;
+		}
 
 		using var sb = Pooling.RentStringBuilder();
 		using var messageTokens = message.RentMessageTokenList();

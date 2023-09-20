@@ -14,6 +14,11 @@ public class PlainTextConsoleRenderer : ILogRenderer
 
 	public Task Render(TokenizedMessage message)
 	{
+		if (message is null)
+		{
+			return Task.CompletedTask;
+		}
+
 		using var sb = Pooling.RentStringBuilder();
 		using var messageTokens = message.RentMessageTokenList();
 

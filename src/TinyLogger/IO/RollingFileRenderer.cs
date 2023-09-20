@@ -34,7 +34,9 @@ public class RollingFileRenderer : ILogRenderer, IDisposable
 	protected virtual void Dispose(bool disposing)
 	{
 		if (disposed)
+		{
 			return;
+		}
 
 		if (disposing)
 		{
@@ -51,8 +53,10 @@ public class RollingFileRenderer : ILogRenderer, IDisposable
 
 	public async Task Render(TokenizedMessage message)
 	{
-		if (disposed)
+		if (disposed || message is null)
+		{
 			return;
+		}
 
 		var fileName = getFileName();
 

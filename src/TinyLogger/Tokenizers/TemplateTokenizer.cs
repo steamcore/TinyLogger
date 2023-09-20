@@ -19,6 +19,12 @@ public static class TemplateTokenizer
 
 	public static void Tokenize(string logFormat, IList<MessageToken> output)
 	{
+		if (logFormat is null)
+			throw new ArgumentNullException(nameof(logFormat));
+
+		if (output is null)
+			throw new ArgumentNullException(nameof(output));
+
 		var state = State.Literal;
 		var start = 0;
 		var lastOpen = -1;

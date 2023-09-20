@@ -68,6 +68,9 @@ public readonly partial struct MessageToken : IEquatable<MessageToken>
 
 	public void Write(StringBuilder sb)
 	{
+		if (sb is null)
+			throw new ArgumentNullException(nameof(sb));
+
 		var value = Value != null && ValueTransform != null ? ValueTransform(Value) : Value;
 
 		if (value is string str)
@@ -147,6 +150,9 @@ public readonly partial struct MessageToken : IEquatable<MessageToken>
 	/// <param name="value">The value to be parsed</param>
 	public static MessageToken FromFormat(string value)
 	{
+		if (value is null)
+			throw new ArgumentNullException(nameof(value));
+
 		// Avoid calling the Regex if possible to reduce allocations
 
 #if NET6_0_OR_GREATER

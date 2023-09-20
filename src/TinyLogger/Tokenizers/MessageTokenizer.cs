@@ -9,6 +9,9 @@ public class MessageTokenizer : IMessageTokenizer
 
 	public MessageTokenizer(IOptions<TinyLoggerOptions> options)
 	{
+		if (options is null)
+			throw new ArgumentNullException(nameof(options));
+
 		objectTokenizer = options.Value.ObjectTokenizer;
 
 		tokenizedMessageTemplate = new Lazy<IReadOnlyList<MessageToken>>(() => TemplateTokenizer.Tokenize(options.Value.Template).ToList());
@@ -16,6 +19,12 @@ public class MessageTokenizer : IMessageTokenizer
 
 	public void Tokenize<TState>(TState state, Exception? exception, Func<TState, Exception?, string> formatter, IList<MessageToken> output)
 	{
+		if (formatter is null)
+			throw new ArgumentNullException(nameof(formatter));
+
+		if (output is null)
+			throw new ArgumentNullException(nameof(output));
+
 		using var data = Pooling.RentMetadataDictionary();
 
 		PopulateDictionary(state, data.Value);
@@ -54,6 +63,15 @@ public class MessageTokenizer : IMessageTokenizer
 
 	public void Tokenize(IReadOnlyList<MessageToken> messageTokens, IReadOnlyDictionary<string, object?> data, IList<MessageToken> output)
 	{
+		if (messageTokens is null)
+			throw new ArgumentNullException(nameof(messageTokens));
+
+		if (data is null)
+			throw new ArgumentNullException(nameof(data));
+
+		if (output is null)
+			throw new ArgumentNullException(nameof(output));
+
 		for (var i = 0; i < messageTokens.Count; i++)
 		{
 			var messageToken = messageTokens[i];
