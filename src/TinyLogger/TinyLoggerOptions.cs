@@ -11,12 +11,12 @@ public class TinyLoggerOptions
 	/// </summary>
 	[SuppressMessage("Design", "CA1002:Do not expose generic lists", Justification = "It's supposed to be configurable")]
 	[SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "It's supposed to be configurable")]
-	public List<ILogExtender> Extenders { get; set; } = new()
-	{
+	public List<ILogExtender> Extenders { get; set; } =
+	[
 		new LogLevelExtender(),
 		new ProcessExtender(),
 		new ThreadExtender()
-	};
+	];
 
 	/// <summary>
 	/// <para>
@@ -46,7 +46,7 @@ public class TinyLoggerOptions
 	/// </summary>
 	[SuppressMessage("Design", "CA1002:Do not expose generic lists", Justification = "It's supposed to be configurable")]
 	[SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "It's supposed to be configurable")]
-	public List<ILogRenderer> Renderers { get; set; } = new();
+	public List<ILogRenderer> Renderers { get; set; } = [];
 
 	/// <summary>
 	/// Defines the structure of every log message, see MessageTemplates for examples.

@@ -25,7 +25,14 @@ public class StreamRenderer : ILogRenderer, IDisposable
 
 	public StreamRenderer(Func<StreamWriter> createStreamWriter)
 	{
-		this.createStreamWriter = createStreamWriter ?? throw new ArgumentNullException(nameof(createStreamWriter));
+#if NET
+		ArgumentNullException.ThrowIfNull(createStreamWriter);
+#else
+		if (createStreamWriter is null)
+			throw new ArgumentNullException(nameof(createStreamWriter));
+#endif
+
+		this.createStreamWriter = createStreamWriter;
 	}
 
 	public void Dispose()

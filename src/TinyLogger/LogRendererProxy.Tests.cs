@@ -11,7 +11,7 @@ public class LogRendererProxyTests
 	public async Task All_messages_should_be_rendered(int messageCount)
 	{
 		var renderer = new TestRenderer();
-		var options = new TinyLoggerOptions { Renderers = new List<ILogRenderer> { renderer } };
+		var options = new TinyLoggerOptions { Renderers = [renderer] };
 
 		await RenderMessages(options, messageCount);
 
@@ -24,7 +24,7 @@ public class LogRendererProxyTests
 	public async Task All_messages_should_be_rendered_even_if_queue_depth_is_small(int queueDepth, int messageCount)
 	{
 		var renderer = new TestRenderer();
-		var options = new TinyLoggerOptions { MaxQueueDepth = queueDepth, Renderers = new List<ILogRenderer> { renderer } };
+		var options = new TinyLoggerOptions { MaxQueueDepth = queueDepth, Renderers = [renderer] };
 
 		await RenderMessages(options, messageCount);
 
@@ -43,7 +43,7 @@ public class LogRendererProxyTests
 			renderers.Add(new TestRenderer());
 		}
 
-		var options = new TinyLoggerOptions { Renderers = renderers.ToList<ILogRenderer>() };
+		var options = new TinyLoggerOptions { Renderers = [.. renderers] };
 
 		await RenderMessages(options, messageCount);
 

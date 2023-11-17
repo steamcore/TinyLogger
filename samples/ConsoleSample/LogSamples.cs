@@ -3,15 +3,8 @@ using Microsoft.Extensions.Logging;
 
 namespace ConsoleSample;
 
-public class LogSamples
+public class LogSamples(ILogger logger)
 {
-	private readonly ILogger logger;
-
-	public LogSamples(ILogger logger)
-	{
-		this.logger = logger;
-	}
-
 	public void LogAll()
 	{
 		LogIntro();

@@ -3,15 +3,9 @@ using System.Text;
 
 namespace TinyLogger.Console.TrueColor;
 
-public class TrueColorConsoleRenderer : ILogRenderer
+public class TrueColorConsoleRenderer(ITrueColorConsoleTheme theme)
+	: ILogRenderer
 {
-	private readonly ITrueColorConsoleTheme theme;
-
-	public TrueColorConsoleRenderer(ITrueColorConsoleTheme theme)
-	{
-		this.theme = theme;
-	}
-
 	public Task Flush()
 	{
 		return Task.CompletedTask;

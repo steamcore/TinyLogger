@@ -17,42 +17,39 @@ public enum MessageTokenType
 	ObjectToken
 }
 
-public readonly partial struct MessageToken : IEquatable<MessageToken>
+public readonly partial struct MessageToken(
+	object? value,
+	MessageTokenType type,
+	int? alignment = null,
+	string? format = null,
+	Func<object, object>? valueTransform = null
+)
+	: IEquatable<MessageToken>
 {
 	/// <summary>
 	/// Alignment from format string
 	/// </summary>
-	public int? Alignment { get; }
+	public int? Alignment { get; } = alignment;
 
 	/// <summary>
 	/// Format from format string
 	/// </summary>
-	public string? Format { get; }
+	public string? Format { get; } = format;
 
 	/// <summary>
 	/// The actual value represented by this token
 	/// </summary>
-	public object? Value { get; }
+	public object? Value { get; } = value;
 
 	/// <summary>
 	/// Transform the value when it is to be rendered, for example LogLevel.Information -> "info"
 	/// </summary>
-	public Func<object, object>? ValueTransform { get; }
+	public Func<object, object>? ValueTransform { get; } = valueTransform;
 
 	/// <summary>
 	/// Token type
 	/// </summary>
-	public MessageTokenType Type { get; }
-
-	public MessageToken(object? value, MessageTokenType type, int? alignment = null, string? format = null, Func<object, object>? valueTransform = null)
-	{
-		Value = value;
-		Type = type;
-
-		Alignment = alignment;
-		Format = format;
-		ValueTransform = valueTransform;
-	}
+	public MessageTokenType Type { get; } = type;
 
 	public override string ToString()
 	{
@@ -68,8 +65,12 @@ public readonly partial struct MessageToken : IEquatable<MessageToken>
 
 	public void Write(StringBuilder sb)
 	{
+#if NET
+		ArgumentNullException.ThrowIfNull(sb);
+#else
 		if (sb is null)
 			throw new ArgumentNullException(nameof(sb));
+#endif
 
 		var value = Value != null && ValueTransform != null ? ValueTransform(Value) : Value;
 
@@ -150,8 +151,12 @@ public readonly partial struct MessageToken : IEquatable<MessageToken>
 	/// <param name="value">The value to be parsed</param>
 	public static MessageToken FromFormat(string value)
 	{
+#if NET
+		ArgumentNullException.ThrowIfNull(value);
+#else
 		if (value is null)
 			throw new ArgumentNullException(nameof(value));
+#endif
 
 		// Avoid calling the Regex if possible to reduce allocations
 

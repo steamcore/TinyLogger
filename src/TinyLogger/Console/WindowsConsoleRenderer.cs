@@ -5,15 +5,9 @@ namespace TinyLogger.Console;
 /// <summary>
 /// Renders log messages to the console in color by using the legacy Windows API.
 /// </summary>
-public class WindowsConsoleRenderer : ILogRenderer
+public class WindowsConsoleRenderer(IConsoleTheme theme)
+	: ILogRenderer
 {
-	private readonly IConsoleTheme theme;
-
-	public WindowsConsoleRenderer(IConsoleTheme theme)
-	{
-		this.theme = theme;
-	}
-
 	public Task Flush()
 	{
 		return Task.CompletedTask;

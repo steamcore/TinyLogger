@@ -5,15 +5,9 @@ namespace TinyLogger.Console;
 /// <summary>
 /// Renders log messages to the console in color by using ANSI control codes.
 /// </summary>
-public class AnsiConsoleRenderer : ILogRenderer
+public class AnsiConsoleRenderer(IConsoleTheme theme)
+	: ILogRenderer
 {
-	private readonly IConsoleTheme theme;
-
-	public AnsiConsoleRenderer(IConsoleTheme theme)
-	{
-		this.theme = theme;
-	}
-
 	public Task Flush()
 	{
 		return Task.CompletedTask;

@@ -7,17 +7,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1DCCD6F8-06A
 	ProjectSection(SolutionItems) = preProject
 		src\Directory.Build.props = src\Directory.Build.props
 		src\Directory.Build.targets = src\Directory.Build.targets
+		src\Directory.Packages.props = src\Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyLogger", "src\TinyLogger\TinyLogger.csproj", "{C996C1A7-085D-4F8E-97F5-A42E26E5FDAA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{7E2C9496-4085-4B77-978A-DE764AE14789}"
+	ProjectSection(SolutionItems) = preProject
+		samples\Directory.Build.props = samples\Directory.Build.props
+		samples\Directory.Packages.props = samples\Directory.Packages.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleSample", "samples\ConsoleSample\ConsoleSample.csproj", "{B8215ECC-8CDD-4546-9A9B-B0EBF4CCE693}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{191BFFBF-9868-4A7F-BAA6-41E740E7CC39}"
 	ProjectSection(SolutionItems) = preProject
 		test\Directory.Build.props = test\Directory.Build.props
+		test\Directory.Packages.props = test\Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyLogger.Tests", "test\TinyLogger.Tests\TinyLogger.Tests.csproj", "{71E740DE-03B7-4E9D-BA2F-BC7BA1A4047B}"
@@ -31,7 +37,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{29200C
 		global.json = global.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyLogger.Benchmarks", "test\TinyLogger.Benchmarks\TinyLogger.Benchmarks.csproj", "{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyLogger.Benchmarks", "test\TinyLogger.Benchmarks\TinyLogger.Benchmarks.csproj", "{4194E703-6CC6-4DC4-B7DF-7ADCE2D0E99A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

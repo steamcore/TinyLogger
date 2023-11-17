@@ -3,20 +3,14 @@ using System.Threading.Channels;
 
 namespace TinyLogger;
 
-internal class LogRendererProxy : ILogRenderer, IDisposable
+internal class LogRendererProxy(TinyLoggerOptions options)
+	: ILogRenderer, IDisposable
 {
 	private readonly object _lock = new();
-	private readonly List<Channel<TokenizedMessage>> channels = new();
-	private readonly List<Task> workerTasks = new();
-	private readonly TinyLoggerOptions options;
-
+	private readonly List<Channel<TokenizedMessage>> channels = [];
+	private readonly List<Task> workerTasks = [];
 	private bool disposed;
 	private bool initialized;
-
-	public LogRendererProxy(TinyLoggerOptions options)
-	{
-		this.options = options;
-	}
 
 	public void Dispose()
 	{

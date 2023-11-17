@@ -3,22 +3,15 @@ using TinyLogger.Tokenizers;
 
 namespace TinyLogger;
 
-internal class TinyLogger : ILogger
+internal class TinyLogger(
+	IMessageTokenizer messageTokenizer,
+	IReadOnlyList<ILogExtender> extenders,
+	ILogRenderer renderer,
+	string categoryName
+)
+	: ILogger
 {
 	private static readonly MessageToken newLine = MessageToken.FromLiteral(Environment.NewLine);
-
-	private readonly IMessageTokenizer messageTokenizer;
-	private readonly IReadOnlyList<ILogExtender> extenders;
-	private readonly ILogRenderer renderer;
-	private readonly string categoryName;
-
-	public TinyLogger(IMessageTokenizer messageTokenizer, IReadOnlyList<ILogExtender> extenders, ILogRenderer renderer, string categoryName)
-	{
-		this.messageTokenizer = messageTokenizer;
-		this.extenders = extenders;
-		this.renderer = renderer;
-		this.categoryName = categoryName;
-	}
 
 	public IDisposable? BeginScope<TState>(TState state) where TState : notnull
 	{

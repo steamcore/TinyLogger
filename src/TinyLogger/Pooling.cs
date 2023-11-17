@@ -22,7 +22,7 @@ public static class Pooling
 	{
 		public Dictionary<string, object?> Create()
 		{
-			return new Dictionary<string, object?>();
+			return [];
 		}
 
 		public bool Return(Dictionary<string, object?> obj)
@@ -36,7 +36,7 @@ public static class Pooling
 	{
 		public List<T> Create()
 		{
-			return new List<T>();
+			return [];
 		}
 
 		public bool Return(List<T> obj)
@@ -46,19 +46,10 @@ public static class Pooling
 		}
 	}
 
-	private class PooledValue<T> : IPooledValue<T>
+	private class PooledValue<T>(ObjectPool<T> pool) : IPooledValue<T>
 		where T : class
 	{
-		private readonly ObjectPool<T> pool;
-
-		public T Value { get; }
-
-		public PooledValue(ObjectPool<T> pool)
-		{
-			this.pool = pool;
-
-			Value = pool.Get();
-		}
+		public T Value { get; } = pool.Get();
 
 		public void Dispose()
 		{

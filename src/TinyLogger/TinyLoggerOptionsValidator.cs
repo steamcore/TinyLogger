@@ -6,8 +6,12 @@ public class TinyLoggerOptionsValidator : IValidateOptions<TinyLoggerOptions>
 {
 	public ValidateOptionsResult Validate(string? name, TinyLoggerOptions options)
 	{
+#if NET
+		ArgumentNullException.ThrowIfNull(options);
+#else
 		if (options is null)
 			throw new ArgumentNullException(nameof(options));
+#endif
 
 		var failures = new List<string>();
 

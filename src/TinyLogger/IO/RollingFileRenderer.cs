@@ -5,10 +5,11 @@ namespace TinyLogger.IO;
 /// <summary>
 /// Render messages in plain text to a file with a rolling filename.
 /// </summary>
-public class RollingFileRenderer : ILogRenderer, IDisposable
+public class RollingFileRenderer(Func<string> getFileName, LogFileMode logFileMode)
+	: ILogRenderer, IDisposable
 {
-	private readonly Func<string> getFileName;
-	private readonly LogFileMode logFileMode;
+	private readonly Func<string> getFileName = getFileName;
+	private readonly LogFileMode logFileMode = logFileMode;
 
 	private bool disposed;
 	private string? openFileName;
@@ -17,12 +18,6 @@ public class RollingFileRenderer : ILogRenderer, IDisposable
 	public RollingFileRenderer(Func<string> getFileName)
 		: this(getFileName, LogFileMode.Append)
 	{
-	}
-
-	public RollingFileRenderer(Func<string> getFileName, LogFileMode logFileMode)
-	{
-		this.getFileName = getFileName;
-		this.logFileMode = logFileMode;
 	}
 
 	public void Dispose()
