@@ -50,11 +50,10 @@ task DotnetTest DotnetBuild, {
 }
 
 task DotnetPack AssertVersion, {
-    $outputPath = (Get-Item ".").FullName
     exec {
         dotnet pack .\src\TinyLogger\TinyLogger.csproj `
             --configuration Release `
-            --output $outputPath `
+            --output . `
             /p:ContinuousIntegrationBuild="true" `
             /p:EnableSourcelink="true" `
             /p:Version=$Version
