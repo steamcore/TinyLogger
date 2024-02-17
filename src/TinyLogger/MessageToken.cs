@@ -53,14 +53,14 @@ public readonly partial struct MessageToken(
 
 	public override string ToString()
 	{
-		var value = Value != null && ValueTransform != null ? ValueTransform(Value) : Value;
+		var transformedValue = Value != null && ValueTransform != null ? ValueTransform(Value) : Value;
 
-		if (value is string str)
+		if (transformedValue is string str)
 		{
 			return str;
 		}
 
-		return string.Format(CultureInfo.CurrentCulture, GetFormatString(), value);
+		return string.Format(CultureInfo.CurrentCulture, GetFormatString(), transformedValue);
 	}
 
 	public void Write(StringBuilder sb)
@@ -72,15 +72,15 @@ public readonly partial struct MessageToken(
 			throw new ArgumentNullException(nameof(sb));
 #endif
 
-		var value = Value != null && ValueTransform != null ? ValueTransform(Value) : Value;
+		var transformedValue = Value != null && ValueTransform != null ? ValueTransform(Value) : Value;
 
-		if (value is string str)
+		if (transformedValue is string str)
 		{
 			sb.Append(str);
 		}
 		else
 		{
-			sb.AppendFormat(CultureInfo.CurrentCulture, GetFormatString(), value);
+			sb.AppendFormat(CultureInfo.CurrentCulture, GetFormatString(), transformedValue);
 		}
 	}
 
@@ -186,7 +186,7 @@ public readonly partial struct MessageToken(
 				return new MessageToken(
 					valueStr,
 					MessageTokenType.ObjectToken,
-					alignment: int.TryParse(alignmentStr, out var alignment) ? alignment : (int?)null,
+					alignment: int.TryParse(alignmentStr, out var alignmentValue) ? alignmentValue : (int?)null,
 					format: !string.IsNullOrEmpty(formatStr) ? formatStr : null
 				);
 			}

@@ -97,6 +97,7 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 				}
 				catch (Exception)
 				{
+					// Swallow render errors, we can't log errors or it could become an infinite loop
 				}
 			}
 

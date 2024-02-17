@@ -18,7 +18,7 @@ public class MessageTokenizer : IMessageTokenizer
 
 		objectTokenizer = options.Value.ObjectTokenizer;
 
-		tokenizedMessageTemplate = new Lazy<IReadOnlyList<MessageToken>>(() => TemplateTokenizer.Tokenize(options.Value.Template).ToList());
+		tokenizedMessageTemplate = new Lazy<IReadOnlyList<MessageToken>>(() => [.. TemplateTokenizer.Tokenize(options.Value.Template)]);
 	}
 
 	public void Tokenize<TState>(TState state, Exception? exception, Func<TState, Exception?, string> formatter, IList<MessageToken> output)

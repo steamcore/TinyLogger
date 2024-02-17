@@ -18,7 +18,7 @@ public static class Pooling
 	public static IPooledValue<List<MessageToken>> RentMessageTokenList() => new PooledValue<List<MessageToken>>(messageTokenListPool);
 	public static IPooledValue<StringBuilder> RentStringBuilder() => new PooledValue<StringBuilder>(stringBuilderPool);
 
-	private class DictionaryPoolPolicy : IPooledObjectPolicy<Dictionary<string, object?>>
+	private sealed class DictionaryPoolPolicy : IPooledObjectPolicy<Dictionary<string, object?>>
 	{
 		public Dictionary<string, object?> Create()
 		{
@@ -32,7 +32,7 @@ public static class Pooling
 		}
 	}
 
-	private class ListPoolPolicy<T> : IPooledObjectPolicy<List<T>>
+	private sealed class ListPoolPolicy<T> : IPooledObjectPolicy<List<T>>
 	{
 		public List<T> Create()
 		{
@@ -46,7 +46,7 @@ public static class Pooling
 		}
 	}
 
-	private class PooledValue<T>(ObjectPool<T> pool) : IPooledValue<T>
+	private sealed class PooledValue<T>(ObjectPool<T> pool) : IPooledValue<T>
 		where T : class
 	{
 		public T Value { get; } = pool.Get();
