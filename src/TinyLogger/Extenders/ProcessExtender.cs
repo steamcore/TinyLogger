@@ -6,7 +6,7 @@ public class ProcessExtender : ILogExtender
 {
 	private static readonly DateTime startTime = Process.GetCurrentProcess().StartTime.ToUniversalTime();
 
-	public void Extend(Dictionary<string, object?> data)
+	public void Extend(Dictionary<string, MessageToken?> data)
 	{
 		if (data?.ContainsKey("process_time") == false)
 		{

@@ -6,6 +6,18 @@ namespace TinyLogger;
 
 public abstract partial record MessageToken
 {
+	public MessageToken WithFormatFrom(ObjectToken? token)
+	{
+		if (token is null)
+		{
+			return this;
+		}
+
+		var hasFormat = token.Alignment != null || token.Format != null;
+
+		return hasFormat && this is ObjectToken ot ? ot with { Alignment = token.Alignment, Format = token.Format } : this;
+	}
+
 	public abstract void Write(StringBuilder sb);
 
 #if NET7_0_OR_GREATER
@@ -166,6 +178,43 @@ public record ObjectTokenWithTransform<T> : ObjectToken
 		else
 		{
 			sb.AppendFormat(CultureInfo.CurrentCulture, FormatString, transformedValue);
+		}
+	}
+}
+
+public record FuncToken(Func<MessageToken> GetToken) : MessageToken
+{
+	public override string ToString()
+	{
+		return GetToken().ToString();
+	}
+
+	public override void Write(StringBuilder sb)
+	{
+		GetToken().Write(sb);
+	}
+}
+
+public record TokenTemplate(Action<IList<MessageToken>> PopulateTokens) : MessageToken
+{
+	public override string ToString()
+	{
+		using var sb = Pooling.RentStringBuilder();
+
+		Write(sb.Value);
+
+		return sb.Value.ToString();
+	}
+
+	public override void Write(StringBuilder sb)
+	{
+		using var tokens = Pooling.RentMessageTokenList();
+
+		PopulateTokens(tokens.Value);
+
+		foreach (var token in tokens.Value)
+		{
+			token.Write(sb);
 		}
 	}
 }

@@ -30,19 +30,16 @@ internal class TinyLogger(
 
 		void GetMessageTokens(IList<MessageToken> output)
 		{
-			// Tokenize actual log message using a callback in case it is not needed (depends on the log template)
-			var getMessage = (IList<MessageToken> output) => { messageTokenizer.Tokenize(state, exception, formatter, output); };
-
 			using var data = Pooling.RentMetadataDictionary();
 
 			// Setup built in log fields
 			data.Value.Add("categoryName", new LiteralToken(categoryName));
-			data.Value.Add("eventId", eventId);
-			data.Value.Add("exception", exception);
+			data.Value.Add("eventId", new ObjectToken(eventId));
+			data.Value.Add("exception", new ObjectToken(exception));
 			data.Value.Add("exception_message", exception != null ? new ObjectTokenWithTransform<Exception>(exception, static x => x.Message) : null);
 			data.Value.Add("exception_newLine", exception != null ? newLine : null);
-			data.Value.Add("logLevel", logLevel);
-			data.Value.Add("message", getMessage);
+			data.Value.Add("logLevel", new ObjectToken(logLevel));
+			data.Value.Add("message", new TokenTemplate(tokens => messageTokenizer.Tokenize(state, exception, formatter, tokens)));
 			data.Value.Add("newLine", newLine);
 			data.Value.Add("timestamp", new LiteralToken(DateTime.Now.ToString(CultureInfo.CurrentCulture)));
 			data.Value.Add("timestamp_utc", new LiteralToken(DateTime.UtcNow.ToString(CultureInfo.CurrentCulture)));

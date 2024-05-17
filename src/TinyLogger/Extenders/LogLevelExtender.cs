@@ -4,9 +4,9 @@ namespace TinyLogger.Extenders;
 
 public class LogLevelExtender : ILogExtender
 {
-	public void Extend(Dictionary<string, object?> data)
+	public void Extend(Dictionary<string, MessageToken?> data)
 	{
-		if (data?.TryGetValue("logLevel", out var value) == true && value is LogLevel logLevel)
+		if (data?.TryGetValue("logLevel", out var token) == true && token is ObjectToken ot && ot.Value is LogLevel logLevel)
 		{
 			data["logLevel_short"] = new ObjectTokenWithTransform<LogLevel>(logLevel, GetShortLogLevel);
 		}

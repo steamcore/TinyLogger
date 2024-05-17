@@ -23,9 +23,9 @@ public class PoolingBenchmarks
 	public void PooledMetadataDictionary()
 	{
 		using var pooledValue = Pooling.RentMetadataDictionary();
-		pooledValue.Value["bar"] = "foo";
-		pooledValue.Value["foo"] = "bar";
-		pooledValue.Value["fee"] = "fum";
+		pooledValue.Value["bar"] = new LiteralToken("foo");
+		pooledValue.Value["foo"] = new LiteralToken("bar");
+		pooledValue.Value["fee"] = new LiteralToken("fum");
 	}
 
 	[Benchmark]

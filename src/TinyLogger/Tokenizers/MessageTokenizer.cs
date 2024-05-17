@@ -37,7 +37,7 @@ public class MessageTokenizer : IMessageTokenizer
 
 		PopulateDictionary(state, data.Value);
 
-		if (data.Value.Count > 1 && data.Value.TryGetValue("{OriginalFormat}", out var value) && value is string originalFormat)
+		if (data.Value.Count > 1 && data.Value.TryGetValue("{OriginalFormat}", out var token) && token is ObjectToken objectToken && objectToken.Value is string originalFormat)
 		{
 			var template = CachedTemplateTokenizer.Tokenize(originalFormat);
 
@@ -48,7 +48,7 @@ public class MessageTokenizer : IMessageTokenizer
 
 		output.Add(new LiteralToken(formatter(state, exception)));
 
-		static void PopulateDictionary(TState state, Dictionary<string, object?> dictionary)
+		static void PopulateDictionary(TState state, Dictionary<string, MessageToken?> dictionary)
 		{
 			if (state is IReadOnlyList<KeyValuePair<string, object?>> logValues)
 			{
@@ -56,18 +56,18 @@ public class MessageTokenizer : IMessageTokenizer
 				{
 					var kvp = logValues[i];
 
-					dictionary[kvp.Key] = kvp.Value;
+					dictionary[kvp.Key] = new ObjectToken(kvp.Value);
 				}
 			}
 		}
 	}
 
-	public void Tokenize(IReadOnlyDictionary<string, object?> data, IList<MessageToken> output)
+	public void Tokenize(IReadOnlyDictionary<string, MessageToken?> data, IList<MessageToken> output)
 	{
 		Tokenize(tokenizedMessageTemplate, data, output);
 	}
 
-	public void Tokenize(IReadOnlyList<MessageToken> messageTokens, IReadOnlyDictionary<string, object?> data, IList<MessageToken> output)
+	public void Tokenize(IReadOnlyList<MessageToken> messageTokens, IReadOnlyDictionary<string, MessageToken?> data, IList<MessageToken> output)
 	{
 #if NET
 		ArgumentNullException.ThrowIfNull(messageTokens);
@@ -94,63 +94,39 @@ public class MessageTokenizer : IMessageTokenizer
 			}
 			else if (messageToken is ObjectToken objectToken && objectToken.Value is string key && data.ContainsKey(key))
 			{
-				AddTokens(objectTokenizer, objectToken, data[key], output);
+				AddTokens(objectTokenizer, data[key]?.WithFormatFrom(objectToken), output);
 			}
 		}
 	}
 
-	private static void AddTokens(IObjectTokenizer? objectTokenizer, ObjectToken objectToken, object? value, IList<MessageToken> output)
+	private static void AddTokens(IObjectTokenizer? objectTokenizer, MessageToken? token, IList<MessageToken> output)
 	{
-		if (value is null)
+		switch (token)
 		{
-			if (objectToken.Value is "null")
-			{
-				output.Add(new LiteralToken("(null)"));
-			}
+			case FuncToken lazyToken:
+				AddTokens(objectTokenizer, lazyToken.GetToken(), output);
+				break;
 
-			return;
-		}
+			case TokenTemplate tokenTemplate:
+				{
+					using var tokenList = Pooling.RentMessageTokenList();
 
-		if (value is Action<IList<MessageToken>> valueAction)
-		{
-			valueAction(output);
+					tokenTemplate.PopulateTokens(tokenList.Value);
 
-			return;
-		}
+					foreach (var item in tokenList.Value)
+					{
+						AddTokens(objectTokenizer, item.WithFormatFrom(token as ObjectToken), output);
+					}
+				}
+				break;
 
-		if (value is Func<object> valueFunc)
-		{
-			value = valueFunc();
-		}
+			case LiteralToken literalToken:
+				output.Add(literalToken);
+				break;
 
-		var hasFormat = objectToken.Alignment != null || objectToken.Format != null;
-
-		if (value is IReadOnlyList<MessageToken> valueTokens)
-		{
-			for (var i = 0; i < valueTokens.Count; i++)
-			{
-				var token = valueTokens[i];
-
-				output.Add(hasFormat && token is ObjectToken ot ? ot with { Alignment = objectToken.Alignment, Format = objectToken.Format } : token);
-			}
-			return;
-		}
-
-		if (value is LiteralToken literalToken)
-		{
-			output.Add(literalToken);
-			return;
-		}
-
-		if (value is ObjectToken valueToken)
-		{
-			output.Add(hasFormat ? valueToken with { Alignment = objectToken.Alignment, Format = objectToken.Format } : valueToken);
-			return;
-		}
-
-		if (objectTokenizer?.TryToTokenize(value, output) != true)
-		{
-			output.Add(new ObjectToken(value, objectToken.Alignment, objectToken.Format));
+			case ObjectToken valueToken when objectTokenizer?.TryToTokenize(valueToken.Value, output) != true:
+				output.Add(valueToken.WithFormatFrom(token as ObjectToken));
+				break;
 		}
 	}
 }

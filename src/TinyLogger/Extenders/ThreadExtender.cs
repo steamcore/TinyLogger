@@ -4,11 +4,11 @@ namespace TinyLogger.Extenders;
 
 public class ThreadExtender : ILogExtender
 {
-	public void Extend(Dictionary<string, object?> data)
+	public void Extend(Dictionary<string, MessageToken?> data)
 	{
 		if (data?.ContainsKey("threadId") == false)
 		{
-			data.Add("threadId", (Func<object>)(() => new LiteralToken(Environment.CurrentManagedThreadId.ToString(CultureInfo.InvariantCulture))));
+			data.Add("threadId", new FuncToken(() => new LiteralToken(Environment.CurrentManagedThreadId.ToString(CultureInfo.InvariantCulture))));
 		}
 	}
 }

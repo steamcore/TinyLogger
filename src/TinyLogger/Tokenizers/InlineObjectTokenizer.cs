@@ -7,12 +7,12 @@ namespace TinyLogger.Tokenizers;
 
 public class InlineObjectTokenizer : IObjectTokenizer
 {
-	public virtual bool TryToTokenize(object value, IList<MessageToken> output)
+	public virtual bool TryToTokenize(object? value, IList<MessageToken> output)
 	{
 		return AttemptTokenization(value, output);
 	}
 
-	internal static bool AttemptTokenization(object value, IList<MessageToken> output)
+	internal static bool AttemptTokenization(object? value, IList<MessageToken> output)
 	{
 		return value switch
 		{
