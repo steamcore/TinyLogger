@@ -7,7 +7,7 @@ public class TokenizedMessage(string categoryName, LogLevel logLevel, Action<ILi
 	public string CategoryName { get; } = categoryName;
 	public LogLevel LogLevel { get; } = logLevel;
 
-	public IPooledValue<List<MessageToken>> RentMessageTokenList()
+	public PooledValue<List<MessageToken>> RentMessageTokenList()
 	{
 		var messageTokens = Pooling.RentMessageTokenList();
 		createMessageTokens(messageTokens.Value);
