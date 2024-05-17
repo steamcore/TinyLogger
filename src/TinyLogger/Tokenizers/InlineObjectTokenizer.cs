@@ -40,7 +40,7 @@ public class InlineObjectTokenizer : IObjectTokenizer
 
 			var dictionaryValue = dictionary[key];
 			output.Add(new LiteralToken(separator + $"{{{key}, "));
-			output.Add(new ObjectToken(dictionaryValue));
+			output.Add(new ObjectToken<object>(dictionaryValue));
 			output.Add(new LiteralToken("}"));
 			separator = ", ";
 		}
@@ -68,7 +68,7 @@ public class InlineObjectTokenizer : IObjectTokenizer
 			}
 			else
 			{
-				output.Add(new ObjectToken(item));
+				output.Add(new ObjectToken<object?>(item));
 			}
 
 			separator = ", ";
@@ -97,7 +97,7 @@ public class InlineObjectTokenizer : IObjectTokenizer
 			}
 			else
 			{
-				output.Add(new ObjectToken(item));
+				output.Add(new ObjectToken<object?>(item));
 			}
 
 			separator = ", ";
@@ -120,7 +120,7 @@ public class InlineObjectTokenizer : IObjectTokenizer
 				output.Add(new LiteralToken(", "));
 			}
 
-			output.Add(new ObjectToken(tuple[i]));
+			output.Add(new ObjectToken<object?>(tuple[i]));
 		}
 
 		output.Add(new LiteralToken(")"));

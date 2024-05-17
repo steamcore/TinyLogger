@@ -34,9 +34,9 @@ public class WindowsConsoleRenderer(IConsoleTheme theme)
 			ConsoleColor? foreground = null;
 			ConsoleColor? background = null;
 
-			if (token is ObjectToken objectToken)
+			if (token.TryGetValue(out var value))
 			{
-				(foreground, background) = theme.GetColors(objectToken.Value, message.LogLevel);
+				(foreground, background) = theme.GetColors(value, message.LogLevel);
 			}
 
 			RenderToken(token.ToString(), foreground, background);

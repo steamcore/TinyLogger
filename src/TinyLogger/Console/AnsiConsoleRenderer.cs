@@ -36,35 +36,35 @@ public class AnsiConsoleRenderer(IConsoleTheme theme)
 		{
 			var token = messageTokens.Value[i];
 
-			if (token is not ObjectToken objectToken)
+			if (token is LiteralToken || !token.TryGetValue(out var value))
 			{
 				token.Write(sb.Value);
 				continue;
 			}
 
-			switch (theme.GetColors(objectToken.Value, message.LogLevel))
+			switch (theme.GetColors(value, message.LogLevel))
 			{
 				case (ConsoleColor foreground, ConsoleColor background):
 					AppendForeground(sb.Value, foreground);
 					AppendBackground(sb.Value, background);
-					objectToken.Write(sb.Value);
+					token.Write(sb.Value);
 					sb.Value.Append(Reset);
 					break;
 
 				case (ConsoleColor foreground, _):
 					AppendForeground(sb.Value, foreground);
-					objectToken.Write(sb.Value);
+					token.Write(sb.Value);
 					sb.Value.Append(Reset);
 					break;
 
 				case (_, ConsoleColor background):
 					AppendBackground(sb.Value, background);
-					objectToken.Write(sb.Value);
+					token.Write(sb.Value);
 					sb.Value.Append(Reset);
 					break;
 
 				default:
-					objectToken.Write(sb.Value);
+					token.Write(sb.Value);
 					break;
 			}
 		}

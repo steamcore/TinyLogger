@@ -12,7 +12,7 @@ public class SampleEnvironmentExtender : ILogExtender
 		}
 
 		data.TryAdd("hostname", new LiteralToken(Environment.MachineName));
-		data.TryAdd("os", new ObjectToken(Environment.OSVersion));
-		data.TryAdd("runtime_version", new ObjectToken(Environment.Version));
+		data.TryAdd("os", new ObjectToken<OperatingSystem>(Environment.OSVersion));
+		data.TryAdd("runtime_version", new ObjectToken<Version>(Environment.Version));
 	}
 }

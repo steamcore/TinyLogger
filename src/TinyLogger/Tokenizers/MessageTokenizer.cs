@@ -37,7 +37,7 @@ public class MessageTokenizer : IMessageTokenizer
 
 		PopulateDictionary(state, data.Value);
 
-		if (data.Value.Count > 1 && data.Value.TryGetValue("{OriginalFormat}", out var token) && token is ObjectToken objectToken && objectToken.Value is string originalFormat)
+		if (data.Value.Count > 1 && data.Value.TryGetValue("{OriginalFormat}", out var token) && token?.TryGetValue<string>(out var originalFormat) == true)
 		{
 			var template = CachedTemplateTokenizer.Tokenize(originalFormat);
 
@@ -56,7 +56,7 @@ public class MessageTokenizer : IMessageTokenizer
 				{
 					var kvp = logValues[i];
 
-					dictionary[kvp.Key] = new ObjectToken(kvp.Value);
+					dictionary[kvp.Key] = new ObjectToken<object>(kvp.Value);
 				}
 			}
 		}
@@ -92,9 +92,9 @@ public class MessageTokenizer : IMessageTokenizer
 			{
 				output.Add(messageToken);
 			}
-			else if (messageToken is ObjectToken objectToken && objectToken.Value is string key && data.ContainsKey(key))
+			else if (messageToken.TryGetValue<string>(out var key) && data.ContainsKey(key))
 			{
-				AddTokens(objectTokenizer, data[key]?.WithFormatFrom(objectToken), output);
+				AddTokens(objectTokenizer, data[key]?.WithFormatFrom(messageToken as ObjectToken), output);
 			}
 		}
 	}
@@ -124,8 +124,11 @@ public class MessageTokenizer : IMessageTokenizer
 				output.Add(literalToken);
 				break;
 
-			case ObjectToken valueToken when objectTokenizer?.TryToTokenize(valueToken.Value, output) != true:
-				output.Add(valueToken.WithFormatFrom(token as ObjectToken));
+			case ObjectToken valueToken:
+				if (!valueToken.TryGetValue(out var value) || objectTokenizer?.TryToTokenize(value, output) != true)
+				{
+					output.Add(valueToken.WithFormatFrom(token as ObjectToken));
+				}
 				break;
 		}
 	}

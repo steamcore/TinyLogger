@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -6,6 +7,10 @@ namespace TinyLogger;
 
 public abstract partial record MessageToken
 {
+	public abstract bool TryGetValue([NotNullWhen(true)] out object? value);
+
+	public abstract bool TryGetValue<T>([NotNullWhen(true)] out T value);
+
 	public MessageToken WithFormatFrom(ObjectToken? token)
 	{
 		if (token is null)
@@ -66,7 +71,7 @@ public abstract partial record MessageToken
 				var alignmentStr = match.Groups["alignment"].Value;
 				var formatStr = match.Groups["format"].Value;
 
-				return new ObjectToken(
+				return new ObjectToken<string>(
 					valueStr,
 					Alignment: int.TryParse(alignmentStr, out var alignmentValue) ? alignmentValue : (int?)null,
 					Format: !string.IsNullOrEmpty(formatStr) ? formatStr : null
@@ -75,7 +80,7 @@ public abstract partial record MessageToken
 		}
 		else
 		{
-			return new ObjectToken(value[1..^1]);
+			return new ObjectToken<string>(value[1..^1]);
 		}
 
 		return new LiteralToken(value);
@@ -88,6 +93,24 @@ public record LiteralToken(string Value) :
 	public override string ToString()
 	{
 		return Value;
+	}
+
+	public override bool TryGetValue([NotNullWhen(true)] out object? value)
+	{
+		value = Value;
+		return true;
+	}
+
+	public override bool TryGetValue<T>([NotNullWhen(true)] out T value)
+	{
+		if (Value is T t)
+		{
+			value = t;
+			return true;
+		}
+
+		value = default!;
+		return false;
 	}
 
 	public override void Write(StringBuilder sb)
@@ -103,9 +126,14 @@ public record LiteralToken(string Value) :
 	}
 }
 
-public record ObjectToken(object? Value, int? Alignment = null, string? Format = null) :
-	MessageToken
+public abstract record ObjectToken(int? Alignment = null, string? Format = null) :
+	MessageToken;
+
+public record ObjectToken<T>(T? Value, int? Alignment = null, string? Format = null) :
+	ObjectToken(Alignment, Format)
 {
+	private object? objectValue;
+
 	protected string FormatString => $"{{0{(Alignment != null ? "," + Alignment : null)}{(Format != null ? ":" + Format : null)}}}";
 
 	public override string ToString()
@@ -116,6 +144,24 @@ public record ObjectToken(object? Value, int? Alignment = null, string? Format =
 		}
 
 		return string.Format(CultureInfo.CurrentCulture, FormatString, Value);
+	}
+
+	public override bool TryGetValue([NotNullWhen(true)] out object? value)
+	{
+		value = objectValue ??= Value;
+		return value != null;
+	}
+
+	public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue value)
+	{
+		if (Value is TValue val)
+		{
+			value = val;
+			return true;
+		}
+
+		value = default!;
+		return false;
 	}
 
 	public override void Write(StringBuilder sb)
@@ -138,7 +184,7 @@ public record ObjectToken(object? Value, int? Alignment = null, string? Format =
 	}
 }
 
-public record ObjectTokenWithTransform<T> : ObjectToken
+public record ObjectTokenWithTransform<T> : ObjectToken<T>
 {
 	public Func<T, object> ValueTransform { get; init; }
 
@@ -150,7 +196,7 @@ public record ObjectTokenWithTransform<T> : ObjectToken
 
 	public override string ToString()
 	{
-		var transformedValue = Value != null ? ValueTransform((T)Value) : Value;
+		var transformedValue = Value != null ? ValueTransform(Value) : Value;
 
 		if (transformedValue is string str)
 		{
@@ -169,7 +215,7 @@ public record ObjectTokenWithTransform<T> : ObjectToken
 			throw new ArgumentNullException(nameof(sb));
 #endif
 
-		var transformedValue = Value != null ? ValueTransform((T)Value) : Value;
+		var transformedValue = Value != null ? ValueTransform(Value) : Value;
 
 		if (transformedValue is string str)
 		{
@@ -189,6 +235,16 @@ public record FuncToken(Func<MessageToken> GetToken) : MessageToken
 		return GetToken().ToString();
 	}
 
+	public override bool TryGetValue([NotNullWhen(true)] out object? value)
+	{
+		return GetToken().TryGetValue(out value);
+	}
+
+	public override bool TryGetValue<T>([NotNullWhen(true)] out T value)
+	{
+		return GetToken().TryGetValue<T>(out value);
+	}
+
 	public override void Write(StringBuilder sb)
 	{
 		GetToken().Write(sb);
@@ -204,6 +260,18 @@ public record TokenTemplate(Action<IList<MessageToken>> PopulateTokens) : Messag
 		Write(sb.Value);
 
 		return sb.Value.ToString();
+	}
+
+	public override bool TryGetValue([NotNullWhen(true)] out object? value)
+	{
+		value = null;
+		return false;
+	}
+
+	public override bool TryGetValue<T>([NotNullWhen(true)] out T value)
+	{
+		value = default!;
+		return false;
 	}
 
 	public override void Write(StringBuilder sb)

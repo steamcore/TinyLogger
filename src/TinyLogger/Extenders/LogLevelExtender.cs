@@ -6,7 +6,7 @@ public class LogLevelExtender : ILogExtender
 {
 	public void Extend(Dictionary<string, MessageToken?> data)
 	{
-		if (data?.TryGetValue("logLevel", out var token) == true && token is ObjectToken ot && ot.Value is LogLevel logLevel)
+		if (data?.TryGetValue("logLevel", out var token) == true && token?.TryGetValue<LogLevel>(out var logLevel) == true)
 		{
 			data["logLevel_short"] = new ObjectTokenWithTransform<LogLevel>(logLevel, GetShortLogLevel);
 		}

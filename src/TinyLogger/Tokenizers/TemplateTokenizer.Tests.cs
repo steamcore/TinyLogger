@@ -37,7 +37,7 @@ public class TemplateTokenizerTests
 			"abc{d ef}ghi",
 			[
 				new LiteralToken("abc"),
-				new ObjectToken("d ef"),
+				new ObjectToken<string>("d ef"),
 				new LiteralToken("ghi")
 			]
 		},
@@ -45,16 +45,16 @@ public class TemplateTokenizerTests
 			"abc{def}ghi",
 			[
 				new LiteralToken("abc"),
-				new ObjectToken("def"),
+				new ObjectToken<string>("def"),
 				new LiteralToken("ghi")
 			]
 		},
 		{
 			"{a,2}{b:o}{c,3:#}",
 			[
-				new ObjectToken("a", Alignment: 2),
-				new ObjectToken("b", Format: "o"),
-				new ObjectToken("c", Alignment: 3, Format: "#")
+				new ObjectToken<string>("a", Alignment: 2),
+				new ObjectToken<string>("b", Format: "o"),
+				new ObjectToken<string>("c", Alignment: 3, Format: "#")
 			]
 		}
 	};

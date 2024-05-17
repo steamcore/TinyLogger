@@ -40,7 +40,7 @@ public class DefaultObjectTokenizer : IObjectTokenizer
 
 			var dictionaryValue = dictionary[key];
 			output.Add(new LiteralToken(separator + $"- {key}: "));
-			output.Add(new ObjectToken(dictionaryValue));
+			output.Add(new ObjectToken<object>(dictionaryValue));
 		}
 
 		return true;
@@ -63,7 +63,7 @@ public class DefaultObjectTokenizer : IObjectTokenizer
 
 			if (!InlineObjectTokenizer.AttemptTokenization(item, output))
 			{
-				output.Add(new ObjectToken(item));
+				output.Add(new ObjectToken<object>(item));
 			}
 		}
 
@@ -85,7 +85,7 @@ public class DefaultObjectTokenizer : IObjectTokenizer
 
 			if (!InlineObjectTokenizer.AttemptTokenization(item, output))
 			{
-				output.Add(new ObjectToken(item));
+				output.Add(new ObjectToken<object>(item));
 			}
 		}
 
@@ -104,7 +104,7 @@ public class DefaultObjectTokenizer : IObjectTokenizer
 				output.Add(new LiteralToken(", "));
 			}
 
-			output.Add(new ObjectToken(tuple[i]));
+			output.Add(new ObjectToken<object?>(tuple[i]));
 		}
 
 		output.Add(new LiteralToken(")"));

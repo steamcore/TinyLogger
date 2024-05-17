@@ -34,11 +34,11 @@ internal class TinyLogger(
 
 			// Setup built in log fields
 			data.Value.Add("categoryName", new LiteralToken(categoryName));
-			data.Value.Add("eventId", new ObjectToken(eventId));
-			data.Value.Add("exception", new ObjectToken(exception));
+			data.Value.Add("eventId", new ObjectToken<EventId>(eventId));
+			data.Value.Add("exception", new ObjectToken<Exception>(exception));
 			data.Value.Add("exception_message", exception != null ? new ObjectTokenWithTransform<Exception>(exception, static x => x.Message) : null);
 			data.Value.Add("exception_newLine", exception != null ? newLine : null);
-			data.Value.Add("logLevel", new ObjectToken(logLevel));
+			data.Value.Add("logLevel", new ObjectToken<LogLevel>(logLevel));
 			data.Value.Add("message", new TokenTemplate(tokens => messageTokenizer.Tokenize(state, exception, formatter, tokens)));
 			data.Value.Add("newLine", newLine);
 			data.Value.Add("timestamp", new LiteralToken(DateTime.Now.ToString(CultureInfo.CurrentCulture)));
