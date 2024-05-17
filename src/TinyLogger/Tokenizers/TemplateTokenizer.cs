@@ -1,5 +1,23 @@
 namespace TinyLogger.Tokenizers;
 
+public static class CachedTemplateTokenizer
+{
+	private static readonly LimitedSizeCache<string, List<MessageToken>> cache = new(1_000);
+
+	public static IReadOnlyList<MessageToken> Tokenize(string logFormat)
+	{
+		if (cache.TryGetValue(logFormat, out var tokens))
+		{
+			return tokens!;
+		}
+
+		var result = new List<MessageToken>();
+		TemplateTokenizer.Tokenize(logFormat, result);
+		cache.Put(logFormat, result);
+		return result;
+	}
+}
+
 public static class TemplateTokenizer
 {
 	private enum State

@@ -5,7 +5,7 @@ namespace TinyLogger.Tokenizers;
 public class MessageTokenizer : IMessageTokenizer
 {
 	private readonly IObjectTokenizer? objectTokenizer;
-	private readonly Lazy<IReadOnlyList<MessageToken>> tokenizedMessageTemplate;
+	private readonly IReadOnlyList<MessageToken> tokenizedMessageTemplate;
 
 	public MessageTokenizer(IOptions<TinyLoggerOptions> options)
 	{
@@ -17,8 +17,7 @@ public class MessageTokenizer : IMessageTokenizer
 #endif
 
 		objectTokenizer = options.Value.ObjectTokenizer;
-
-		tokenizedMessageTemplate = new Lazy<IReadOnlyList<MessageToken>>(() => [.. TemplateTokenizer.Tokenize(options.Value.Template)]);
+		tokenizedMessageTemplate = CachedTemplateTokenizer.Tokenize(options.Value.Template);
 	}
 
 	public void Tokenize<TState>(TState state, Exception? exception, Func<TState, Exception?, string> formatter, IList<MessageToken> output)
@@ -40,11 +39,9 @@ public class MessageTokenizer : IMessageTokenizer
 
 		if (data.Value.Count > 1 && data.Value.TryGetValue("{OriginalFormat}", out var value) && value is string originalFormat)
 		{
-			using var template = Pooling.RentMessageTokenList();
+			var template = CachedTemplateTokenizer.Tokenize(originalFormat);
 
-			TemplateTokenizer.Tokenize(originalFormat, template.Value);
-
-			Tokenize(template.Value, data.Value, output);
+			Tokenize(template, data.Value, output);
 
 			return;
 		}
@@ -67,7 +64,7 @@ public class MessageTokenizer : IMessageTokenizer
 
 	public void Tokenize(IReadOnlyDictionary<string, object?> data, IList<MessageToken> output)
 	{
-		Tokenize(tokenizedMessageTemplate.Value, data, output);
+		Tokenize(tokenizedMessageTemplate, data, output);
 	}
 
 	public void Tokenize(IReadOnlyList<MessageToken> messageTokens, IReadOnlyDictionary<string, object?> data, IList<MessageToken> output)
