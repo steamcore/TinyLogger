@@ -39,9 +39,9 @@ public class InlineObjectTokenizer : IObjectTokenizer
 				continue;
 
 			var dictionaryValue = dictionary[key];
-			output.Add(MessageToken.FromLiteral(separator + $"{{{key}, "));
-			output.Add(MessageToken.FromObject(dictionaryValue));
-			output.Add(MessageToken.FromLiteral("}"));
+			output.Add(new LiteralToken(separator + $"{{{key}, "));
+			output.Add(new ObjectToken(dictionaryValue));
+			output.Add(new LiteralToken("}"));
 			separator = ", ";
 		}
 
@@ -52,29 +52,29 @@ public class InlineObjectTokenizer : IObjectTokenizer
 	{
 		var separator = string.Empty;
 
-		output.Add(MessageToken.FromLiteral("["));
+		output.Add(new LiteralToken("["));
 
 		for (var i = 0; i < list.Count; i++)
 		{
 			var item = list[i];
 
-			output.Add(MessageToken.FromLiteral(separator));
+			output.Add(new LiteralToken(separator));
 
 			if (item is IGrouping<object, object> grouping)
 			{
-				output.Add(MessageToken.FromLiteral($"{{{grouping.Key}, "));
+				output.Add(new LiteralToken($"{{{grouping.Key}, "));
 				TokenizeValue(grouping, output);
-				output.Add(MessageToken.FromLiteral("}"));
+				output.Add(new LiteralToken("}"));
 			}
 			else
 			{
-				output.Add(MessageToken.FromObject(item));
+				output.Add(new ObjectToken(item));
 			}
 
 			separator = ", ";
 		}
 
-		output.Add(MessageToken.FromLiteral("]"));
+		output.Add(new LiteralToken("]"));
 
 		return true;
 	}
@@ -83,27 +83,27 @@ public class InlineObjectTokenizer : IObjectTokenizer
 	{
 		var separator = string.Empty;
 
-		output.Add(MessageToken.FromLiteral("["));
+		output.Add(new LiteralToken("["));
 
 		foreach (var item in enumerable)
 		{
-			output.Add(MessageToken.FromLiteral(separator));
+			output.Add(new LiteralToken(separator));
 
 			if (item is IGrouping<object, object> grouping)
 			{
-				output.Add(MessageToken.FromLiteral($"{{{grouping.Key}, "));
+				output.Add(new LiteralToken($"{{{grouping.Key}, "));
 				TokenizeValue(grouping, output);
-				output.Add(MessageToken.FromLiteral("}"));
+				output.Add(new LiteralToken("}"));
 			}
 			else
 			{
-				output.Add(MessageToken.FromObject(item));
+				output.Add(new ObjectToken(item));
 			}
 
 			separator = ", ";
 		}
 
-		output.Add(MessageToken.FromLiteral("]"));
+		output.Add(new LiteralToken("]"));
 
 		return true;
 	}
@@ -111,19 +111,19 @@ public class InlineObjectTokenizer : IObjectTokenizer
 #if NET
 	internal static bool TokenizeValue(ITuple tuple, IList<MessageToken> output)
 	{
-		output.Add(MessageToken.FromLiteral("("));
+		output.Add(new LiteralToken("("));
 
 		for (var i = 0; i < tuple.Length; i++)
 		{
 			if (i > 0)
 			{
-				output.Add(MessageToken.FromLiteral(", "));
+				output.Add(new LiteralToken(", "));
 			}
 
-			output.Add(MessageToken.FromObject(tuple[i]));
+			output.Add(new ObjectToken(tuple[i]));
 		}
 
-		output.Add(MessageToken.FromLiteral(")"));
+		output.Add(new LiteralToken(")"));
 
 		return true;
 	}

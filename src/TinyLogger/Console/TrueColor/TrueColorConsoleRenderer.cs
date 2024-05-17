@@ -34,35 +34,35 @@ public class TrueColorConsoleRenderer(ITrueColorConsoleTheme theme)
 		{
 			var token = messageTokens.Value[i];
 
-			if (token.Type != MessageTokenType.ObjectToken)
+			if (token is not ObjectToken objectToken)
 			{
 				token.Write(sb.Value);
 				continue;
 			}
 
-			switch (theme.GetColors(token.Value, message.LogLevel))
+			switch (theme.GetColors(objectToken.Value, message.LogLevel))
 			{
 				case (Color foreground, Color background):
 					AppendForeground(sb.Value, foreground);
 					AppendBackground(sb.Value, background);
-					token.Write(sb.Value);
+					objectToken.Write(sb.Value);
 					sb.Value.Append(Reset);
 					break;
 
 				case (Color foreground, _):
 					AppendForeground(sb.Value, foreground);
-					token.Write(sb.Value);
+					objectToken.Write(sb.Value);
 					sb.Value.Append(Reset);
 					break;
 
 				case (_, Color background):
 					AppendBackground(sb.Value, background);
-					token.Write(sb.Value);
+					objectToken.Write(sb.Value);
 					sb.Value.Append(Reset);
 					break;
 
 				default:
-					token.Write(sb.Value);
+					objectToken.Write(sb.Value);
 					break;
 			}
 		}

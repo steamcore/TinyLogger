@@ -10,7 +10,7 @@ public class ProcessExtender : ILogExtender
 	{
 		if (data?.ContainsKey("process_time") == false)
 		{
-			data.Add("process_time", MessageToken.FromLiteral(DateTime.UtcNow - startTime));
+			data.Add("process_time", new LiteralToken((DateTime.UtcNow - startTime).ToString()));
 		}
 	}
 }

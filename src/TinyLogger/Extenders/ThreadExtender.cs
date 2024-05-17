@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace TinyLogger.Extenders;
 
 public class ThreadExtender : ILogExtender
@@ -6,7 +8,7 @@ public class ThreadExtender : ILogExtender
 	{
 		if (data?.ContainsKey("threadId") == false)
 		{
-			data.Add("threadId", (Func<object>)(() => MessageToken.FromLiteral(Environment.CurrentManagedThreadId)));
+			data.Add("threadId", (Func<object>)(() => new LiteralToken(Environment.CurrentManagedThreadId.ToString(CultureInfo.InvariantCulture))));
 		}
 	}
 }

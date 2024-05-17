@@ -117,7 +117,7 @@ public static class TemplateTokenizer
 			if (length == 0)
 				return;
 
-			output.Add(MessageToken.FromLiteral(logFormat.Substring(index, length)));
+			output.Add(new LiteralToken(logFormat.Substring(index, length)));
 		}
 
 		void AddValue(int index, int length)

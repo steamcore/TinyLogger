@@ -8,7 +8,7 @@ public class LogLevelExtender : ILogExtender
 	{
 		if (data?.TryGetValue("logLevel", out var value) == true && value is LogLevel logLevel)
 		{
-			data["logLevel_short"] = MessageToken.FromObject(logLevel, valueTransform: x => GetShortLogLevel((LogLevel)x));
+			data["logLevel_short"] = new ObjectTokenWithTransform<LogLevel>(logLevel, GetShortLogLevel);
 		}
 	}
 

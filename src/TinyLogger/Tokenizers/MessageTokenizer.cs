@@ -46,7 +46,7 @@ public class MessageTokenizer : IMessageTokenizer
 			return;
 		}
 
-		output.Add(MessageToken.FromLiteral(formatter(state, exception)));
+		output.Add(new LiteralToken(formatter(state, exception)));
 
 		static void PopulateDictionary(TState state, Dictionary<string, object?> dictionary)
 		{
@@ -88,24 +88,24 @@ public class MessageTokenizer : IMessageTokenizer
 		{
 			var messageToken = messageTokens[i];
 
-			if (messageToken.Type == MessageTokenType.LiteralToken)
+			if (messageToken is LiteralToken)
 			{
 				output.Add(messageToken);
 			}
-			else if (messageToken.Value is string key && data.ContainsKey(key))
+			else if (messageToken is ObjectToken objectToken && objectToken.Value is string key && data.ContainsKey(key))
 			{
-				AddTokens(objectTokenizer, messageToken, data[key], output);
+				AddTokens(objectTokenizer, objectToken, data[key], output);
 			}
 		}
 	}
 
-	private static void AddTokens(IObjectTokenizer? objectTokenizer, MessageToken messageToken, object? value, IList<MessageToken> output)
+	private static void AddTokens(IObjectTokenizer? objectTokenizer, ObjectToken objectToken, object? value, IList<MessageToken> output)
 	{
 		if (value is null)
 		{
-			if (messageToken.Value is "null")
+			if (objectToken.Value is "null")
 			{
-				output.Add(MessageToken.FromLiteral("(null)", messageToken.Alignment, messageToken.Format));
+				output.Add(new LiteralToken("(null)"));
 			}
 
 			return;
@@ -123,7 +123,7 @@ public class MessageTokenizer : IMessageTokenizer
 			value = valueFunc();
 		}
 
-		var hasFormat = messageToken.Alignment != null || messageToken.Format != null;
+		var hasFormat = objectToken.Alignment != null || objectToken.Format != null;
 
 		if (value is IReadOnlyList<MessageToken> valueTokens)
 		{
@@ -131,20 +131,26 @@ public class MessageTokenizer : IMessageTokenizer
 			{
 				var token = valueTokens[i];
 
-				output.Add(hasFormat ? token.WithFormat(messageToken) : token);
+				output.Add(hasFormat && token is ObjectToken ot ? ot with { Alignment = objectToken.Alignment, Format = objectToken.Format } : token);
 			}
 			return;
 		}
 
-		if (value is MessageToken valueToken)
+		if (value is LiteralToken literalToken)
 		{
-			output.Add(hasFormat ? valueToken.WithFormat(messageToken) : valueToken);
+			output.Add(literalToken);
+			return;
+		}
+
+		if (value is ObjectToken valueToken)
+		{
+			output.Add(hasFormat ? valueToken with { Alignment = objectToken.Alignment, Format = objectToken.Format } : valueToken);
 			return;
 		}
 
 		if (objectTokenizer?.TryToTokenize(value, output) != true)
 		{
-			output.Add(MessageToken.FromObject(value, messageToken.Alignment, messageToken.Format));
+			output.Add(new ObjectToken(value, objectToken.Alignment, objectToken.Format));
 		}
 	}
 }

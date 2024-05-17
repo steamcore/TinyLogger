@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.Extensions.Logging;
 using TinyLogger.Tokenizers;
 
@@ -11,7 +12,7 @@ internal class TinyLogger(
 )
 	: ILogger
 {
-	private static readonly MessageToken newLine = MessageToken.FromLiteral(Environment.NewLine);
+	private static readonly MessageToken newLine = new LiteralToken(Environment.NewLine);
 
 	public IDisposable? BeginScope<TState>(TState state) where TState : notnull
 	{
@@ -35,16 +36,16 @@ internal class TinyLogger(
 			using var data = Pooling.RentMetadataDictionary();
 
 			// Setup built in log fields
-			data.Value.Add("categoryName", MessageToken.FromLiteral(categoryName));
+			data.Value.Add("categoryName", new LiteralToken(categoryName));
 			data.Value.Add("eventId", eventId);
 			data.Value.Add("exception", exception);
-			data.Value.Add("exception_message", exception != null ? MessageToken.FromObject(exception, valueTransform: x => ((Exception)x).Message) : null);
+			data.Value.Add("exception_message", exception != null ? new ObjectTokenWithTransform<Exception>(exception, static x => x.Message) : null);
 			data.Value.Add("exception_newLine", exception != null ? newLine : null);
 			data.Value.Add("logLevel", logLevel);
 			data.Value.Add("message", getMessage);
 			data.Value.Add("newLine", newLine);
-			data.Value.Add("timestamp", MessageToken.FromLiteral(DateTime.Now));
-			data.Value.Add("timestamp_utc", MessageToken.FromLiteral(DateTime.UtcNow));
+			data.Value.Add("timestamp", new LiteralToken(DateTime.Now.ToString(CultureInfo.CurrentCulture)));
+			data.Value.Add("timestamp_utc", new LiteralToken(DateTime.UtcNow.ToString(CultureInfo.CurrentCulture)));
 
 			// Extend log fields
 			for (var i = 0; i < extenders.Count; i++)

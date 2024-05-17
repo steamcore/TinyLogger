@@ -18,43 +18,43 @@ public class TemplateTokenizerTests
 		{
 			"abc{{def}ghi",
 			[
-				MessageToken.FromLiteral("abc{{def}ghi")
+				new LiteralToken("abc{{def}ghi")
 			]
 		},
 		{
 			"abc{def}}ghi",
 			[
-				MessageToken.FromLiteral("abc{def}}ghi")
+				new LiteralToken("abc{def}}ghi")
 			]
 		},
 		{
 			"abc{{def}}ghi",
 			[
-				MessageToken.FromLiteral("abc{{def}}ghi")
+				new LiteralToken("abc{{def}}ghi")
 			]
 		},
 		{
 			"abc{d ef}ghi",
 			[
-				MessageToken.FromLiteral("abc"),
-				MessageToken.FromObject("d ef"),
-				MessageToken.FromLiteral("ghi")
+				new LiteralToken("abc"),
+				new ObjectToken("d ef"),
+				new LiteralToken("ghi")
 			]
 		},
 		{
 			"abc{def}ghi",
 			[
-				MessageToken.FromLiteral("abc"),
-				MessageToken.FromObject("def"),
-				MessageToken.FromLiteral("ghi")
+				new LiteralToken("abc"),
+				new ObjectToken("def"),
+				new LiteralToken("ghi")
 			]
 		},
 		{
 			"{a,2}{b:o}{c,3:#}",
 			[
-				MessageToken.FromObject("a", alignment: 2),
-				MessageToken.FromObject("b", format: "o"),
-				MessageToken.FromObject("c", alignment: 3, format: "#")
+				new ObjectToken("a", Alignment: 2),
+				new ObjectToken("b", Format: "o"),
+				new ObjectToken("c", Alignment: 3, Format: "#")
 			]
 		}
 	};

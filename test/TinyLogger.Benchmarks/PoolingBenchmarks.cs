@@ -33,9 +33,9 @@ public class PoolingBenchmarks
 	{
 		var value = new List<MessageToken>
 		{
-			new MessageToken("foo", MessageTokenType.LiteralToken),
-			new MessageToken("bar", MessageTokenType.LiteralToken),
-			new MessageToken("fee", MessageTokenType.LiteralToken)
+			new LiteralToken("foo"),
+			new LiteralToken("bar"),
+			new LiteralToken("fee")
 		};
 	}
 
@@ -43,9 +43,9 @@ public class PoolingBenchmarks
 	public void PooledMessageTokenList()
 	{
 		using var pooledValue = Pooling.RentMessageTokenList();
-		pooledValue.Value.Add(new MessageToken("foo", MessageTokenType.LiteralToken));
-		pooledValue.Value.Add(new MessageToken("bar", MessageTokenType.LiteralToken));
-		pooledValue.Value.Add(new MessageToken("fee", MessageTokenType.LiteralToken));
+		pooledValue.Value.Add(new LiteralToken("foo"));
+		pooledValue.Value.Add(new LiteralToken("bar"));
+		pooledValue.Value.Add(new LiteralToken("fee"));
 	}
 
 	[Benchmark]

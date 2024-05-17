@@ -4,134 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace TinyLogger;
 
-public enum MessageTokenType
+public abstract partial record MessageToken
 {
-	/// <summary>
-	/// Literal tokens should be rendered as plain text
-	/// </summary>
-	LiteralToken,
-
-	/// <summary>
-	/// Object tokens can be tokenized and rendered using color
-	/// </summary>
-	ObjectToken
-}
-
-public readonly partial struct MessageToken(
-	object? value,
-	MessageTokenType type,
-	int? alignment = null,
-	string? format = null,
-	Func<object, object>? valueTransform = null
-)
-	: IEquatable<MessageToken>
-{
-	/// <summary>
-	/// Alignment from format string
-	/// </summary>
-	public int? Alignment { get; } = alignment;
-
-	/// <summary>
-	/// Format from format string
-	/// </summary>
-	public string? Format { get; } = format;
-
-	/// <summary>
-	/// The actual value represented by this token
-	/// </summary>
-	public object? Value { get; } = value;
-
-	/// <summary>
-	/// Transform the value when it is to be rendered, for example LogLevel.Information -> "info"
-	/// </summary>
-	public Func<object, object>? ValueTransform { get; } = valueTransform;
-
-	/// <summary>
-	/// Token type
-	/// </summary>
-	public MessageTokenType Type { get; } = type;
-
-	public override string ToString()
-	{
-		var transformedValue = Value != null && ValueTransform != null ? ValueTransform(Value) : Value;
-
-		if (transformedValue is string str)
-		{
-			return str;
-		}
-
-		return string.Format(CultureInfo.CurrentCulture, GetFormatString(), transformedValue);
-	}
-
-	public void Write(StringBuilder sb)
-	{
-#if NET
-		ArgumentNullException.ThrowIfNull(sb);
-#else
-		if (sb is null)
-			throw new ArgumentNullException(nameof(sb));
-#endif
-
-		var transformedValue = Value != null && ValueTransform != null ? ValueTransform(Value) : Value;
-
-		if (transformedValue is string str)
-		{
-			sb.Append(str);
-		}
-		else
-		{
-			sb.AppendFormat(CultureInfo.CurrentCulture, GetFormatString(), transformedValue);
-		}
-	}
-
-	public MessageToken WithFormat(MessageToken formatToken)
-	{
-		return new MessageToken(
-			Value,
-			Type,
-			Alignment ?? formatToken.Alignment,
-			Format ?? formatToken.Format,
-			ValueTransform
-		);
-	}
-
-	public bool Equals(MessageToken other)
-	{
-		if (Type != other.Type)
-			return false;
-
-		return (Value is null && other.Value is null || Value?.Equals(other.Value) == true)
-			&& (Alignment is null && other.Alignment is null || Alignment?.Equals(other.Alignment) == true)
-			&& (Format is null && other.Format is null || Format?.Equals(other.Format, StringComparison.Ordinal) == true);
-	}
-
-	public override bool Equals(object? obj)
-	{
-		if (obj is not MessageToken other)
-			return false;
-
-		return Equals(other);
-	}
-
-	public override int GetHashCode()
-	{
-		return Value?.GetHashCode() ?? 0;
-	}
-
-	private string GetFormatString()
-	{
-		return $"{{0{(Alignment != null ? "," + Alignment : null)}{(Format != null ? ":" + Format : null)}}}";
-	}
-
-	public static bool operator ==(MessageToken left, MessageToken right)
-	{
-		return left.Equals(right);
-	}
-
-	public static bool operator !=(MessageToken left, MessageToken right)
-	{
-		return !(left == right);
-	}
+	public abstract void Write(StringBuilder sb);
 
 #if NET7_0_OR_GREATER
 	[GeneratedRegex(@"^{(?<value>[^,:]+)(,(?<alignment>[\d\-]+))?(:(?<format>[^}]+))?}$", RegexOptions.ExplicitCapture)]
@@ -162,7 +37,7 @@ public readonly partial struct MessageToken(
 
 		if (value[0] != '{' || value[^1] != '}')
 		{
-			return new MessageToken(value, MessageTokenType.LiteralToken);
+			return new LiteralToken(value);
 		}
 
 #if NET
@@ -179,40 +54,118 @@ public readonly partial struct MessageToken(
 				var alignmentStr = match.Groups["alignment"].Value;
 				var formatStr = match.Groups["format"].Value;
 
-				return new MessageToken(
+				return new ObjectToken(
 					valueStr,
-					MessageTokenType.ObjectToken,
-					alignment: int.TryParse(alignmentStr, out var alignmentValue) ? alignmentValue : (int?)null,
-					format: !string.IsNullOrEmpty(formatStr) ? formatStr : null
+					Alignment: int.TryParse(alignmentStr, out var alignmentValue) ? alignmentValue : (int?)null,
+					Format: !string.IsNullOrEmpty(formatStr) ? formatStr : null
 				);
 			}
 		}
 		else
 		{
-			return new MessageToken(
-				value[1..^1],
-				MessageTokenType.ObjectToken,
-				null,
-				null
-			);
+			return new ObjectToken(value[1..^1]);
 		}
 
-		return new MessageToken(value, MessageTokenType.LiteralToken);
+		return new LiteralToken(value);
+	}
+}
+
+public record LiteralToken(string Value) :
+	MessageToken
+{
+	public override string ToString()
+	{
+		return Value;
 	}
 
-	/// <summary>
-	/// Create a literal token that will be rendered as plain text
-	/// </summary>
-	public static MessageToken FromLiteral(object? value, int? alignment = null, string? format = null, Func<object, object>? valueTransform = null)
+	public override void Write(StringBuilder sb)
 	{
-		return new MessageToken(value, MessageTokenType.LiteralToken, alignment, format, valueTransform);
+#if NET
+		ArgumentNullException.ThrowIfNull(sb);
+#else
+		if (sb is null)
+			throw new ArgumentNullException(nameof(sb));
+#endif
+
+		sb.Append(Value);
+	}
+}
+
+public record ObjectToken(object? Value, int? Alignment = null, string? Format = null) :
+	MessageToken
+{
+	protected string FormatString => $"{{0{(Alignment != null ? "," + Alignment : null)}{(Format != null ? ":" + Format : null)}}}";
+
+	public override string ToString()
+	{
+		if (Value is string str)
+		{
+			return str;
+		}
+
+		return string.Format(CultureInfo.CurrentCulture, FormatString, Value);
 	}
 
-	/// <summary>
-	/// Create an object token that can be rendered in color
-	/// </summary>
-	public static MessageToken FromObject(object? value, int? alignment = null, string? format = null, Func<object, object>? valueTransform = null)
+	public override void Write(StringBuilder sb)
 	{
-		return new MessageToken(value, MessageTokenType.ObjectToken, alignment, format, valueTransform);
+#if NET
+		ArgumentNullException.ThrowIfNull(sb);
+#else
+		if (sb is null)
+			throw new ArgumentNullException(nameof(sb));
+#endif
+
+		if (Value is string str)
+		{
+			sb.Append(str);
+		}
+		else
+		{
+			sb.AppendFormat(CultureInfo.CurrentCulture, FormatString, Value);
+		}
+	}
+}
+
+public record ObjectTokenWithTransform<T> : ObjectToken
+{
+	public Func<T, object> ValueTransform { get; init; }
+
+	public ObjectTokenWithTransform(T value, Func<T, object> valueTransform, int? alignment = null, string? format = null)
+		: base(value, alignment, format)
+	{
+		ValueTransform = valueTransform;
+	}
+
+	public override string ToString()
+	{
+		var transformedValue = Value != null ? ValueTransform((T)Value) : Value;
+
+		if (transformedValue is string str)
+		{
+			return str;
+		}
+
+		return string.Format(CultureInfo.CurrentCulture, FormatString, transformedValue);
+	}
+
+	public override void Write(StringBuilder sb)
+	{
+#if NET
+		ArgumentNullException.ThrowIfNull(sb);
+#else
+		if (sb is null)
+			throw new ArgumentNullException(nameof(sb));
+#endif
+
+		var transformedValue = Value != null ? ValueTransform((T)Value) : Value;
+
+		if (transformedValue is string str)
+		{
+			sb.Append(str);
+		}
+		else
+		{
+			sb.AppendFormat(CultureInfo.CurrentCulture, FormatString, transformedValue);
+		}
 	}
 }
