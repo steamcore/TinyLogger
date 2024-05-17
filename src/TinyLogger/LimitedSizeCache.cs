@@ -1,8 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
-#if NET
 using System.Diagnostics.CodeAnalysis;
-#endif
 
 namespace TinyLogger;
 
@@ -74,11 +72,7 @@ public class LimitedSizeCache<TKey, TValue>
 	/// <param name="key">The key of the item to get.</param>
 	/// <param name="value">When this method returns, contains the value associated with the specified key, if the key is found; otherwise, null.</param>
 	/// <returns>true if the cache contains an item with the specified key; otherwise, false.</returns>
-#if NET
 	public bool TryGetValue(TKey key, [NotNullWhen(true)] out TValue? value)
-#else
-	public bool TryGetValue(TKey key, out TValue? value)
-#endif
 	{
 #if NET
 		ArgumentNullException.ThrowIfNull(key);

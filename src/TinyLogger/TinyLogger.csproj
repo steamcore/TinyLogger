@@ -23,6 +23,7 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
     <PackageReference Include="Microsoft.CSharp" />
+    <PackageReference Include="PolySharp" />
     <PackageReference Include="System.Interactive.Async" />
     <PackageReference Include="System.Threading.Channels" />
   </ItemGroup>
