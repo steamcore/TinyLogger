@@ -11,7 +11,7 @@ public class PoolingBenchmarks
 	[Benchmark]
 	public void PlainMetadataDictionary()
 	{
-		var value = new Dictionary<string, object?>
+		_ = new Dictionary<string, object?>
 		{
 			["bar"] = "foo",
 			["foo"] = "bar",
@@ -31,7 +31,7 @@ public class PoolingBenchmarks
 	[Benchmark]
 	public void PlainMessageTokenList()
 	{
-		var value = new List<MessageToken>
+		_ = new List<MessageToken>
 		{
 			new LiteralToken("foo"),
 			new LiteralToken("bar"),

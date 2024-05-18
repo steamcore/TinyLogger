@@ -58,10 +58,7 @@ public class LimitedSizeCache<TKey, TValue>
 		{
 			lock (pruneLock)
 			{
-				if (pruneTask is null)
-				{
-					pruneTask = Task.Run(PruneCache);
-				}
+				pruneTask ??= Task.Run(PruneCache);
 			}
 		}
 	}
@@ -103,9 +100,9 @@ public class LimitedSizeCache<TKey, TValue>
 		}
 
 		// Remove least recently accessed items
-		foreach (var item in items.OrderBy(x => x.LastAccessed).Take((int)(items.Count * pruneRatio)))
+		foreach (var (Key, _) in items.OrderBy(x => x.LastAccessed).Take((int)(items.Count * pruneRatio)))
 		{
-			cache.TryRemove(item.Key, out _);
+			cache.TryRemove(Key, out _);
 		}
 
 		pruneTask = null;

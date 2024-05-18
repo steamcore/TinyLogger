@@ -5,7 +5,7 @@ using Microsoft.Extensions.ObjectPool;
 namespace TinyLogger;
 
 [SuppressMessage("Performance", "CA1815:Override equals and operator equals on value types", Justification = "This only reason this is a value type is to avoid boxing allocations.")]
-public struct PooledValue<T> : IDisposable
+public readonly struct PooledValue<T> : IDisposable
 	where T : class
 {
 	private readonly ObjectPool<T> pool;
@@ -31,9 +31,9 @@ public static class Pooling
 	private static readonly ObjectPool<StringBuilder> stringBuilderPool = ObjectPool.Create(new StringBuilderPooledObjectPolicy());
 	private static readonly ObjectPool<List<MessageToken>> messageTokenListPool = ObjectPool.Create(new ListPoolPolicy<MessageToken>(50));
 
-	public static PooledValue<Dictionary<string, MessageToken?>> RentMetadataDictionary() => new PooledValue<Dictionary<string, MessageToken?>>(metadataDictionaryPool);
-	public static PooledValue<List<MessageToken>> RentMessageTokenList() => new PooledValue<List<MessageToken>>(messageTokenListPool);
-	public static PooledValue<StringBuilder> RentStringBuilder() => new PooledValue<StringBuilder>(stringBuilderPool);
+	public static PooledValue<Dictionary<string, MessageToken?>> RentMetadataDictionary() => new(metadataDictionaryPool);
+	public static PooledValue<List<MessageToken>> RentMessageTokenList() => new(messageTokenListPool);
+	public static PooledValue<StringBuilder> RentStringBuilder() => new(stringBuilderPool);
 
 	private sealed class DictionaryPoolPolicy<TKey, TValue>(int capacity) :
 		IPooledObjectPolicy<Dictionary<TKey, TValue>>
