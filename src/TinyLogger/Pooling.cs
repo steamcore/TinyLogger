@@ -27,20 +27,21 @@ public struct PooledValue<T> : IDisposable
 
 public static class Pooling
 {
-	private static readonly ObjectPool<Dictionary<string, MessageToken?>> metadataDictionaryPool = ObjectPool.Create(new DictionaryPoolPolicy<string, MessageToken?>());
+	private static readonly ObjectPool<Dictionary<string, MessageToken?>> metadataDictionaryPool = ObjectPool.Create(new DictionaryPoolPolicy<string, MessageToken?>(50));
 	private static readonly ObjectPool<StringBuilder> stringBuilderPool = ObjectPool.Create(new StringBuilderPooledObjectPolicy());
-	private static readonly ObjectPool<List<MessageToken>> messageTokenListPool = ObjectPool.Create(new ListPoolPolicy<MessageToken>());
+	private static readonly ObjectPool<List<MessageToken>> messageTokenListPool = ObjectPool.Create(new ListPoolPolicy<MessageToken>(50));
 
 	public static PooledValue<Dictionary<string, MessageToken?>> RentMetadataDictionary() => new PooledValue<Dictionary<string, MessageToken?>>(metadataDictionaryPool);
 	public static PooledValue<List<MessageToken>> RentMessageTokenList() => new PooledValue<List<MessageToken>>(messageTokenListPool);
 	public static PooledValue<StringBuilder> RentStringBuilder() => new PooledValue<StringBuilder>(stringBuilderPool);
 
-	private sealed class DictionaryPoolPolicy<TKey, TValue> : IPooledObjectPolicy<Dictionary<TKey, TValue>>
+	private sealed class DictionaryPoolPolicy<TKey, TValue>(int capacity) :
+		IPooledObjectPolicy<Dictionary<TKey, TValue>>
 		where TKey : notnull
 	{
 		public Dictionary<TKey, TValue> Create()
 		{
-			return [];
+			return new Dictionary<TKey, TValue>(capacity);
 		}
 
 		public bool Return(Dictionary<TKey, TValue> obj)
@@ -50,11 +51,12 @@ public static class Pooling
 		}
 	}
 
-	private sealed class ListPoolPolicy<T> : IPooledObjectPolicy<List<T>>
+	private sealed class ListPoolPolicy<T>(int capacity) :
+		IPooledObjectPolicy<List<T>>
 	{
 		public List<T> Create()
 		{
-			return [];
+			return new List<T>(capacity);
 		}
 
 		public bool Return(List<T> obj)
