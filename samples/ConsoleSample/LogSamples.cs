@@ -5,6 +5,8 @@ namespace ConsoleSample;
 
 public class LogSamples(ILogger logger)
 {
+	private static readonly string logo = Environment.NewLine + FiggleFonts.Slant.Render("TinyLogger");
+
 	public void LogAll()
 	{
 		LogIntro();
@@ -16,7 +18,7 @@ public class LogSamples(ILogger logger)
 
 	public void LogIntro()
 	{
-		logger.LogInformation(new EventId(0, "Intro"), "{figgle}", Environment.NewLine + FiggleFonts.Slant.Render("TinyLogger"));
+		logger.LogInformation(new EventId(0, "Intro"), "{figgle}", logo);
 	}
 
 	public void LogSimpleExamples()
