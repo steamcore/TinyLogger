@@ -7,7 +7,7 @@ using TinyLogger.IO;
 namespace TinyLogger.Benchmarks;
 
 [MemoryDiagnoser]
-public partial class Benchmark : IDisposable
+public partial class LogComparisonBenchmarks : IDisposable
 {
 	private readonly ILoggerFactory dotnetConsoleFactory;
 	private readonly ILogger dotnetConsole;
@@ -25,14 +25,14 @@ public partial class Benchmark : IDisposable
 	private readonly ILogger stream;
 	private readonly MemoryStream memoryStream = new();
 
-	public Benchmark()
+	public LogComparisonBenchmarks()
 	{
 		dotnetConsoleFactory = LoggerFactory.Create(configure =>
 		{
 			configure.AddConsole();
 		});
 
-		dotnetConsole = dotnetConsoleFactory.CreateLogger<Benchmark>();
+		dotnetConsole = dotnetConsoleFactory.CreateLogger<LogComparisonBenchmarks>();
 
 		ansiConsoleFactory = LoggerFactory.Create(configure =>
 		{
@@ -42,7 +42,7 @@ public partial class Benchmark : IDisposable
 			});
 		});
 
-		ansiConsole = ansiConsoleFactory.CreateLogger<Benchmark>();
+		ansiConsole = ansiConsoleFactory.CreateLogger<LogComparisonBenchmarks>();
 
 		plainTextConsoleFactory = LoggerFactory.Create(configure =>
 		{
@@ -52,7 +52,7 @@ public partial class Benchmark : IDisposable
 			});
 		});
 
-		plainTextConsole = plainTextConsoleFactory.CreateLogger<Benchmark>();
+		plainTextConsole = plainTextConsoleFactory.CreateLogger<LogComparisonBenchmarks>();
 
 		trueColorConsoleFactory = LoggerFactory.Create(configure =>
 		{
@@ -62,7 +62,7 @@ public partial class Benchmark : IDisposable
 			});
 		});
 
-		trueColorConsole = trueColorConsoleFactory.CreateLogger<Benchmark>();
+		trueColorConsole = trueColorConsoleFactory.CreateLogger<LogComparisonBenchmarks>();
 
 		streamFactory = LoggerFactory.Create(configure =>
 		{
@@ -72,7 +72,7 @@ public partial class Benchmark : IDisposable
 			});
 		});
 
-		stream = streamFactory.CreateLogger<Benchmark>();
+		stream = streamFactory.CreateLogger<LogComparisonBenchmarks>();
 	}
 
 	public void Dispose()

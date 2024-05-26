@@ -1,4 +1,3 @@
 using BenchmarkDotNet.Running;
-using TinyLogger.Benchmarks;
 
-BenchmarkRunner.Run<Benchmark>();
+BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
