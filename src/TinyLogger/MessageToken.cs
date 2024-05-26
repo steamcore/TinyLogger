@@ -142,6 +142,10 @@ public record ObjectToken<T>(T? Value, int? Alignment = null, string? Format = n
 		{
 			return str;
 		}
+		else if (Alignment is null && Format is null)
+		{
+			return Value?.ToString() ?? string.Empty;
+		}
 
 		return string.Format(CultureInfo.CurrentCulture, FormatString, Value);
 	}
@@ -173,9 +177,9 @@ public record ObjectToken<T>(T? Value, int? Alignment = null, string? Format = n
 			throw new ArgumentNullException(nameof(sb));
 #endif
 
-		if (Value is string str)
+		if (Value is string || Alignment is null && Format is null)
 		{
-			sb.Append(str);
+			sb.Append(Value);
 		}
 		else
 		{
