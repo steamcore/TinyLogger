@@ -39,6 +39,7 @@ public partial class LogComparisonBenchmarks : IDisposable
 			configure.AddTinyLogger(options =>
 			{
 				options.Renderers.Add(new AnsiConsoleRenderer(new DefaultConsoleTheme()));
+				options.UseSynchronousWrites = true;
 			});
 		});
 
@@ -49,6 +50,7 @@ public partial class LogComparisonBenchmarks : IDisposable
 			configure.AddTinyLogger(options =>
 			{
 				options.Renderers.Add(new PlainTextConsoleRenderer());
+				options.UseSynchronousWrites = true;
 			});
 		});
 
@@ -59,6 +61,7 @@ public partial class LogComparisonBenchmarks : IDisposable
 			configure.AddTinyLogger(options =>
 			{
 				options.Renderers.Add(new TrueColorConsoleRenderer(new DefaultTrueColorConsoleTheme()));
+				options.UseSynchronousWrites = true;
 			});
 		});
 
@@ -69,6 +72,7 @@ public partial class LogComparisonBenchmarks : IDisposable
 			configure.AddTinyLogger(options =>
 			{
 				options.Renderers.Add(new StreamRenderer(memoryStream));
+				options.UseSynchronousWrites = true;
 			});
 		});
 

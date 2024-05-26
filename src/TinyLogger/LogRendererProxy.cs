@@ -46,6 +46,16 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 		if (disposed)
 			return;
 
+		if (options.UseSynchronousWrites)
+		{
+			foreach (var renderer in options.Renderers)
+			{
+				await renderer.Render(message).ConfigureAwait(false);
+			}
+
+			return;
+		}
+
 		EnsureInitialized();
 
 		for (var i = 0; i < channels.Count; i++)

@@ -52,4 +52,9 @@ public class TinyLoggerOptions
 	/// Defines the structure of every log message, see MessageTemplates for examples.
 	/// </summary>
 	public string Template { get; set; } = MessageTemplates.Default;
+
+	/// <summary>
+	/// Disables the asynchronous channel and uses synchronous writes instead which is useful when doing benchmarks.
+	/// </summary>
+	public bool UseSynchronousWrites { get; set; }
 }
