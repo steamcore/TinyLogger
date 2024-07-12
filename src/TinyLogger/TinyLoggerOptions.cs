@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using TinyLogger.Extenders;
 using TinyLogger.Tokenizers;
@@ -34,6 +35,7 @@ public class TinyLoggerOptions
 	/// </para>
 	/// <para>Use BackPressureArbiter options to control what to do when this limit is reached.</para>
 	/// </summary>
+	[Range(1, 100_000, ErrorMessage = "{0} must be between {1} and {2}")]
 	public int MaxQueueDepth { get; set; } = 100;
 
 	/// <summary>
@@ -46,15 +48,29 @@ public class TinyLoggerOptions
 	/// </summary>
 	[SuppressMessage("Design", "CA1002:Do not expose generic lists", Justification = "It's supposed to be configurable")]
 	[SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "It's supposed to be configurable")]
+#if NET
+	[UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "Members should not be trimmed")]
+#endif
+	[MinLength(1, ErrorMessage = "{0} must not be empty")]
 	public List<ILogRenderer> Renderers { get; set; } = [];
 
 	/// <summary>
 	/// Defines the structure of every log message, see MessageTemplates for examples.
 	/// </summary>
+	[Required(ErrorMessage = "{0} must not be empty")]
 	public string Template { get; set; } = MessageTemplates.Default;
 
 	/// <summary>
 	/// Disables the asynchronous channel and uses synchronous writes instead which is useful when doing benchmarks.
 	/// </summary>
 	public bool UseSynchronousWrites { get; set; }
+
+	// Make sure necessary members aren't trimmed
+#if NET
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+	[SuppressMessage("Performance", "CA1823:Avoid unused private fields", Justification = "Unused on purpose")]
+	[SuppressMessage("Roslynator", "RCS1213:Remove unused member declaration.", Justification = "Unused on purpose")]
+	[SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Unused on purpose")]
+	private static readonly Type keepRendererMembers = typeof(List<ILogRenderer>);
+#endif
 }
