@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Channels;
 
 namespace TinyLogger;
@@ -94,7 +93,6 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 		}
 	}
 
-	[SuppressMessage("Design", "RCS1075:Avoid empty catch clause that catches System.Exception.", Justification = "Must not crash but can't handle or log errors")]
 	private static async Task RenderWorker(ChannelReader<TokenizedMessage> reader, ILogRenderer renderer)
 	{
 		while (await reader.WaitToReadAsync().ConfigureAwait(false))
@@ -105,7 +103,7 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 				{
 					await renderer.Render(message).ConfigureAwait(false);
 				}
-				catch (Exception)
+				catch
 				{
 					// Swallow render errors, we can't log errors or it could become an infinite loop
 				}
