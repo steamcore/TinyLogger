@@ -54,7 +54,9 @@ public static class LoggingBuilderExtensions
 		ArgumentNullException.ThrowIfNull(logging);
 #else
 		if (logging is null)
+		{
 			throw new ArgumentNullException(nameof(logging));
+		}
 #endif
 
 		logging.Services.AddOptions<TinyLoggerOptions>().Configure(configureOptions);

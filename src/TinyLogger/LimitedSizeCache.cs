@@ -50,11 +50,15 @@ public class LimitedSizeCache<TKey, TValue>
 		ArgumentNullException.ThrowIfNull(key);
 #else
 		if (key is null)
+		{
 			throw new ArgumentNullException(nameof(key));
+		}
 #endif
 
 		if (value is null)
+		{
 			return;
+		}
 
 		cache[key] = (value, DateTime.UtcNow);
 
@@ -79,7 +83,9 @@ public class LimitedSizeCache<TKey, TValue>
 		ArgumentNullException.ThrowIfNull(key);
 #else
 		if (key is null)
+		{
 			throw new ArgumentNullException(nameof(key));
+		}
 #endif
 
 		if (cache.TryGetValue(key, out var item))

@@ -25,10 +25,14 @@ public sealed class TinyLoggerProvider : ILoggerProvider
 		ArgumentNullException.ThrowIfNull(options);
 #else
 		if (messageTokenizer is null)
+		{
 			throw new ArgumentNullException(nameof(messageTokenizer));
+		}
 
 		if (options is null)
+		{
 			throw new ArgumentNullException(nameof(options));
+		}
 #endif
 
 		this.messageTokenizer = messageTokenizer;
@@ -40,7 +44,9 @@ public sealed class TinyLoggerProvider : ILoggerProvider
 	public void Dispose()
 	{
 		if (disposed)
+		{
 			return;
+		}
 
 		rendererProxy.Dispose();
 
@@ -61,7 +67,9 @@ public sealed class TinyLoggerProvider : ILoggerProvider
 		ObjectDisposedException.ThrowIf(disposed, this);
 #else
 		if (disposed)
+		{
 			throw new ObjectDisposedException(nameof(TinyLoggerProvider));
+		}
 #endif
 
 		return new TinyLogger(messageTokenizer, options.Value.Extenders, rendererProxy, categoryName);

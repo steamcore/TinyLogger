@@ -24,7 +24,9 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 	protected virtual void Dispose(bool disposing)
 	{
 		if (disposed)
+		{
 			return;
+		}
 
 		if (disposing)
 		{
@@ -47,7 +49,9 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 	public async Task Render(TokenizedMessage message)
 	{
 		if (disposed)
+		{
 			return;
+		}
 
 		if (options.UseSynchronousWrites)
 		{
@@ -66,7 +70,9 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 			var channel = channels[i];
 
 			if (channel.Writer.TryWrite(message))
+			{
 				continue;
+			}
 
 			if (options.BackPressureArbiter is null || options.BackPressureArbiter(message))
 			{
@@ -78,12 +84,16 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 	private void EnsureInitialized()
 	{
 		if (initialized)
+		{
 			return;
+		}
 
 		lock (_lock)
 		{
 			if (initialized)
+			{
 				return;
+			}
 
 			foreach (var renderer in options.Renderers)
 			{

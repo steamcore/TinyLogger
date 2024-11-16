@@ -36,7 +36,9 @@ public class InlineObjectTokenizer : IObjectTokenizer
 		foreach (var key in dictionary.Keys)
 		{
 			if (key is null)
+			{
 				continue;
+			}
 
 			var dictionaryValue = dictionary[key];
 			output.Add(new LiteralToken(separator + $"{{{key}, "));

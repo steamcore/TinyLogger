@@ -13,7 +13,9 @@ public class MessageTokenizer : IMessageTokenizer
 		ArgumentNullException.ThrowIfNull(options);
 #else
 		if (options is null)
+		{
 			throw new ArgumentNullException(nameof(options));
+		}
 #endif
 
 		objectTokenizer = options.Value.ObjectTokenizer;
@@ -27,10 +29,14 @@ public class MessageTokenizer : IMessageTokenizer
 		ArgumentNullException.ThrowIfNull(output);
 #else
 		if (formatter is null)
+		{
 			throw new ArgumentNullException(nameof(formatter));
+		}
 
 		if (output is null)
+		{
 			throw new ArgumentNullException(nameof(output));
+		}
 #endif
 
 		using var data = Pooling.RentMetadataDictionary();
@@ -75,13 +81,19 @@ public class MessageTokenizer : IMessageTokenizer
 		ArgumentNullException.ThrowIfNull(output);
 #else
 		if (messageTokens is null)
+		{
 			throw new ArgumentNullException(nameof(messageTokens));
+		}
 
 		if (data is null)
+		{
 			throw new ArgumentNullException(nameof(data));
+		}
 
 		if (output is null)
+		{
 			throw new ArgumentNullException(nameof(output));
+		}
 #endif
 
 		for (var i = 0; i < messageTokens.Count; i++)

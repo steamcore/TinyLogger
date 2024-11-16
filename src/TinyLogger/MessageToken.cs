@@ -47,7 +47,9 @@ public abstract partial record MessageToken
 		ArgumentNullException.ThrowIfNull(value);
 #else
 		if (value is null)
+		{
 			throw new ArgumentNullException(nameof(value));
+		}
 #endif
 
 		// Avoid calling the Regex if possible to reduce allocations
@@ -119,7 +121,9 @@ public record LiteralToken(string Value) :
 		ArgumentNullException.ThrowIfNull(sb);
 #else
 		if (sb is null)
+		{
 			throw new ArgumentNullException(nameof(sb));
+		}
 #endif
 
 		sb.Append(Value);
@@ -174,7 +178,9 @@ public record ObjectToken<T>(T? Value, int? Alignment = null, string? Format = n
 		ArgumentNullException.ThrowIfNull(sb);
 #else
 		if (sb is null)
+		{
 			throw new ArgumentNullException(nameof(sb));
+		}
 #endif
 
 		if (Value is string || Alignment is null && Format is null)
@@ -216,7 +222,9 @@ public record ObjectTokenWithTransform<T> : ObjectToken<T>
 		ArgumentNullException.ThrowIfNull(sb);
 #else
 		if (sb is null)
+		{
 			throw new ArgumentNullException(nameof(sb));
+		}
 #endif
 
 		var transformedValue = Value != null ? ValueTransform(Value) : Value;

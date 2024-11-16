@@ -23,7 +23,9 @@ public static class TinyLoggerOptionsExtensions
 		ArgumentNullException.ThrowIfNull(options);
 #else
 		if (options is null)
+		{
 			throw new ArgumentNullException(nameof(options));
+		}
 #endif
 
 		// Honor no-color.org
@@ -52,7 +54,9 @@ public static class TinyLoggerOptionsExtensions
 		ArgumentNullException.ThrowIfNull(options);
 #else
 		if (options is null)
+		{
 			throw new ArgumentNullException(nameof(options));
+		}
 #endif
 
 		options.Renderers.Add(new PlainTextConsoleRenderer());
@@ -77,7 +81,9 @@ public static class TinyLoggerOptionsExtensions
 		ArgumentNullException.ThrowIfNull(options);
 #else
 		if (options is null)
+		{
 			throw new ArgumentNullException(nameof(options));
+		}
 #endif
 
 		// Honor no-color.org
@@ -113,7 +119,9 @@ public static class TinyLoggerOptionsExtensions
 		ArgumentNullException.ThrowIfNull(options);
 #else
 		if (options is null)
+		{
 			throw new ArgumentNullException(nameof(options));
+		}
 #endif
 
 		options.Renderers.Add(new FileRenderer(fileName, logFileMode));
@@ -141,7 +149,9 @@ public static class TinyLoggerOptionsExtensions
 		ArgumentNullException.ThrowIfNull(options);
 #else
 		if (options is null)
+		{
 			throw new ArgumentNullException(nameof(options));
+		}
 #endif
 
 		options.Renderers.Add(new RollingFileRenderer(getFileName, logFileMode));
@@ -159,7 +169,9 @@ public static class TinyLoggerOptionsExtensions
 		ArgumentNullException.ThrowIfNull(options);
 #else
 		if (options is null)
+		{
 			throw new ArgumentNullException(nameof(options));
+		}
 #endif
 
 		options.Renderers.Add(new StreamRenderer(stream));

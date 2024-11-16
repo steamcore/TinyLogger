@@ -42,10 +42,14 @@ public static class TemplateTokenizer
 		ArgumentNullException.ThrowIfNull(output);
 #else
 		if (logFormat is null)
+		{
 			throw new ArgumentNullException(nameof(logFormat));
+		}
 
 		if (output is null)
+		{
 			throw new ArgumentNullException(nameof(output));
+		}
 #endif
 
 		var state = State.Literal;
@@ -115,7 +119,9 @@ public static class TemplateTokenizer
 		void AddLiteral(int index, int length)
 		{
 			if (length == 0)
+			{
 				return;
+			}
 
 			output.Add(new LiteralToken(logFormat.Substring(index, length)));
 		}
@@ -123,7 +129,9 @@ public static class TemplateTokenizer
 		void AddValue(int index, int length)
 		{
 			if (length == 0)
+			{
 				return;
+			}
 
 			output.Add(MessageToken.FromFormat(logFormat.Substring(index, length)));
 		}

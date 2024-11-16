@@ -33,7 +33,9 @@ public class StreamRenderer : ILogRenderer, IDisposable
 		ArgumentNullException.ThrowIfNull(createStreamWriter);
 #else
 		if (createStreamWriter is null)
+		{
 			throw new ArgumentNullException(nameof(createStreamWriter));
+		}
 #endif
 
 		this.createStreamWriter = createStreamWriter;
