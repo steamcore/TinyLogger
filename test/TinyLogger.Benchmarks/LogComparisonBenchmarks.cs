@@ -7,6 +7,7 @@ using TinyLogger.IO;
 namespace TinyLogger.Benchmarks;
 
 [MemoryDiagnoser]
+[ShortRunJob]
 public partial class LogComparisonBenchmarks : IDisposable
 {
 	private readonly ILoggerFactory dotnetConsoleFactory;

@@ -5,6 +5,7 @@ using BenchmarkDotNet.Attributes;
 namespace TinyLogger.Benchmarks;
 
 [MemoryDiagnoser]
+[ShortRunJob]
 [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Must not be static.")]
 public class PoolingBenchmarks
 {
