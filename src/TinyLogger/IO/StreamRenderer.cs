@@ -8,7 +8,11 @@ namespace TinyLogger.IO;
 public class StreamRenderer : ILogRenderer, IDisposable
 {
 	private readonly Func<StreamWriter> createStreamWriter;
+#if NET9_0_OR_GREATER
+	private readonly Lock streamWriterLock = new();
+#else
 	private readonly object streamWriterLock = new();
+#endif
 
 	private bool disposed;
 	private StreamWriter? streamWriter;

@@ -17,7 +17,11 @@ public class LimitedSizeCache<TKey, TValue>
 	private readonly ConcurrentDictionary<TKey, (TValue Value, DateTime LastAccessed)> cache;
 	private readonly int maxItems;
 	private readonly double pruneRatio;
+#if NET9_0_OR_GREATER
+	private readonly Lock pruneLock = new();
+#else
 	private readonly object pruneLock = new();
+#endif
 
 	private Task? pruneTask;
 

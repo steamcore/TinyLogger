@@ -2,7 +2,7 @@ using TinyLogger;
 
 namespace ConsoleSample;
 
-public class SampleEnvironmentExtender : ILogExtender
+internal sealed class SampleEnvironmentExtender : ILogExtender
 {
 	private static readonly LiteralToken machineName = new(Environment.MachineName);
 	private static readonly ObjectToken<OperatingSystem> os = new(Environment.OSVersion);

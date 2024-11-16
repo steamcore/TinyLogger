@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.Logging;
 using TinyLogger.Console;
@@ -8,6 +9,7 @@ namespace TinyLogger.Benchmarks;
 
 [MemoryDiagnoser]
 [ShortRunJob]
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "BenchmarkDotNet")]
 public partial class LogComparisonBenchmarks : IDisposable
 {
 	private readonly ILoggerFactory dotnetConsoleFactory;

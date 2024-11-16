@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ConsoleSample;
 
-public class LogSamples(ILogger logger)
+internal sealed class LogSamples(ILogger logger)
 {
 	private static readonly string logo = Environment.NewLine + FiggleFonts.Slant.Render("TinyLogger");
 

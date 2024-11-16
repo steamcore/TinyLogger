@@ -34,23 +34,29 @@ public static partial class AnsiSupport
 		public const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 
 #if NET
+		[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 		[LibraryImport("kernel32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static partial bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
 
+		[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 		[LibraryImport("kernel32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static partial bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
+		[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 		[LibraryImport("kernel32.dll", SetLastError = true)]
 		public static partial IntPtr GetStdHandle(int nStdHandle);
 #else
+		[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 		[DllImport("kernel32.dll")]
 		public static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
 
+		[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 		[DllImport("kernel32.dll")]
 		public static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
+		[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 		[DllImport("kernel32.dll", SetLastError = true)]
 		public static extern IntPtr GetStdHandle(int nStdHandle);
 #endif
