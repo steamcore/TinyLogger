@@ -33,7 +33,7 @@ public static partial class AnsiSupport
 
 		public const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 
-#if NET7_0_OR_GREATER
+#if NET
 		[LibraryImport("kernel32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static partial bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);

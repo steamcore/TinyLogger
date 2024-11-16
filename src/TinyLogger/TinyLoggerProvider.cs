@@ -57,7 +57,7 @@ public sealed class TinyLoggerProvider : ILoggerProvider
 
 	public ILogger CreateLogger(string categoryName)
 	{
-#if NET7_0_OR_GREATER
+#if NET
 		ObjectDisposedException.ThrowIf(disposed, this);
 #else
 		if (disposed)

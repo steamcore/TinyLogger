@@ -25,7 +25,7 @@ public abstract partial record MessageToken
 
 	public abstract void Write(StringBuilder sb);
 
-#if NET7_0_OR_GREATER
+#if NET
 	[GeneratedRegex(@"^{(?<value>[^,:]+)(,(?<alignment>[\d\-]+))?(:(?<format>[^}]+))?}$", RegexOptions.ExplicitCapture)]
 	private static partial Regex GetFormatMatcher();
 	private static readonly Regex formatMatcher = GetFormatMatcher();
