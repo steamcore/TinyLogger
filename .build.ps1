@@ -7,6 +7,13 @@ param (
     $Version
 )
 
+function GetTargetFrameworks([string] $projectPath) {
+    $project = [xml](Get-Content $projectPath)
+    $project.SelectNodes("//TargetFrameworks") | ForEach-Object {
+        $_.InnerText -split ';'
+    }
+}
+
 task AssertVersion {
     if (-not $Version) {
         throw "Specify version with -Version parameter"
@@ -44,8 +51,12 @@ task DotnetBuild DotnetRestore, {
 }
 
 task DotnetTest DotnetBuild, {
-    exec {
-        dotnet test --no-build .\test\TinyLogger.Tests\TinyLogger.Tests.csproj
+    Push-Location (Join-Path "test" "TinyLogger.Tests")
+
+    GetTargetFrameworks "./TinyLogger.Tests.csproj" | ForEach-Object {
+        exec {
+            dotnet run --no-build --framework $_
+        }
     }
 }
 
