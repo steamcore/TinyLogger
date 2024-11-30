@@ -8,12 +8,12 @@ namespace TinyLogger.Console;
 public class WindowsConsoleRenderer(IConsoleTheme theme)
 	: ILogRenderer
 {
-	public Task Flush()
+	public Task FlushAsync()
 	{
 		return Task.CompletedTask;
 	}
 
-	public Task Render(TokenizedMessage message)
+	public Task RenderAsync(TokenizedMessage message)
 	{
 		if (message is null)
 		{

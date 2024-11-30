@@ -61,7 +61,7 @@ public class LogRendererProxyTests
 
 		for (var i = 0; i < messageCount; i++)
 		{
-			await proxy.Render(message);
+			await proxy.RenderAsync(message);
 		}
 	}
 
@@ -69,12 +69,12 @@ public class LogRendererProxyTests
 	{
 		public int Count { get; private set; }
 
-		public Task Flush()
+		public Task FlushAsync()
 		{
 			return Task.CompletedTask;
 		}
 
-		public Task Render(TokenizedMessage message)
+		public Task RenderAsync(TokenizedMessage message)
 		{
 			Count++;
 			return Task.CompletedTask;

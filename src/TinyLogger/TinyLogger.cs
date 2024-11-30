@@ -39,7 +39,7 @@ internal class TinyLogger(
 
 	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
 	{
-		renderer.Render(new TokenizedMessage(categoryName, logLevel, GetMessageTokens)).ConfigureAwait(false).GetAwaiter().GetResult();
+		renderer.RenderAsync(new TokenizedMessage(categoryName, logLevel, GetMessageTokens)).ConfigureAwait(false).GetAwaiter().GetResult();
 
 		void GetMessage(IList<MessageToken> output)
 		{

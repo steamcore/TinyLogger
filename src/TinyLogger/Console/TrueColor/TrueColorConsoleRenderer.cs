@@ -6,12 +6,12 @@ namespace TinyLogger.Console.TrueColor;
 public class TrueColorConsoleRenderer(ITrueColorConsoleTheme theme)
 	: ILogRenderer
 {
-	public Task Flush()
+	public Task FlushAsync()
 	{
 		return Task.CompletedTask;
 	}
 
-	public Task Render(TokenizedMessage message)
+	public Task RenderAsync(TokenizedMessage message)
 	{
 		if (message is null)
 		{

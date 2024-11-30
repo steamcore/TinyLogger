@@ -41,12 +41,12 @@ public class RollingFileRenderer(Func<string> getFileName, LogFileMode logFileMo
 		disposed = true;
 	}
 
-	public Task Flush()
+	public Task FlushAsync()
 	{
 		return streamWriter?.FlushAsync() ?? Task.CompletedTask;
 	}
 
-	public async Task Render(TokenizedMessage message)
+	public async Task RenderAsync(TokenizedMessage message)
 	{
 		if (disposed || message is null)
 		{

@@ -41,12 +41,12 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 		disposed = true;
 	}
 
-	public Task Flush()
+	public Task FlushAsync()
 	{
 		return Task.CompletedTask;
 	}
 
-	public async Task Render(TokenizedMessage message)
+	public async Task RenderAsync(TokenizedMessage message)
 	{
 		if (disposed)
 		{
@@ -57,7 +57,7 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 		{
 			foreach (var renderer in options.Renderers)
 			{
-				await renderer.Render(message).ConfigureAwait(false);
+				await renderer.RenderAsync(message).ConfigureAwait(false);
 			}
 
 			return;
@@ -100,14 +100,14 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 				var channel = Channel.CreateBounded<TokenizedMessage>(options.MaxQueueDepth);
 
 				channels.Add(channel);
-				workerTasks.Add(RenderWorker(channel.Reader, renderer));
+				workerTasks.Add(RenderMessagesAsync(channel.Reader, renderer));
 			}
 
 			initialized = true;
 		}
 	}
 
-	private static async Task RenderWorker(ChannelReader<TokenizedMessage> reader, ILogRenderer renderer)
+	private static async Task RenderMessagesAsync(ChannelReader<TokenizedMessage> reader, ILogRenderer renderer)
 	{
 		while (await reader.WaitToReadAsync().ConfigureAwait(false))
 		{
@@ -115,7 +115,7 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 			{
 				try
 				{
-					await renderer.Render(message).ConfigureAwait(false);
+					await renderer.RenderAsync(message).ConfigureAwait(false);
 				}
 				catch
 				{
@@ -123,7 +123,7 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 				}
 			}
 
-			await renderer.Flush();
+			await renderer.FlushAsync();
 		}
 	}
 }
