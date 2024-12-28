@@ -3,13 +3,15 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <NoWarn>CA1707</NoWarn>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Shouldly" />
-    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.analyzers" />
     <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="xunit.v3" />
   </ItemGroup>
 
   <ItemGroup>
