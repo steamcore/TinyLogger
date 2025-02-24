@@ -11,7 +11,7 @@ public class TemplateTokenizerTests
 		result.ShouldBe(testData[input]);
 	}
 
-	public static TheoryData<string> TestDataKeys => new(testData.Keys);
+	public static TheoryData<string> TestDataKeys => [.. testData.Keys];
 
 	private static readonly IReadOnlyDictionary<string, IReadOnlyList<MessageToken>> testData = new Dictionary<string, IReadOnlyList<MessageToken>>
 	{
