@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/config/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="global.json" />
+  </Folder>
+  <Folder Name="/samples/">
+    <File Path="samples/Directory.Build.props" />
+    <File Path="samples/Directory.Packages.props" />
+    <Project Path="samples/ConsoleSample/ConsoleSample.csproj" />
+    <Project Path="samples/GenericHostSample/GenericHostSample.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <File Path="src/Directory.Build.props" />
+    <File Path="src/Directory.Build.targets" />
+    <File Path="src/Directory.Packages.props" />
+    <Project Path="src/TinyLogger/TinyLogger.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <File Path="test/Directory.Build.props" />
+    <File Path="test/Directory.Packages.props" />
+    <Project Path="test/TinyLogger.Benchmarks/TinyLogger.Benchmarks.csproj" />
+    <Project Path="test/TinyLogger.Tests/TinyLogger.Tests.csproj" />
+  </Folder>
+</Solution>
