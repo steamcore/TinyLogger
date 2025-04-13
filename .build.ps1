@@ -44,8 +44,33 @@ task DotnetBuild DotnetRestore, {
 }
 
 task DotnetTest DotnetBuild, {
+    Push-Location "./test/TinyLogger.Tests"
+
+    $targetFrameworks = ([xml](Get-Content "./TinyLogger.Tests.csproj") | Select-Xml -XPath "//TargetFrameworks/text()").Node.Value -split ';'
+
+    foreach ($framework in $targetFrameworks) {
+        if ($framework -eq '$(TargetFrameworks)' -or ($framework -eq 'net481' -and -not $IsWindows)) {
+            continue
+        }
+        exec {
+            dotnet run --no-build --disable-logo --framework $framework
+        }
+    }
+}
+
+task AotTest {
+    $binary = $IsWindows ? "./TinyLogger.Tests.exe" : "./TinyLogger.Tests"
+    $runtime = $IsWindows ? "win-x64" : "linux-x64"
+
+    Push-Location "./test/TinyLogger.Tests"
     exec {
-        dotnet test --no-build .\test\TinyLogger.Tests\TinyLogger.Tests.csproj
+        dotnet publish /p:"Aot=true" --framework "net9.0" --runtime $runtime
+    }
+    Pop-Location
+
+    Push-Location "./artifacts/publish/TinyLogger.Tests/release_net9.0_$runtime/"
+    exec {
+        & $binary --disable-logo
     }
 }
 

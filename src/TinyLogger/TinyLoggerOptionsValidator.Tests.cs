@@ -4,7 +4,7 @@ namespace TinyLogger;
 
 public class TinyLoggerOptionsValidatorTests
 {
-	[Fact]
+	[Test]
 	public void Validate_should_allow_valid_options()
 	{
 		var options = new TinyLoggerOptions
@@ -20,7 +20,7 @@ public class TinyLoggerOptionsValidatorTests
 		result.Succeeded.ShouldBeTrue();
 	}
 
-	[Fact]
+	[Test]
 	public void Validate_should_deny_invalid_options()
 	{
 		var options = new TinyLoggerOptions

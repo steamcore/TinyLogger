@@ -4,10 +4,10 @@ namespace TinyLogger;
 
 public class LogRendererProxyTests
 {
-	[Theory]
-	[InlineData(1)]
-	[InlineData(127)]
-	[InlineData(7_919)]
+	[Test]
+	[Arguments(1)]
+	[Arguments(127)]
+	[Arguments(7_919)]
 	public async Task All_messages_should_be_rendered(int messageCount)
 	{
 		var renderer = new TestRenderer();
@@ -18,9 +18,9 @@ public class LogRendererProxyTests
 		renderer.Count.ShouldBe(messageCount);
 	}
 
-	[Theory]
-	[InlineData(1, 131)]
-	[InlineData(2, 359)]
+	[Test]
+	[Arguments(1, 131)]
+	[Arguments(2, 359)]
 	public async Task All_messages_should_be_rendered_even_if_queue_depth_is_small(int queueDepth, int messageCount)
 	{
 		var renderer = new TestRenderer();
@@ -31,10 +31,10 @@ public class LogRendererProxyTests
 		renderer.Count.ShouldBe(messageCount);
 	}
 
-	[Theory]
-	[InlineData(3, 577)]
-	[InlineData(5, 1_583)]
-	[InlineData(7, 7_129)]
+	[Test]
+	[Arguments(3, 577)]
+	[Arguments(5, 1_583)]
+	[Arguments(7, 7_129)]
 	public async Task All_messages_should_be_rendered_by_all_renderers(int rendererCount, int messageCount)
 	{
 		var renderers = new List<TestRenderer>();
