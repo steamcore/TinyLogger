@@ -64,7 +64,7 @@ task AotTest {
 
     Push-Location "./test/TinyLogger.Tests"
     exec {
-        dotnet publish /p:"Aot=true" --framework "net9.0" --runtime $runtime
+        dotnet publish /p:"Aot=true" --runtime $runtime
     }
     Pop-Location
 

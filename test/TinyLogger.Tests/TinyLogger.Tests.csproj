@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Aot)' == 'true' ">
+    <TargetFrameworks></TargetFrameworks>
+    <TargetFramework>net9.0</TargetFramework>
     <PublishAot>true</PublishAot>
   </PropertyGroup>
 
