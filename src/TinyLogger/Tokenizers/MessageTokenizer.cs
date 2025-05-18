@@ -121,11 +121,7 @@ public class MessageTokenizer : IMessageTokenizer
 
 			case TokenTemplate tokenTemplate:
 				{
-					using var tokenList = Pooling.RentMessageTokenList();
-
-					tokenTemplate.PopulateTokens(tokenList.Value);
-
-					foreach (var item in tokenList.Value)
+					foreach (var item in tokenTemplate.MessageTokens)
 					{
 						AddTokens(objectTokenizer, item.WithFormatFrom(token as ObjectToken), output);
 					}

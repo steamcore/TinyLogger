@@ -1,16 +1,18 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Channels;
+using Microsoft.Extensions.Logging;
 
 namespace TinyLogger;
 
 internal class LogRendererProxy(TinyLoggerOptions options)
-	: ILogRenderer, IDisposable
+	: IDisposable
 {
 #if NET9_0_OR_GREATER
 	private readonly Lock _lock = new();
 #else
 	private readonly object _lock = new();
 #endif
-	private readonly List<Channel<TokenizedMessage>> channels = [];
+	private readonly List<Channel<PooledTokenizedMessage>> channels = [];
 	private readonly List<Task> workerTasks = [];
 	private bool disposed;
 	private bool initialized;
@@ -41,12 +43,8 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 		disposed = true;
 	}
 
-	public Task FlushAsync()
-	{
-		return Task.CompletedTask;
-	}
-
-	public async Task RenderAsync(TokenizedMessage message)
+	[SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Pooled object is disposed by channel worker")]
+	public void Render(string categoryName, LogLevel logLevel, Action<IList<MessageToken>> populateMessage, Action<IReadOnlyList<MessageToken>, IList<MessageToken>> populateLogMessage)
 	{
 		if (disposed)
 		{
@@ -55,9 +53,11 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 
 		if (options.UseSynchronousWrites)
 		{
+			using var tokenizedMessage = new PooledTokenizedMessage(categoryName, logLevel, populateMessage, populateLogMessage);
+
 			foreach (var renderer in options.Renderers)
 			{
-				await renderer.RenderAsync(message).ConfigureAwait(false);
+				renderer.RenderAsync(tokenizedMessage).ConfigureAwait(false).GetAwaiter().GetResult();
 			}
 
 			return;
@@ -65,19 +65,23 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 
 		EnsureInitialized();
 
-		for (var i = 0; i < channels.Count; i++)
+		foreach (var channel in channels)
 		{
-			var channel = channels[i];
+			var tokenizedMessage = new PooledTokenizedMessage(categoryName, logLevel, populateMessage, populateLogMessage);
 
-			if (channel.Writer.TryWrite(message))
+			if (channel.Writer.TryWrite(tokenizedMessage))
 			{
 				continue;
 			}
 
-			if (options.BackPressureArbiter is null || options.BackPressureArbiter(message))
+			if (options.BackPressureArbiter is null || options.BackPressureArbiter(tokenizedMessage))
 			{
-				await channel.Writer.WriteAsync(message).ConfigureAwait(false);
+				channel.Writer.WriteAsync(tokenizedMessage).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
+
+				continue;
 			}
+
+			tokenizedMessage.Dispose();
 		}
 	}
 
@@ -97,7 +101,7 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 
 			foreach (var renderer in options.Renderers)
 			{
-				var channel = Channel.CreateBounded<TokenizedMessage>(options.MaxQueueDepth);
+				var channel = Channel.CreateBounded<PooledTokenizedMessage>(options.MaxQueueDepth);
 
 				channels.Add(channel);
 				workerTasks.Add(RenderMessagesAsync(channel.Reader, renderer));
@@ -107,7 +111,7 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 		}
 	}
 
-	private static async Task RenderMessagesAsync(ChannelReader<TokenizedMessage> reader, ILogRenderer renderer)
+	private static async Task RenderMessagesAsync(ChannelReader<PooledTokenizedMessage> reader, ILogRenderer renderer)
 	{
 		while (await reader.WaitToReadAsync().ConfigureAwait(false))
 		{
@@ -120,6 +124,10 @@ internal class LogRendererProxy(TinyLoggerOptions options)
 				catch
 				{
 					// Swallow render errors, we can't log errors or it could become an infinite loop
+				}
+				finally
+				{
+					message.Dispose();
 				}
 			}
 

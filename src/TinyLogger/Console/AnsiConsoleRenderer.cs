@@ -30,11 +30,10 @@ public class AnsiConsoleRenderer(IConsoleTheme theme)
 		const string Reset = "\x1b[0m";
 
 		using var sb = Pooling.RentStringBuilder();
-		using var messageTokens = message.RentMessageTokenList();
 
-		for (var i = 0; i < messageTokens.Value.Count; i++)
+		for (var i = 0; i < message.MessageTokens.Count; i++)
 		{
-			var token = messageTokens.Value[i];
+			var token = message.MessageTokens[i];
 
 			if (token is LiteralToken || !token.TryGetValue(out var value))
 			{

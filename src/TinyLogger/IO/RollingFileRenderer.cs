@@ -72,11 +72,10 @@ public class RollingFileRenderer(Func<string> getFileName, LogFileMode logFileMo
 		}
 
 		using var sb = Pooling.RentStringBuilder();
-		using var messageTokens = message.RentMessageTokenList();
 
-		for (var i = 0; i < messageTokens.Value.Count; i++)
+		for (var i = 0; i < message.MessageTokens.Count; i++)
 		{
-			var token = messageTokens.Value[i];
+			var token = message.MessageTokens[i];
 
 			token.Write(sb.Value);
 		}

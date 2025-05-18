@@ -263,7 +263,7 @@ public record FuncToken(Func<MessageToken> GetToken) : MessageToken
 	}
 }
 
-public record TokenTemplate(Action<IList<MessageToken>> PopulateTokens) : MessageToken
+public record TokenTemplate(IReadOnlyList<MessageToken> MessageTokens) : MessageToken
 {
 	public override string ToString()
 	{
@@ -288,11 +288,7 @@ public record TokenTemplate(Action<IList<MessageToken>> PopulateTokens) : Messag
 
 	public override void Write(StringBuilder sb)
 	{
-		using var tokens = Pooling.RentMessageTokenList();
-
-		PopulateTokens(tokens.Value);
-
-		foreach (var token in tokens.Value)
+		foreach (var token in MessageTokens)
 		{
 			token.Write(sb);
 		}

@@ -8,12 +8,12 @@ public class LogRendererProxyTests
 	[Arguments(1)]
 	[Arguments(127)]
 	[Arguments(7_919)]
-	public async Task All_messages_should_be_rendered(int messageCount)
+	public void All_messages_should_be_rendered(int messageCount)
 	{
 		var renderer = new TestRenderer();
 		var options = new TinyLoggerOptions { Renderers = [renderer] };
 
-		await RenderMessages(options, messageCount);
+		RenderMessages(options, messageCount);
 
 		renderer.Count.ShouldBe(messageCount);
 	}
@@ -21,12 +21,12 @@ public class LogRendererProxyTests
 	[Test]
 	[Arguments(1, 131)]
 	[Arguments(2, 359)]
-	public async Task All_messages_should_be_rendered_even_if_queue_depth_is_small(int queueDepth, int messageCount)
+	public void All_messages_should_be_rendered_even_if_queue_depth_is_small(int queueDepth, int messageCount)
 	{
 		var renderer = new TestRenderer();
 		var options = new TinyLoggerOptions { MaxQueueDepth = queueDepth, Renderers = [renderer] };
 
-		await RenderMessages(options, messageCount);
+		RenderMessages(options, messageCount);
 
 		renderer.Count.ShouldBe(messageCount);
 	}
@@ -35,7 +35,7 @@ public class LogRendererProxyTests
 	[Arguments(3, 577)]
 	[Arguments(5, 1_583)]
 	[Arguments(7, 7_129)]
-	public async Task All_messages_should_be_rendered_by_all_renderers(int rendererCount, int messageCount)
+	public void All_messages_should_be_rendered_by_all_renderers(int rendererCount, int messageCount)
 	{
 		var renderers = new List<TestRenderer>();
 		for (var i = 0; i < rendererCount; i++)
@@ -45,7 +45,7 @@ public class LogRendererProxyTests
 
 		var options = new TinyLoggerOptions { Renderers = [.. renderers] };
 
-		await RenderMessages(options, messageCount);
+		RenderMessages(options, messageCount);
 
 		for (var i = 0; i < rendererCount; i++)
 		{
@@ -53,15 +53,13 @@ public class LogRendererProxyTests
 		}
 	}
 
-	private static async Task RenderMessages(TinyLoggerOptions options, int messageCount)
+	private static void RenderMessages(TinyLoggerOptions options, int messageCount)
 	{
-		var message = new TokenizedMessage(string.Empty, LogLevel.Debug, _ => { });
-
 		using var proxy = new LogRendererProxy(options);
 
 		for (var i = 0; i < messageCount; i++)
 		{
-			await proxy.RenderAsync(message);
+			proxy.Render(string.Empty, LogLevel.Debug, _ => { }, (_, _) => { });
 		}
 	}
 

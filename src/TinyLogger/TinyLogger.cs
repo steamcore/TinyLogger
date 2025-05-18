@@ -7,7 +7,7 @@ namespace TinyLogger;
 internal class TinyLogger(
 	IMessageTokenizer messageTokenizer,
 	IReadOnlyList<ILogExtender> extenders,
-	ILogRenderer renderer,
+	LogRendererProxy renderer,
 	string categoryName
 )
 	: ILogger
@@ -39,14 +39,14 @@ internal class TinyLogger(
 
 	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
 	{
-		renderer.RenderAsync(new TokenizedMessage(categoryName, logLevel, GetMessageTokens)).ConfigureAwait(false).GetAwaiter().GetResult();
+		renderer.Render(categoryName, logLevel, PopulateMessage, PopulateLogMessage);
 
-		void GetMessage(IList<MessageToken> output)
+		void PopulateMessage(IList<MessageToken> output)
 		{
 			messageTokenizer.Tokenize(state, exception, formatter, output);
 		}
 
-		void GetMessageTokens(IList<MessageToken> output)
+		void PopulateLogMessage(IReadOnlyList<MessageToken> messageTokens, IList<MessageToken> output)
 		{
 			using var data = Pooling.RentMetadataDictionary();
 
@@ -54,7 +54,7 @@ internal class TinyLogger(
 			data.Value.Add("categoryName", new LiteralToken(categoryName));
 			data.Value.Add("eventId", new ObjectToken<EventId>(eventId));
 			data.Value.Add("logLevel", logLevelTokens[logLevel]);
-			data.Value.Add("message", new TokenTemplate(GetMessage));
+			data.Value.Add("message", new TokenTemplate(messageTokens));
 			data.Value.Add("newLine", newLine);
 			data.Value.Add("timestamp", timestamp);
 			data.Value.Add("timestamp_utc", timestampUtc);
