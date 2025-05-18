@@ -75,23 +75,23 @@ public class AnsiConsoleRenderer(IConsoleTheme theme)
 		{
 			sb.Append(color switch
 			{
-				ConsoleColor.Black => "\x1b[30m",
-				ConsoleColor.DarkRed => "\x1b[31m",
-				ConsoleColor.DarkGreen => "\x1b[32m",
-				ConsoleColor.DarkYellow => "\x1b[33m",
-				ConsoleColor.DarkBlue => "\x1b[34m",
-				ConsoleColor.DarkMagenta => "\x1b[35m",
-				ConsoleColor.DarkCyan => "\x1b[36m",
-				ConsoleColor.Gray => "\x1b[37m",
+				ConsoleColor.Black => "\x1b[38;5;0m",
+				ConsoleColor.DarkRed => "\x1b[38;5;1m",
+				ConsoleColor.DarkGreen => "\x1b[38;5;2m",
+				ConsoleColor.DarkYellow => "\x1b[38;5;3m",
+				ConsoleColor.DarkBlue => "\x1b[38;5;4m",
+				ConsoleColor.DarkMagenta => "\x1b[38;5;5m",
+				ConsoleColor.DarkCyan => "\x1b[38;5;6m",
+				ConsoleColor.Gray => "\x1b[38;5;7m",
 
-				ConsoleColor.DarkGray => "\x1b[90m",
-				ConsoleColor.Red => "\x1b[91m",
-				ConsoleColor.Green => "\x1b[92m",
-				ConsoleColor.Yellow => "\x1b[93m",
-				ConsoleColor.Blue => "\x1b[94m",
-				ConsoleColor.Magenta => "\x1b[95m",
-				ConsoleColor.Cyan => "\x1b[96m",
-				ConsoleColor.White => "\x1b[97m",
+				ConsoleColor.DarkGray => "\x1b[38;5;8m",
+				ConsoleColor.Red => "\x1b[38;5;9m",
+				ConsoleColor.Green => "\x1b[38;5;10m",
+				ConsoleColor.Yellow => "\x1b[38;5;11m",
+				ConsoleColor.Blue => "\x1b[38;5;12m",
+				ConsoleColor.Magenta => "\x1b[38;5;13m",
+				ConsoleColor.Cyan => "\x1b[38;5;14m",
+				ConsoleColor.White => "\x1b[38;5;15m",
 
 				_ => "\x1b[39m"
 			});
@@ -101,23 +101,23 @@ public class AnsiConsoleRenderer(IConsoleTheme theme)
 		{
 			sb.Append(color switch
 			{
-				ConsoleColor.Black => "\x1b[40m",
-				ConsoleColor.DarkRed => "\x1b[41m",
-				ConsoleColor.DarkGreen => "\x1b[42m",
-				ConsoleColor.DarkYellow => "\x1b[43m",
-				ConsoleColor.DarkBlue => "\x1b[44m",
-				ConsoleColor.DarkMagenta => "\x1b[45m",
-				ConsoleColor.DarkCyan => "\x1b[46m",
-				ConsoleColor.Gray => "\x1b[47m",
+				ConsoleColor.Black => "\x1b[48;5;0m",
+				ConsoleColor.DarkRed => "\x1b[48;5;1m",
+				ConsoleColor.DarkGreen => "\x1b[48;5;2m",
+				ConsoleColor.DarkYellow => "\x1b[48;5;3m",
+				ConsoleColor.DarkBlue => "\x1b[48;5;4m",
+				ConsoleColor.DarkMagenta => "\x1b[48;5;5m",
+				ConsoleColor.DarkCyan => "\x1b[48;5;6m",
+				ConsoleColor.Gray => "\x1b[48;5;7m",
 
-				ConsoleColor.DarkGray => "\x1b[100m",
-				ConsoleColor.Red => "\x1b[101m",
-				ConsoleColor.Green => "\x1b[102m",
-				ConsoleColor.Yellow => "\x1b[103m",
-				ConsoleColor.Blue => "\x1b[104m",
-				ConsoleColor.Magenta => "\x1b[105m",
-				ConsoleColor.Cyan => "\x1b[106m",
-				ConsoleColor.White => "\x1b[107m",
+				ConsoleColor.DarkGray => "\x1b[48;5;8m",
+				ConsoleColor.Red => "\x1b[48;5;9m",
+				ConsoleColor.Green => "\x1b[48;5;10m",
+				ConsoleColor.Yellow => "\x1b[48;5;11m",
+				ConsoleColor.Blue => "\x1b[48;5;12m",
+				ConsoleColor.Magenta => "\x1b[48;5;13m",
+				ConsoleColor.Cyan => "\x1b[48;5;14m",
+				ConsoleColor.White => "\x1b[48;5;15m",
 
 				_ => "\x1b[49m"
 			});
