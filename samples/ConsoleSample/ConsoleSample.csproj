@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Figgle" />
+    <PackageReference Include="Figgle.Fonts" />
   </ItemGroup>
 
 </Project>

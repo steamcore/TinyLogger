@@ -1,4 +1,4 @@
-using Figgle;
+using Figgle.Fonts;
 using Microsoft.Extensions.Logging;
 
 namespace ConsoleSample;

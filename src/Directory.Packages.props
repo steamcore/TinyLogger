@@ -5,21 +5,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="9.0.5" />
-    <PackageVersion Include="System.Threading.Channels" Version="9.0.5" />
+    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="9.0.8" />
+    <PackageVersion Include="System.Threading.Channels" Version="9.0.8" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageVersion Include="PolySharp" Version="1.15.0" />
-    <PackageVersion Include="System.Interactive.Async" Version="6.0.1" />
+    <PackageVersion Include="System.Interactive.Async" Version="6.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15" />
-    <GlobalPackageReference Include="Roslynator.Analyzers" Version="4.13.1" />
+    <GlobalPackageReference Include="Roslynator.Analyzers" Version="4.14.0" />
   </ItemGroup>
 
 </Project>

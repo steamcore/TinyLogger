@@ -5,11 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageVersion Include="Figgle" Version="0.5.1" />
+    <PackageVersion Include="Figgle" Version="0.6.5" />
+    <PackageVersion Include="Figgle.Fonts" Version="0.6.5" />
   </ItemGroup>
 
 </Project>
