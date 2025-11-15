@@ -43,14 +43,7 @@ public abstract partial record MessageToken
 	/// <param name="value">The value to be parsed</param>
 	public static MessageToken FromFormat(string value)
 	{
-#if NET
 		ArgumentNullException.ThrowIfNull(value);
-#else
-		if (value is null)
-		{
-			throw new ArgumentNullException(nameof(value));
-		}
-#endif
 
 		// Avoid calling the Regex if possible to reduce allocations
 
@@ -59,11 +52,7 @@ public abstract partial record MessageToken
 			return new LiteralToken(value);
 		}
 
-#if NET
 		if (value.Contains(':', StringComparison.Ordinal) || value.Contains(',', StringComparison.Ordinal))
-#else
-		if (value.Contains(':') || value.Contains(','))
-#endif
 		{
 			var match = formatMatcher.Match(value);
 
@@ -117,14 +106,7 @@ public record LiteralToken(string Value) :
 
 	public override void Write(StringBuilder sb)
 	{
-#if NET
 		ArgumentNullException.ThrowIfNull(sb);
-#else
-		if (sb is null)
-		{
-			throw new ArgumentNullException(nameof(sb));
-		}
-#endif
 
 		sb.Append(Value);
 	}
@@ -174,14 +156,7 @@ public record ObjectToken<T>(T? Value, int? Alignment = null, string? Format = n
 
 	public override void Write(StringBuilder sb)
 	{
-#if NET
 		ArgumentNullException.ThrowIfNull(sb);
-#else
-		if (sb is null)
-		{
-			throw new ArgumentNullException(nameof(sb));
-		}
-#endif
 
 		if (Value is string || Alignment is null && Format is null)
 		{
@@ -218,14 +193,7 @@ public record ObjectTokenWithTransform<T> : ObjectToken<T>
 
 	public override void Write(StringBuilder sb)
 	{
-#if NET
 		ArgumentNullException.ThrowIfNull(sb);
-#else
-		if (sb is null)
-		{
-			throw new ArgumentNullException(nameof(sb));
-		}
-#endif
 
 		var transformedValue = Value != null ? ValueTransform(Value) : Value;
 

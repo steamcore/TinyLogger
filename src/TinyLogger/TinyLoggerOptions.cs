@@ -48,9 +48,7 @@ public class TinyLoggerOptions
 	/// </summary>
 	[SuppressMessage("Design", "CA1002:Do not expose generic lists", Justification = "It's supposed to be configurable")]
 	[SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "It's supposed to be configurable")]
-#if NET
 	[UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "Members should not be trimmed")]
-#endif
 	[MinLength(1, ErrorMessage = "{0} must not be empty")]
 	public List<ILogRenderer> Renderers { get; set; } = [];
 
@@ -66,11 +64,9 @@ public class TinyLoggerOptions
 	public bool UseSynchronousWrites { get; set; }
 
 	// Make sure necessary members aren't trimmed
-#if NET
 	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 	[SuppressMessage("Performance", "CA1823:Avoid unused private fields", Justification = "Unused on purpose")]
 	[SuppressMessage("Roslynator", "RCS1213:Remove unused member declaration.", Justification = "Unused on purpose")]
 	[SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Unused on purpose")]
 	private static readonly Type keepRendererMembers = typeof(List<ILogRenderer>);
-#endif
 }

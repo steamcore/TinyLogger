@@ -37,20 +37,8 @@ public static class TemplateTokenizer
 
 	public static void Tokenize(string logFormat, IList<MessageToken> output)
 	{
-#if NET
 		ArgumentNullException.ThrowIfNull(logFormat);
 		ArgumentNullException.ThrowIfNull(output);
-#else
-		if (logFormat is null)
-		{
-			throw new ArgumentNullException(nameof(logFormat));
-		}
-
-		if (output is null)
-		{
-			throw new ArgumentNullException(nameof(output));
-		}
-#endif
 
 		var state = State.Literal;
 		var start = 0;

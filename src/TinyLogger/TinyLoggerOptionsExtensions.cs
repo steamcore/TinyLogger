@@ -21,14 +21,7 @@ public static class TinyLoggerOptionsExtensions
 		/// </summary>
 		public TinyLoggerOptions AddConsole(IConsoleTheme theme)
 		{
-#if NET
 			ArgumentNullException.ThrowIfNull(options);
-#else
-			if (options is null)
-			{
-				throw new ArgumentNullException(nameof(options));
-			}
-#endif
 
 			// Honor no-color.org
 			if (Environment.GetEnvironmentVariable("NO_COLOR") != null)
@@ -52,14 +45,7 @@ public static class TinyLoggerOptionsExtensions
 		/// </summary>
 		public TinyLoggerOptions AddPlainTextConsole()
 		{
-#if NET
 			ArgumentNullException.ThrowIfNull(options);
-#else
-			if (options is null)
-			{
-				throw new ArgumentNullException(nameof(options));
-			}
-#endif
 
 			options.Renderers.Add(new PlainTextConsoleRenderer());
 
@@ -79,14 +65,7 @@ public static class TinyLoggerOptionsExtensions
 		/// </summary>
 		public TinyLoggerOptions AddTrueColorConsole(ITrueColorConsoleTheme theme)
 		{
-#if NET
 			ArgumentNullException.ThrowIfNull(options);
-#else
-			if (options is null)
-			{
-				throw new ArgumentNullException(nameof(options));
-			}
-#endif
 
 			// Honor no-color.org
 			if (Environment.GetEnvironmentVariable("NO_COLOR") != null || !AnsiSupport.TryEnable())
@@ -117,14 +96,7 @@ public static class TinyLoggerOptionsExtensions
 		/// <param name="logFileMode">Append or truncate log file</param>
 		public TinyLoggerOptions AddFile(string fileName, LogFileMode logFileMode)
 		{
-#if NET
 			ArgumentNullException.ThrowIfNull(options);
-#else
-			if (options is null)
-			{
-				throw new ArgumentNullException(nameof(options));
-			}
-#endif
 
 			options.Renderers.Add(new FileRenderer(fileName, logFileMode));
 
@@ -147,14 +119,7 @@ public static class TinyLoggerOptionsExtensions
 		/// <param name="logFileMode">Append or truncate log file</param>
 		public TinyLoggerOptions AddRollingFile(Func<string> getFileName, LogFileMode logFileMode)
 		{
-#if NET
 			ArgumentNullException.ThrowIfNull(options);
-#else
-			if (options is null)
-			{
-				throw new ArgumentNullException(nameof(options));
-			}
-#endif
 
 			options.Renderers.Add(new RollingFileRenderer(getFileName, logFileMode));
 
@@ -167,14 +132,7 @@ public static class TinyLoggerOptionsExtensions
 		/// <param name="stream">The Stream to write to.</param>
 		public TinyLoggerOptions AddStream(Stream stream)
 		{
-#if NET
 			ArgumentNullException.ThrowIfNull(options);
-#else
-			if (options is null)
-			{
-				throw new ArgumentNullException(nameof(options));
-			}
-#endif
 
 			options.Renderers.Add(new StreamRenderer(stream));
 

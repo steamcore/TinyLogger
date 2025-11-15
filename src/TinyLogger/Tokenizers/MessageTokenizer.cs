@@ -9,14 +9,7 @@ public class MessageTokenizer : IMessageTokenizer
 
 	public MessageTokenizer(IOptions<TinyLoggerOptions> options)
 	{
-#if NET
 		ArgumentNullException.ThrowIfNull(options);
-#else
-		if (options is null)
-		{
-			throw new ArgumentNullException(nameof(options));
-		}
-#endif
 
 		objectTokenizer = options.Value.ObjectTokenizer;
 		tokenizedMessageTemplate = CachedTemplateTokenizer.Tokenize(options.Value.Template);
@@ -24,20 +17,8 @@ public class MessageTokenizer : IMessageTokenizer
 
 	public void Tokenize<TState>(TState state, Exception? exception, Func<TState, Exception?, string> formatter, IList<MessageToken> output)
 	{
-#if NET
 		ArgumentNullException.ThrowIfNull(formatter);
 		ArgumentNullException.ThrowIfNull(output);
-#else
-		if (formatter is null)
-		{
-			throw new ArgumentNullException(nameof(formatter));
-		}
-
-		if (output is null)
-		{
-			throw new ArgumentNullException(nameof(output));
-		}
-#endif
 
 		using var data = Pooling.RentMetadataDictionary();
 
@@ -75,26 +56,9 @@ public class MessageTokenizer : IMessageTokenizer
 
 	public void Tokenize(IReadOnlyList<MessageToken> messageTokens, IReadOnlyDictionary<string, MessageToken?> data, IList<MessageToken> output)
 	{
-#if NET
 		ArgumentNullException.ThrowIfNull(messageTokens);
 		ArgumentNullException.ThrowIfNull(data);
 		ArgumentNullException.ThrowIfNull(output);
-#else
-		if (messageTokens is null)
-		{
-			throw new ArgumentNullException(nameof(messageTokens));
-		}
-
-		if (data is null)
-		{
-			throw new ArgumentNullException(nameof(data));
-		}
-
-		if (output is null)
-		{
-			throw new ArgumentNullException(nameof(output));
-		}
-#endif
 
 		for (var i = 0; i < messageTokens.Count; i++)
 		{

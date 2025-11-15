@@ -52,14 +52,7 @@ public static class LoggingBuilderExtensions
 		/// <param name="configureOptions">A callback to configure options</param>
 		public ILoggingBuilder AddTinyLogger(Action<TinyLoggerOptions> configureOptions)
 		{
-#if NET
 			ArgumentNullException.ThrowIfNull(logging);
-#else
-			if (logging is null)
-			{
-				throw new ArgumentNullException(nameof(logging));
-			}
-#endif
 
 			logging.Services.AddOptions<TinyLoggerOptions>().Configure(configureOptions);
 			logging.Services.AddSingleton<IValidateOptions<TinyLoggerOptions>, TinyLoggerOptionsValidator>();

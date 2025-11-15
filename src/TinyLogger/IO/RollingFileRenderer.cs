@@ -60,11 +60,7 @@ public class RollingFileRenderer(Func<string> getFileName, LogFileMode logFileMo
 			if (streamWriter != null)
 			{
 				await streamWriter.FlushAsync();
-#if NET
 				await streamWriter.DisposeAsync();
-#else
-				streamWriter.Dispose();
-#endif
 			}
 
 			streamWriter = new StreamWriter(LogFile.OpenFile(fileName, logFileMode));

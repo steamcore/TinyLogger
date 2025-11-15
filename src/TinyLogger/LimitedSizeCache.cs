@@ -17,11 +17,7 @@ public class LimitedSizeCache<TKey, TValue>
 	private readonly ConcurrentDictionary<TKey, (TValue Value, DateTime LastAccessed)> cache;
 	private readonly int maxItems;
 	private readonly double pruneRatio;
-#if NET9_0_OR_GREATER
 	private readonly Lock pruneLock = new();
-#else
-	private readonly object pruneLock = new();
-#endif
 
 	private Task? pruneTask;
 
@@ -46,14 +42,7 @@ public class LimitedSizeCache<TKey, TValue>
 	/// <param name="value">The value of the item to add or update.</param>
 	public void Put(TKey key, TValue value)
 	{
-#if NET
 		ArgumentNullException.ThrowIfNull(key);
-#else
-		if (key is null)
-		{
-			throw new ArgumentNullException(nameof(key));
-		}
-#endif
 
 		if (value is null)
 		{
@@ -79,14 +68,7 @@ public class LimitedSizeCache<TKey, TValue>
 	/// <returns>true if the cache contains an item with the specified key; otherwise, false.</returns>
 	public bool TryGetValue(TKey key, [NotNullWhen(true)] out TValue? value)
 	{
-#if NET
 		ArgumentNullException.ThrowIfNull(key);
-#else
-		if (key is null)
-		{
-			throw new ArgumentNullException(nameof(key));
-		}
-#endif
 
 		if (cache.TryGetValue(key, out var item))
 		{

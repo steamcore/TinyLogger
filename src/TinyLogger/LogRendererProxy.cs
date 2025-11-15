@@ -7,11 +7,7 @@ namespace TinyLogger;
 internal class LogRendererProxy(TinyLoggerOptions options)
 	: IDisposable
 {
-#if NET9_0_OR_GREATER
 	private readonly Lock _lock = new();
-#else
-	private readonly object _lock = new();
-#endif
 	private readonly List<Channel<PooledTokenizedMessage>> channels = [];
 	private readonly List<Task> workerTasks = [];
 	private bool disposed;
