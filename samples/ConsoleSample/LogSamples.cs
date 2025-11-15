@@ -1,3 +1,4 @@
+#pragma warning disable CA1873 // Avoid potentially expensive logging
 using Figgle.Fonts;
 using Microsoft.Extensions.Logging;
 
