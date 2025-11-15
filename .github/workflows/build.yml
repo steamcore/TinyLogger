@@ -33,15 +33,6 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
-    - name: Run tests (net9.0)
-      run: dotnet run --no-build --disable-logo --framework net9.0
-      working-directory: test/TinyLogger.Tests
-
-    - name: Run tests (net8.0)
-      run: dotnet run --no-build --disable-logo --framework net8.0
-      working-directory: test/TinyLogger.Tests
-
-    - name: Run tests (net481)
-      if: matrix.os == 'windows-latest'
-      run: dotnet run --no-build --disable-logo --framework net481
+    - name: Run tests
+      run: dotnet test --output Detailed --no-build --no-progress --max-parallel-test-modules 1
       working-directory: test/TinyLogger.Tests

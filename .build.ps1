@@ -46,15 +46,8 @@ task DotnetBuild DotnetRestore, {
 task DotnetTest DotnetBuild, {
     Push-Location "./test/TinyLogger.Tests"
 
-    $targetFrameworks = ([xml](Get-Content "./TinyLogger.Tests.csproj") | Select-Xml -XPath "//TargetFrameworks/text()").Node.Value -split ';'
-
-    foreach ($framework in $targetFrameworks) {
-        if ($framework -eq '$(TargetFrameworks)' -or ($framework -eq 'net481' -and -not $IsWindows)) {
-            continue
-        }
-        exec {
-            dotnet run --no-build --disable-logo --framework $framework
-        }
+    exec {
+        dotnet test --no-build
     }
 }
 
