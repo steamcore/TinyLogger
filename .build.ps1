@@ -68,7 +68,7 @@ task AotTest {
     }
     Pop-Location
 
-    Push-Location "./artifacts/publish/TinyLogger.Tests/release_net9.0_$runtime/"
+    Push-Location "./artifacts/publish/TinyLogger.Tests/release_net10.0_$runtime/"
     exec {
         & $binary --disable-logo
     }

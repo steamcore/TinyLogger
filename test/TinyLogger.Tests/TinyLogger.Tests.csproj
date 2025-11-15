@@ -2,15 +2,14 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
     <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('Windows')) ">$(TargetFrameworks);net481</TargetFrameworks>
     <NoWarn>CA1707</NoWarn>
-    <EnableTUnitPolyfills>false</EnableTUnitPolyfills>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Aot)' == 'true' ">
     <TargetFrameworks></TargetFrameworks>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <PublishAot>true</PublishAot>
   </PropertyGroup>
 
@@ -20,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net481' ">
-    <PackageReference Include="Polyfill" />
     <PackageReference Include="System.ComponentModel.Annotations" />
   </ItemGroup>
 
