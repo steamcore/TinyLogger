@@ -41,7 +41,7 @@ task DotnetTest DotnetBuild, {
     Push-Location "./test/TinyLogger.Tests"
 
     exec {
-        dotnet test --no-build
+        dotnet test --disable-logo --no-build
     }
 }
 
