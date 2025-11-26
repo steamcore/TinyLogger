@@ -28,7 +28,9 @@ public static class TinyLoggerOptionsExtensions
 			{
 				options.Renderers.Add(new PlainTextConsoleRenderer());
 			}
-			else if (AnsiSupport.TryEnable() || Environment.GetEnvironmentVariable("ANSI_COLOR") != null)
+			else if (Environment.GetEnvironmentVariable("ANSI_COLOR") != null
+				|| Environment.GetEnvironmentVariable("DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION") != null
+				|| AnsiSupport.TryEnable())
 			{
 				options.Renderers.Add(new AnsiConsoleRenderer(theme));
 			}
