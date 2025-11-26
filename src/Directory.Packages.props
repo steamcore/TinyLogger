@@ -13,8 +13,8 @@
 
   <ItemGroup>
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageVersion Include="Polyfill" Version="9.0.3" />
-    <PackageVersion Include="System.Interactive.Async" Version="6.0.3" />
+    <PackageVersion Include="Polyfill" Version="9.3.0" />
+    <PackageVersion Include="System.Interactive.Async" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
