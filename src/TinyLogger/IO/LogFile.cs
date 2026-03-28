@@ -6,11 +6,11 @@ internal static class LogFile
 	{
 		if (logFileMode == LogFileMode.Truncate)
 		{
-			var fs = File.Open(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
+			var fs = File.Open(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read | FileShare.Delete);
 			fs.SetLength(0);
 			return fs;
 		}
 
-		return File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read);
+		return File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read | FileShare.Delete);
 	}
 }

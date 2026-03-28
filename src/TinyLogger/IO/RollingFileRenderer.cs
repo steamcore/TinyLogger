@@ -1,17 +1,14 @@
-using System.Text;
-
 namespace TinyLogger.IO;
 
 /// <summary>
 /// Render messages in plain text to a file with a rolling filename.
 /// </summary>
 public class RollingFileRenderer(Func<string> getFileName, LogFileMode logFileMode)
-	: ILogRenderer, IDisposable
+	: StreamRendererBase
 {
 	private readonly Func<string> getFileName = getFileName;
 	private readonly LogFileMode logFileMode = logFileMode;
 
-	private bool disposed;
 	private string? openFileName;
 	private StreamWriter? streamWriter;
 
@@ -20,62 +17,42 @@ public class RollingFileRenderer(Func<string> getFileName, LogFileMode logFileMo
 	{
 	}
 
-	public void Dispose()
+	protected override void Dispose(bool disposing)
 	{
-		Dispose(true);
-		GC.SuppressFinalize(this);
-	}
-
-	protected virtual void Dispose(bool disposing)
-	{
-		if (disposed)
-		{
-			return;
-		}
+		base.Dispose(disposing);
 
 		if (disposing)
 		{
 			streamWriter?.Dispose();
 		}
-
-		disposed = true;
 	}
 
-	public Task FlushAsync()
+	override public void Flush()
 	{
-		return streamWriter?.FlushAsync() ?? Task.CompletedTask;
+		streamWriter?.Flush();
 	}
 
-	public async Task RenderAsync(TokenizedMessage message)
+	public override async Task FlushAsync()
 	{
-		if (disposed || message is null)
+		if (streamWriter != null)
 		{
-			return;
+			await streamWriter.FlushAsync().ConfigureAwait(false);
 		}
+	}
 
+	protected override async Task<StreamWriter> GetStreamWriterAsync()
+	{
 		var fileName = getFileName();
 
-		if (openFileName != fileName || streamWriter is null)
+		if (streamWriter != null && (openFileName != fileName || !File.Exists(openFileName)))
 		{
-			if (streamWriter != null)
-			{
-				await streamWriter.FlushAsync();
-				await streamWriter.DisposeAsync();
-			}
-
-			streamWriter = new StreamWriter(LogFile.OpenFile(fileName, logFileMode));
-			openFileName = fileName;
+			await streamWriter.FlushAsync().ConfigureAwait(false);
+			await streamWriter.DisposeAsync().ConfigureAwait(false);
+			streamWriter = null;
 		}
 
-		using var sb = Pooling.RentStringBuilder();
+		openFileName = fileName;
 
-		for (var i = 0; i < message.MessageTokens.Count; i++)
-		{
-			var token = message.MessageTokens[i];
-
-			token.Write(sb.Value);
-		}
-
-		await sb.Value.WriteToStreamWriterAsync(streamWriter).ConfigureAwait(false);
+		return streamWriter ??= new StreamWriter(LogFile.OpenFile(fileName, logFileMode));
 	}
 }

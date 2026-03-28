@@ -1,26 +1,26 @@
-using System.Text;
-
 namespace TinyLogger.IO;
 
 /// <summary>
 /// Renders log messages in plain text to a stream.
 /// </summary>
-public class StreamRenderer : ILogRenderer, IDisposable
+public class StreamRenderer : StreamRendererBase
 {
 	private readonly Func<StreamWriter> createStreamWriter;
-	private readonly Lock streamWriterLock = new();
 
-	private bool disposed;
 	private StreamWriter? streamWriter;
 
 	public StreamRenderer(Stream stream)
-		: this(new Func<StreamWriter>(() => new StreamWriter(stream)))
 	{
+		ArgumentNullException.ThrowIfNull(stream);
+
+		createStreamWriter = () => new StreamWriter(stream);
 	}
 
 	public StreamRenderer(StreamWriter streamWriter)
-		: this(new Func<StreamWriter>(() => streamWriter))
 	{
+		ArgumentNullException.ThrowIfNull(streamWriter);
+
+		createStreamWriter = () => streamWriter;
 	}
 
 	public StreamRenderer(Func<StreamWriter> createStreamWriter)
@@ -30,61 +30,31 @@ public class StreamRenderer : ILogRenderer, IDisposable
 		this.createStreamWriter = createStreamWriter;
 	}
 
-	public void Dispose()
+	protected override void Dispose(bool disposing)
 	{
-		Dispose(true);
-		GC.SuppressFinalize(this);
-	}
-
-	protected virtual void Dispose(bool disposing)
-	{
-		if (disposed)
-		{
-			return;
-		}
+		base.Dispose(disposing);
 
 		if (disposing)
 		{
 			streamWriter?.Dispose();
 		}
-
-		disposed = true;
 	}
 
-	public Task FlushAsync()
+	override public void Flush()
 	{
-		return streamWriter?.FlushAsync() ?? Task.CompletedTask;
+		streamWriter?.Flush();
 	}
 
-	public async Task RenderAsync(TokenizedMessage message)
-	{
-		if (disposed || message is null)
-		{
-			return;
-		}
-
-		using var sb = Pooling.RentStringBuilder();
-
-		for (var i = 0; i < message.MessageTokens.Count; i++)
-		{
-			var token = message.MessageTokens[i];
-
-			token.Write(sb.Value);
-		}
-
-		await sb.Value.WriteToStreamWriterAsync(GetStreamWriter()).ConfigureAwait(false);
-	}
-
-	private StreamWriter GetStreamWriter()
+	public override async Task FlushAsync()
 	{
 		if (streamWriter != null)
 		{
-			return streamWriter;
+			await streamWriter.FlushAsync().ConfigureAwait(false);
 		}
+	}
 
-		lock (streamWriterLock)
-		{
-			return streamWriter ??= createStreamWriter();
-		}
+	protected override Task<StreamWriter> GetStreamWriterAsync()
+	{
+		return Task.FromResult(streamWriter ??= createStreamWriter());
 	}
 }
