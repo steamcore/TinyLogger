@@ -2,6 +2,7 @@ artifacts/
 .cr/
 .vs/
 *.Artifacts/
+TestResults/
 
 *.lock.json
 *.nupkg
