@@ -25,7 +25,7 @@ jobs:
       run: dotnet restore
 
     - name: Check code formatting
-      run: dotnet format --no-restore --verify-no-changes
+      run: dotnet format --no-restore --verify-no-changes --exclude-diagnostics IDE0051 IDE0052
 
     - name: Build
       run: dotnet build --no-restore

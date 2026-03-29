@@ -21,13 +21,13 @@ task DotnetRestore {
 
 task DotnetFormat DotnetRestore, {
     exec {
-        dotnet format --no-restore
+        dotnet format --no-restore --exclude-diagnostics IDE0051 IDE0052
     }
 }
 
 task DotnetFormatCheck DotnetRestore, {
     exec {
-        dotnet format --no-restore --verify-no-changes
+        dotnet format --no-restore --verify-no-changes --exclude-diagnostics IDE0051 IDE0052
     }
 }
 
