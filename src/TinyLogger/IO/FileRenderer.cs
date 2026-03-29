@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace TinyLogger.IO;
 
 /// <summary>
@@ -6,8 +8,13 @@ namespace TinyLogger.IO;
 public class FileRenderer(Func<string> getFileName, LogFileMode logFileMode)
 	: StreamRendererBase
 {
+	private static readonly TimeSpan FileExistsCheckInterval = TimeSpan.FromSeconds(2);
+
 	private string? openFileName;
 	private StreamWriter? streamWriter;
+	private FileSystemWatcher? fileWatcher;
+	private volatile bool fileDeleted;
+	private long lastFileExistsCheckTick = long.MinValue;
 
 	public FileRenderer(string fileName)
 		: this(() => fileName, LogFileMode.Append)
@@ -30,6 +37,9 @@ public class FileRenderer(Func<string> getFileName, LogFileMode logFileMode)
 
 		if (disposing)
 		{
+			fileWatcher?.Dispose();
+			fileWatcher = null;
+
 			streamWriter?.Dispose();
 		}
 	}
@@ -51,15 +61,90 @@ public class FileRenderer(Func<string> getFileName, LogFileMode logFileMode)
 	{
 		var fileName = getFileName();
 
-		if (streamWriter != null && (openFileName != fileName || !File.Exists(openFileName)))
+		if (streamWriter != null && (openFileName != fileName || fileDeleted || IsFileExistsCheckDue() && !File.Exists(openFileName)))
 		{
 			await streamWriter.FlushAsync().ConfigureAwait(false);
 			await streamWriter.DisposeAsync().ConfigureAwait(false);
 			streamWriter = null;
+
+			fileWatcher?.Dispose();
+			fileWatcher = null;
+			fileDeleted = false;
 		}
 
 		openFileName = fileName;
 
-		return streamWriter ??= new StreamWriter(LogFile.OpenFile(fileName, logFileMode));
+		if (streamWriter == null)
+		{
+			streamWriter = new StreamWriter(LogFile.OpenFile(fileName, logFileMode));
+
+			lastFileExistsCheckTick = Stopwatch.GetTimestamp();
+
+			TrySetupFileWatcher(fileName);
+		}
+
+		return streamWriter;
+	}
+
+	private bool IsFileExistsCheckDue()
+	{
+		var now = Stopwatch.GetTimestamp();
+#if NET
+		var elapsedTime = Stopwatch.GetElapsedTime(lastFileExistsCheckTick, now);
+#else
+		var elapsedTicks = now - lastFileExistsCheckTick;
+		var elapsedTime = TimeSpan.FromTicks((long)(elapsedTicks * (double)TimeSpan.TicksPerSecond / Stopwatch.Frequency));
+#endif
+
+		if (elapsedTime > FileExistsCheckInterval)
+		{
+			lastFileExistsCheckTick = now;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private void TrySetupFileWatcher(string fileName)
+	{
+		try
+		{
+			var fullPath = Path.GetFullPath(fileName);
+			var directory = Path.GetDirectoryName(fullPath);
+
+			if (directory == null)
+			{
+				return;
+			}
+
+			fileWatcher = new FileSystemWatcher(directory, Path.GetFileName(fullPath))
+			{
+				NotifyFilter = NotifyFilters.FileName,
+				EnableRaisingEvents = true
+			};
+
+			// FSW handles renames immediately (e.g. log rotation tools that rename-then-delete).
+			// It does NOT reliably fire Deleted while our handle is open on Windows — the OS defers
+			// the directory-entry removal until the last handle closes — so the throttled File.Exists
+			// check in GetStreamWriterAsync covers plain deletions.
+			fileWatcher.Deleted += (_, _) =>
+			{
+				fileDeleted = true;
+			};
+
+			fileWatcher.Renamed += (_, e) =>
+			{
+				if (string.Equals(e.OldFullPath, fullPath, StringComparison.OrdinalIgnoreCase))
+				{
+					fileDeleted = true;
+				}
+			};
+		}
+		catch
+		{
+			// Non-fatal: the throttled File.Exists check will still handle deletion detection.
+			fileWatcher = null;
+		}
 	}
 }
