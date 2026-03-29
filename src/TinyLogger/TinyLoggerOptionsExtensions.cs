@@ -123,7 +123,7 @@ public static class TinyLoggerOptionsExtensions
 		{
 			ArgumentNullException.ThrowIfNull(options);
 
-			options.Renderers.Add(new RollingFileRenderer(getFileName, logFileMode));
+			options.Renderers.Add(new FileRenderer(getFileName, logFileMode));
 
 			return options;
 		}
