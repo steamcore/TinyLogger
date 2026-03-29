@@ -1,11 +1,9 @@
-using System.Diagnostics;
-
 namespace TinyLogger.IO;
 
 /// <summary>
 /// Render messages in plain text to a file, optionally with a rolling filename.
 /// </summary>
-public class FileRenderer(Func<string> getFileName, LogFileMode logFileMode)
+public class FileRenderer(Func<string> getFileName, LogFileMode logFileMode, TimeProvider timeProvider)
 	: StreamRendererBase
 {
 	private static readonly TimeSpan FileExistsCheckInterval = TimeSpan.FromSeconds(2);
@@ -17,17 +15,22 @@ public class FileRenderer(Func<string> getFileName, LogFileMode logFileMode)
 	private long lastFileExistsCheckTick = long.MinValue;
 
 	public FileRenderer(string fileName)
-		: this(() => fileName, LogFileMode.Append)
+		: this(() => fileName, LogFileMode.Append, TimeProvider.System)
 	{
 	}
 
 	public FileRenderer(string fileName, LogFileMode logFileMode)
-		: this(() => fileName, logFileMode)
+		: this(() => fileName, logFileMode, TimeProvider.System)
 	{
 	}
 
 	public FileRenderer(Func<string> getFileName)
-		: this(getFileName, LogFileMode.Append)
+		: this(getFileName, LogFileMode.Append, TimeProvider.System)
+	{
+	}
+
+	public FileRenderer(Func<string> getFileName, LogFileMode logFileMode)
+		: this(getFileName, logFileMode, TimeProvider.System)
 	{
 	}
 
@@ -78,7 +81,7 @@ public class FileRenderer(Func<string> getFileName, LogFileMode logFileMode)
 		{
 			streamWriter = new StreamWriter(LogFile.OpenFile(fileName, logFileMode));
 
-			lastFileExistsCheckTick = Stopwatch.GetTimestamp();
+			lastFileExistsCheckTick = timeProvider.GetTimestamp();
 
 			TrySetupFileWatcher(fileName);
 		}
@@ -88,13 +91,8 @@ public class FileRenderer(Func<string> getFileName, LogFileMode logFileMode)
 
 	private bool IsFileExistsCheckDue()
 	{
-		var now = Stopwatch.GetTimestamp();
-#if NET
-		var elapsedTime = Stopwatch.GetElapsedTime(lastFileExistsCheckTick, now);
-#else
-		var elapsedTicks = now - lastFileExistsCheckTick;
-		var elapsedTime = TimeSpan.FromTicks((long)(elapsedTicks * (double)TimeSpan.TicksPerSecond / Stopwatch.Frequency));
-#endif
+		var now = timeProvider.GetTimestamp();
+		var elapsedTime = timeProvider.GetElapsedTime(lastFileExistsCheckTick, now);
 
 		if (elapsedTime > FileExistsCheckInterval)
 		{
