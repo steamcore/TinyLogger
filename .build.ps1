@@ -7,6 +7,9 @@ param (
     $Version
 )
 
+$artifactFolder = "artifacts"
+$testResultsFolder = Join-Path $artifactFolder "testresults"
+
 task AssertVersion {
     if (-not $Version) {
         throw "Specify version with -Version parameter"
@@ -38,32 +41,33 @@ task DotnetBuild DotnetRestore, {
 }
 
 task DotnetTest DotnetBuild, {
-    Push-Location "./test/TinyLogger.Tests"
-
     exec {
-        dotnet test --disable-logo --no-build
+        dotnet test `
+            --disable-logo `
+            --no-build `
+            --results-directory $testResultsFolder
     }
 }
 
 task AotTest {
-    $binary = $IsWindows ? "./TinyLogger.Tests.exe" : "./TinyLogger.Tests"
     $runtime = $IsWindows ? "win-x64" : "linux-x64"
+    $binaryPath = Join-Path "artifacts" "publish" "TinyLogger.Tests" "release_$runtime"
+    $binary = $IsWindows ? "$binaryPath/TinyLogger.Tests.exe" : "$binaryPath/TinyLogger.Tests"
 
-    Push-Location "./test/TinyLogger.Tests"
     exec {
-        dotnet publish /p:"Aot=true" --runtime $runtime
+        dotnet publish (Join-Path "test" "TinyLogger.Tests") `
+            --runtime $runtime `
+            -p:"Aot=true"
     }
-    Pop-Location
 
-    Push-Location "./artifacts/publish/TinyLogger.Tests/release_net10.0_$runtime/"
     exec {
-        & $binary --disable-logo
+        & $binary --disable-logo --results-directory $testResultsFolder
     }
 }
 
 task DotnetPack AssertVersion, {
     exec {
-        dotnet pack .\src\TinyLogger\TinyLogger.csproj `
+        dotnet pack (Join-Path "src" "TinyLogger") `
             --configuration Release `
             --output . `
             /p:ContinuousIntegrationBuild="true" `
