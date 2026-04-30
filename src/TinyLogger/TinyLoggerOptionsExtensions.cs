@@ -4,6 +4,13 @@ using TinyLogger.IO;
 
 namespace TinyLogger;
 
+internal enum ColorMode
+{
+	Ansi,
+	Windows,
+	PlainText
+}
+
 public static class TinyLoggerOptionsExtensions
 {
 	extension(TinyLoggerOptions options)
@@ -23,21 +30,12 @@ public static class TinyLoggerOptionsExtensions
 		{
 			ArgumentNullException.ThrowIfNull(options);
 
-			// Honor no-color.org
-			if (Environment.GetEnvironmentVariable("NO_COLOR") != null)
+			options.Renderers.Add(DetectColorMode() switch
 			{
-				options.Renderers.Add(new PlainTextConsoleRenderer());
-			}
-			else if (Environment.GetEnvironmentVariable("ANSI_COLOR") != null
-				|| Environment.GetEnvironmentVariable("DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION") != null
-				|| AnsiSupport.TryEnable())
-			{
-				options.Renderers.Add(new AnsiConsoleRenderer(theme));
-			}
-			else
-			{
-				options.Renderers.Add(new WindowsConsoleRenderer(theme));
-			}
+				ColorMode.Ansi => new AnsiConsoleRenderer(theme),
+				ColorMode.Windows => new WindowsConsoleRenderer(theme),
+				_ => new PlainTextConsoleRenderer()
+			});
 
 			return options;
 		}
@@ -69,15 +67,11 @@ public static class TinyLoggerOptionsExtensions
 		{
 			ArgumentNullException.ThrowIfNull(options);
 
-			// Honor no-color.org
-			if (Environment.GetEnvironmentVariable("NO_COLOR") != null || !AnsiSupport.TryEnable())
+			options.Renderers.Add(DetectColorMode() switch
 			{
-				options.Renderers.Add(new PlainTextConsoleRenderer());
-			}
-			else
-			{
-				options.Renderers.Add(new TrueColorConsoleRenderer(theme));
-			}
+				ColorMode.Ansi => new TrueColorConsoleRenderer(theme),
+				_ => new PlainTextConsoleRenderer()
+			});
 
 			return options;
 		}
@@ -140,5 +134,34 @@ public static class TinyLoggerOptionsExtensions
 
 			return options;
 		}
+	}
+
+	private static ColorMode DetectColorMode()
+	{
+		// These environment variables are commonly used to force color output in various tools and libraries, so we check them to determine if color output should be enabled.
+		var forceColor = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ANSI_COLOR"))
+			|| !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FORCE_COLOR"))
+			|| !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION"));
+
+		// Honor no-color.org
+		var noColor = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NO_COLOR"));
+
+		System.Console.WriteLine($"forceColor: {forceColor}, noColor: {noColor}, isOutputRedirected: {System.Console.IsOutputRedirected}");
+
+		// Enable color output if forced by environment variables or if the output is not redirected (i.e., it's a terminal).
+		if (forceColor || !noColor && !System.Console.IsOutputRedirected)
+		{
+			// Always use ANSI when color is forced since ANSI support can't be reliably detected when console is redirected
+			if (forceColor || AnsiSupport.TryEnable())
+			{
+				return ColorMode.Ansi;
+			}
+			else
+			{
+				return ColorMode.Windows;
+			}
+		}
+
+		return ColorMode.PlainText;
 	}
 }
