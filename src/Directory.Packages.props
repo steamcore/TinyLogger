@@ -5,18 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.5" />
-    <PackageVersion Include="Microsoft.Bcl.Memory" Version="10.0.5" />
-    <PackageVersion Include="Microsoft.Bcl.TimeProvider" Version="10.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="10.0.5" />
-    <PackageVersion Include="System.Threading.Channels" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.Bcl.Memory" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.Bcl.TimeProvider" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="10.0.7" />
+    <PackageVersion Include="System.Threading.Channels" Version="10.0.7" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageVersion Include="Polyfill" Version="9.23.0" />
-    <PackageVersion Include="System.Interactive.Async" Version="7.0.0" />
+    <PackageVersion Include="Polyfill" Version="10.3.0" />
+    <PackageVersion Include="System.Interactive.Async" Version="7.0.1" />
   </ItemGroup>
 
   <ItemGroup>

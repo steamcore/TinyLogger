@@ -5,14 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageVersion Include="TUnit.Engine" Version="1.24.0" />
+    <PackageVersion Include="TUnit.Engine" Version="1.41.0" />
   </ItemGroup>
 
 </Project>
