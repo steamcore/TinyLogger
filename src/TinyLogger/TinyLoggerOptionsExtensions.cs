@@ -146,8 +146,6 @@ public static class TinyLoggerOptionsExtensions
 		// Honor no-color.org
 		var noColor = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NO_COLOR"));
 
-		System.Console.WriteLine($"forceColor: {forceColor}, noColor: {noColor}, isOutputRedirected: {System.Console.IsOutputRedirected}");
-
 		// Enable color output if forced by environment variables or if the output is not redirected (i.e., it's a terminal).
 		if (forceColor || !noColor && !System.Console.IsOutputRedirected)
 		{
