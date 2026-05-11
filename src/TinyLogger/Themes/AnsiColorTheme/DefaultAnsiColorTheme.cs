@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
 
-namespace TinyLogger.Console;
+namespace TinyLogger.Themes.AnsiColorTheme;
 
-public class DefaultConsoleTheme : IConsoleTheme
+public class DefaultAnsiColorTheme : IAnsiColorTheme
 {
 	public virtual (ConsoleColor? foreground, ConsoleColor? background) GetColors(object? value, LogLevel logLevel)
 	{

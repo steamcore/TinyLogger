@@ -1,3 +1,4 @@
+using TinyLogger.Themes.AnsiColorTheme;
 using SystemConsole = System.Console;
 
 namespace TinyLogger.Console;
@@ -5,7 +6,7 @@ namespace TinyLogger.Console;
 /// <summary>
 /// Renders log messages to the console in color by using the legacy Windows API.
 /// </summary>
-public class WindowsConsoleRenderer(IConsoleTheme theme)
+public class WindowsConsoleRenderer(IAnsiColorTheme theme)
 	: ILogRenderer
 {
 	public Task FlushAsync()
@@ -25,7 +26,7 @@ public class WindowsConsoleRenderer(IConsoleTheme theme)
 		return Task.CompletedTask;
 	}
 
-	private static void Render(IConsoleTheme theme, TokenizedMessage message)
+	private static void Render(IAnsiColorTheme theme, TokenizedMessage message)
 	{
 		foreach (var token in message.MessageTokens)
 		{

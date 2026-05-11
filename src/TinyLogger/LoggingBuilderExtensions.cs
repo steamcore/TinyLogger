@@ -1,9 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TinyLogger;
-using TinyLogger.Console;
-using TinyLogger.Console.TrueColor;
+using TinyLogger.Formatters;
 using TinyLogger.IO;
+using TinyLogger.Themes.AnsiColorTheme;
+using TinyLogger.Themes.TrueColorTheme;
 
 namespace Microsoft.Extensions.Logging;
 
@@ -16,11 +17,11 @@ public static class LoggingBuilderExtensions
 		/// <summary>
 		/// Add TinyLogger with a message template and color console renderer.
 		/// </summary>
-		public ILoggingBuilder AddTinyConsoleLogger(string? template = null, IConsoleTheme? theme = null)
+		public ILoggingBuilder AddTinyConsoleLogger(string? template = null, IAnsiColorTheme? theme = null)
 		{
 			return logging.AddTinyLogger(options =>
 			{
-				options.AddConsole(theme ?? new DefaultConsoleTheme());
+				options.AddConsole(theme ?? new DefaultAnsiColorTheme());
 				options.Template = template ?? MessageTemplates.Default;
 			});
 		}
@@ -40,11 +41,11 @@ public static class LoggingBuilderExtensions
 		/// <summary>
 		/// Add TinyLogger with a message template and RGB color console renderer.
 		/// </summary>
-		public ILoggingBuilder AddTinyTrueColorConsoleLogger(string? template = null, ITrueColorConsoleTheme? theme = null)
+		public ILoggingBuilder AddTinyTrueColorConsoleLogger(string? template = null, ITrueColorTheme? theme = null)
 		{
 			return logging.AddTinyLogger(options =>
 			{
-				options.AddTrueColorConsole(theme ?? new DefaultTrueColorConsoleTheme());
+				options.AddTrueColorConsole(theme ?? new DefaultTrueColorTheme());
 				options.Template = template ?? MessageTemplates.Default;
 			});
 		}
@@ -54,9 +55,17 @@ public static class LoggingBuilderExtensions
 		/// </summary>
 		public ILoggingBuilder AddTinyFileLogger(string fileName, LogFileMode logFileMode = LogFileMode.Append, string? template = null)
 		{
+			return AddTinyFileLogger(logging, fileName, PlainTextLogFormatter.Instance, logFileMode, template);
+		}
+
+		/// <summary>
+		/// Adds TinyLogger configured with a file renderer.
+		/// </summary>
+		public ILoggingBuilder AddTinyFileLogger(string fileName, ILogFormatter formatter, LogFileMode logFileMode = LogFileMode.Append, string? template = null)
+		{
 			return logging.AddTinyLogger(options =>
 			{
-				options.AddFile(fileName, logFileMode);
+				options.AddFile(fileName, formatter, logFileMode);
 				options.Template = template ?? MessageTemplates.Default;
 			});
 		}
@@ -66,9 +75,17 @@ public static class LoggingBuilderExtensions
 		/// </summary>
 		public ILoggingBuilder AddTinyRollingFileLogger(Func<string> getFileName, LogFileMode logFileMode = LogFileMode.Append, string? template = null)
 		{
+			return AddTinyRollingFileLogger(logging, getFileName, PlainTextLogFormatter.Instance, logFileMode, template);
+		}
+
+		/// <summary>
+		/// Adds TinyLogger configured with a rolling file renderer.
+		/// </summary>
+		public ILoggingBuilder AddTinyRollingFileLogger(Func<string> getFileName, ILogFormatter formatter, LogFileMode logFileMode = LogFileMode.Append, string? template = null)
+		{
 			return logging.AddTinyLogger(options =>
 			{
-				options.AddRollingFile(getFileName, logFileMode);
+				options.AddRollingFile(getFileName, formatter, logFileMode);
 				options.Template = template ?? MessageTemplates.Default;
 			});
 		}

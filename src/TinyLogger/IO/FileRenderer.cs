@@ -1,10 +1,12 @@
+using TinyLogger.Formatters;
+
 namespace TinyLogger.IO;
 
 /// <summary>
 /// Render messages in plain text to a file, optionally with a rolling filename.
 /// </summary>
-public class FileRenderer(Func<string> getFileName, LogFileMode logFileMode, TimeProvider timeProvider)
-	: StreamRendererBase
+public class FileRenderer(ILogFormatter logFormatter, Func<string> getFileName, LogFileMode logFileMode, TimeProvider timeProvider)
+	: StreamRendererBase(logFormatter)
 {
 	private static readonly TimeSpan FileExistsCheckInterval = TimeSpan.FromSeconds(2);
 
@@ -14,23 +16,23 @@ public class FileRenderer(Func<string> getFileName, LogFileMode logFileMode, Tim
 	private volatile bool fileDeleted;
 	private long lastFileExistsCheckTick = long.MinValue;
 
-	public FileRenderer(string fileName)
-		: this(() => fileName, LogFileMode.Append, TimeProvider.System)
+	public FileRenderer(ILogFormatter logFormatter, string fileName)
+		: this(logFormatter, () => fileName, LogFileMode.Append, TimeProvider.System)
 	{
 	}
 
-	public FileRenderer(string fileName, LogFileMode logFileMode)
-		: this(() => fileName, logFileMode, TimeProvider.System)
+	public FileRenderer(ILogFormatter logFormatter, string fileName, LogFileMode logFileMode)
+		: this(logFormatter, () => fileName, logFileMode, TimeProvider.System)
 	{
 	}
 
-	public FileRenderer(Func<string> getFileName)
-		: this(getFileName, LogFileMode.Append, TimeProvider.System)
+	public FileRenderer(ILogFormatter logFormatter, Func<string> getFileName)
+		: this(logFormatter, getFileName, LogFileMode.Append, TimeProvider.System)
 	{
 	}
 
-	public FileRenderer(Func<string> getFileName, LogFileMode logFileMode)
-		: this(getFileName, logFileMode, TimeProvider.System)
+	public FileRenderer(ILogFormatter logFormatter, Func<string> getFileName, LogFileMode logFileMode)
+		: this(logFormatter, getFileName, logFileMode, TimeProvider.System)
 	{
 	}
 

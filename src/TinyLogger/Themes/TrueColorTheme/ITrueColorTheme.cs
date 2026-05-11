@@ -1,9 +1,9 @@
 using System.Drawing;
 using Microsoft.Extensions.Logging;
 
-namespace TinyLogger.Console.TrueColor;
+namespace TinyLogger.Themes.TrueColorTheme;
 
-public interface ITrueColorConsoleTheme
+public interface ITrueColorTheme
 {
 	(Color? foreground, Color? background) GetColors(object? value, LogLevel logLevel);
 }

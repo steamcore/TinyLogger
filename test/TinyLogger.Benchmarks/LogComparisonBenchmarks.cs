@@ -1,8 +1,10 @@
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.Logging;
 using TinyLogger.Console;
-using TinyLogger.Console.TrueColor;
+using TinyLogger.Formatters;
 using TinyLogger.IO;
+using TinyLogger.Themes.AnsiColorTheme;
+using TinyLogger.Themes.TrueColorTheme;
 
 namespace TinyLogger.Benchmarks;
 
@@ -39,7 +41,7 @@ public partial class LogComparisonBenchmarks : IDisposable
 		{
 			configure.AddTinyLogger(options =>
 			{
-				options.Renderers.Add(new AnsiConsoleRenderer(new DefaultConsoleTheme()));
+				options.Renderers.Add(new ConsoleRenderer(new AnsiColorLogFormatter(new DefaultAnsiColorTheme())));
 				options.UseSynchronousWrites = true;
 			});
 		});
@@ -50,7 +52,7 @@ public partial class LogComparisonBenchmarks : IDisposable
 		{
 			configure.AddTinyLogger(options =>
 			{
-				options.Renderers.Add(new PlainTextConsoleRenderer());
+				options.Renderers.Add(new ConsoleRenderer(PlainTextLogFormatter.Instance));
 				options.UseSynchronousWrites = true;
 			});
 		});
@@ -61,7 +63,7 @@ public partial class LogComparisonBenchmarks : IDisposable
 		{
 			configure.AddTinyLogger(options =>
 			{
-				options.Renderers.Add(new TrueColorConsoleRenderer(new DefaultTrueColorConsoleTheme()));
+				options.Renderers.Add(new ConsoleRenderer(new TrueColorLogFormatter(new DefaultTrueColorTheme())));
 				options.UseSynchronousWrites = true;
 			});
 		});
@@ -72,7 +74,7 @@ public partial class LogComparisonBenchmarks : IDisposable
 		{
 			configure.AddTinyLogger(options =>
 			{
-				options.Renderers.Add(new StreamRenderer(memoryStream));
+				options.Renderers.Add(new StreamRenderer(PlainTextLogFormatter.Instance, memoryStream));
 				options.UseSynchronousWrites = true;
 			});
 		});

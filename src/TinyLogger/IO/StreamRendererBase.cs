@@ -1,13 +1,22 @@
 using System.Text;
+using TinyLogger.Formatters;
 
 namespace TinyLogger.IO;
 
 /// <summary>
-/// Renders log messages in plain text to a stream.
+/// Renders log messages to a stream using the supplied log formatter.
 /// </summary>
 public abstract class StreamRendererBase : ILogRenderer, IDisposable
 {
+	private readonly ILogFormatter logFormatter;
+
 	private bool disposed;
+
+	protected StreamRendererBase(ILogFormatter logFormatter)
+	{
+		ArgumentNullException.ThrowIfNull(logFormatter);
+		this.logFormatter = logFormatter;
+	}
 
 	public void Dispose()
 	{
@@ -42,12 +51,7 @@ public abstract class StreamRendererBase : ILogRenderer, IDisposable
 
 		using var sb = Pooling.RentStringBuilder();
 
-		for (var i = 0; i < message.MessageTokens.Count; i++)
-		{
-			var token = message.MessageTokens[i];
-
-			token.Write(sb.Value);
-		}
+		logFormatter.Format(message, sb.Value);
 
 		var streamWriter = await GetStreamWriterAsync().ConfigureAwait(false);
 

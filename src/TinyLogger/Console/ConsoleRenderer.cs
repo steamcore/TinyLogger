@@ -1,11 +1,13 @@
 using System.Text;
+using TinyLogger.Formatters;
 
 namespace TinyLogger.Console;
 
 /// <summary>
-/// Renders log messages to the console in plain text.
+/// Renders log messages to the console using the supplied log formatter.
 /// </summary>
-public class PlainTextConsoleRenderer : ILogRenderer
+public class ConsoleRenderer(ILogFormatter logFormatter)
+	: ILogRenderer
 {
 	public Task FlushAsync()
 	{
@@ -21,12 +23,7 @@ public class PlainTextConsoleRenderer : ILogRenderer
 
 		using var sb = Pooling.RentStringBuilder();
 
-		for (var i = 0; i < message.MessageTokens.Count; i++)
-		{
-			var token = message.MessageTokens[i];
-
-			token.Write(sb.Value);
-		}
+		logFormatter.Format(message, sb.Value);
 
 		sb.Value.WriteToConsole();
 

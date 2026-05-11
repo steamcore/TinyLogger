@@ -1,4 +1,5 @@
 using TinyLogger.Console;
+using TinyLogger.Formatters;
 
 namespace TinyLogger;
 
@@ -10,7 +11,7 @@ public class TinyLoggerOptionsValidatorTests
 		var options = new TinyLoggerOptions
 		{
 			MaxQueueDepth = 1000,
-			Renderers = [new PlainTextConsoleRenderer()],
+			Renderers = [new ConsoleRenderer(PlainTextLogFormatter.Instance)],
 			Template = MessageTemplates.DefaultTimestamped
 		};
 

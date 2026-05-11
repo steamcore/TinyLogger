@@ -2,9 +2,9 @@ using System.Drawing;
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 
-namespace TinyLogger.Console.TrueColor;
+namespace TinyLogger.Themes.TrueColorTheme;
 
-public class DefaultTrueColorConsoleTheme : ITrueColorConsoleTheme
+public class DefaultTrueColorTheme : ITrueColorTheme
 {
 	public static readonly Color Black = GetColor("202020");
 	public static readonly Color Red = GetColor("CE5746");

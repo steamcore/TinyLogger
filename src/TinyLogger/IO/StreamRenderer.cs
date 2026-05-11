@@ -1,7 +1,9 @@
+using TinyLogger.Formatters;
+
 namespace TinyLogger.IO;
 
 /// <summary>
-/// Renders log messages in plain text to a stream.
+/// Renders log messages to a stream using the supplied log formatter.
 /// </summary>
 public class StreamRenderer : StreamRendererBase
 {
@@ -9,21 +11,24 @@ public class StreamRenderer : StreamRendererBase
 
 	private StreamWriter? streamWriter;
 
-	public StreamRenderer(Stream stream)
+	public StreamRenderer(ILogFormatter logFormatter, Stream stream)
+		: base(logFormatter)
 	{
 		ArgumentNullException.ThrowIfNull(stream);
 
 		createStreamWriter = () => new StreamWriter(stream);
 	}
 
-	public StreamRenderer(StreamWriter streamWriter)
+	public StreamRenderer(ILogFormatter logFormatter, StreamWriter streamWriter)
+		: base(logFormatter)
 	{
 		ArgumentNullException.ThrowIfNull(streamWriter);
 
 		createStreamWriter = () => streamWriter;
 	}
 
-	public StreamRenderer(Func<StreamWriter> createStreamWriter)
+	public StreamRenderer(ILogFormatter logFormatter, Func<StreamWriter> createStreamWriter)
+		: base(logFormatter)
 	{
 		ArgumentNullException.ThrowIfNull(createStreamWriter);
 

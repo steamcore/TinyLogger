@@ -1,6 +1,8 @@
 using TinyLogger.Console;
-using TinyLogger.Console.TrueColor;
+using TinyLogger.Formatters;
 using TinyLogger.IO;
+using TinyLogger.Themes.AnsiColorTheme;
+using TinyLogger.Themes.TrueColorTheme;
 
 namespace TinyLogger;
 
@@ -20,22 +22,42 @@ public static class TinyLoggerOptionsExtensions
 		/// </summary>
 		public TinyLoggerOptions AddConsole()
 		{
-			return AddConsole(options, new DefaultConsoleTheme());
+			return AddConsole(options, new DefaultAnsiColorTheme());
 		}
 
 		/// <summary>
 		/// Render messages to the console using a specific color theme.
 		/// </summary>
-		public TinyLoggerOptions AddConsole(IConsoleTheme theme)
+		public TinyLoggerOptions AddConsole(IAnsiColorTheme theme)
 		{
 			ArgumentNullException.ThrowIfNull(options);
 
-			options.Renderers.Add(DetectColorMode() switch
+			var mode = DetectColorMode();
+
+			if (mode == ColorMode.Windows)
 			{
-				ColorMode.Ansi => new AnsiConsoleRenderer(theme),
-				ColorMode.Windows => new WindowsConsoleRenderer(theme),
-				_ => new PlainTextConsoleRenderer()
-			});
+				options.Renderers.Add(new WindowsConsoleRenderer(theme));
+				return options;
+			}
+
+			ILogFormatter formatter = mode == ColorMode.Ansi
+				? new AnsiColorLogFormatter(theme)
+				: PlainTextLogFormatter.Instance;
+
+			options.Renderers.Add(new ConsoleRenderer(formatter));
+
+			return options;
+		}
+
+		/// <summary>
+		/// Render messages to the console.
+		/// </summary>
+		public TinyLoggerOptions AddConsole(ILogFormatter formatter)
+		{
+			ArgumentNullException.ThrowIfNull(options);
+			ArgumentNullException.ThrowIfNull(formatter);
+
+			options.Renderers.Add(new ConsoleRenderer(formatter));
 
 			return options;
 		}
@@ -45,11 +67,7 @@ public static class TinyLoggerOptionsExtensions
 		/// </summary>
 		public TinyLoggerOptions AddPlainTextConsole()
 		{
-			ArgumentNullException.ThrowIfNull(options);
-
-			options.Renderers.Add(new PlainTextConsoleRenderer());
-
-			return options;
+			return AddConsole(options, PlainTextLogFormatter.Instance);
 		}
 
 		/// <summary>
@@ -57,32 +75,19 @@ public static class TinyLoggerOptionsExtensions
 		/// </summary>
 		public TinyLoggerOptions AddTrueColorConsole()
 		{
-			return AddTrueColorConsole(options, new DefaultTrueColorConsoleTheme());
+			return AddTrueColorConsole(options, new DefaultTrueColorTheme());
 		}
 
 		/// <summary>
 		/// Render messages to the console using a specific RGB color theme.
 		/// </summary>
-		public TinyLoggerOptions AddTrueColorConsole(ITrueColorConsoleTheme theme)
+		public TinyLoggerOptions AddTrueColorConsole(ITrueColorTheme theme)
 		{
-			ArgumentNullException.ThrowIfNull(options);
+			ILogFormatter formatter = DetectColorMode() == ColorMode.Ansi
+				? new TrueColorLogFormatter(theme)
+				: PlainTextLogFormatter.Instance;
 
-			options.Renderers.Add(DetectColorMode() switch
-			{
-				ColorMode.Ansi => new TrueColorConsoleRenderer(theme),
-				_ => new PlainTextConsoleRenderer()
-			});
-
-			return options;
-		}
-
-		/// <summary>
-		/// Render messages in plain text to a file.
-		/// </summary>
-		/// <param name="fileName">The file name to write to.</param>
-		public TinyLoggerOptions AddFile(string fileName)
-		{
-			return options.AddFile(fileName, LogFileMode.Append);
+			return AddConsole(options, formatter);
 		}
 
 		/// <summary>
@@ -90,11 +95,22 @@ public static class TinyLoggerOptionsExtensions
 		/// </summary>
 		/// <param name="fileName">The file name to write to.</param>
 		/// <param name="logFileMode">Append or truncate log file</param>
-		public TinyLoggerOptions AddFile(string fileName, LogFileMode logFileMode)
+		public TinyLoggerOptions AddFile(string fileName, LogFileMode logFileMode = LogFileMode.Append)
+		{
+			return AddFile(options, fileName, PlainTextLogFormatter.Instance, logFileMode);
+		}
+
+		/// <summary>
+		/// Render messages to a file.
+		/// </summary>
+		/// <param name="fileName">The file name to write to.</param>
+		/// <param name="formatter">The formatter to use when rendering log messages.</param>
+		/// <param name="logFileMode">Append or truncate log file</param>
+		public TinyLoggerOptions AddFile(string fileName, ILogFormatter formatter, LogFileMode logFileMode = LogFileMode.Append)
 		{
 			ArgumentNullException.ThrowIfNull(options);
 
-			options.Renderers.Add(new FileRenderer(fileName, logFileMode));
+			options.Renderers.Add(new FileRenderer(formatter, fileName, logFileMode));
 
 			return options;
 		}
@@ -103,21 +119,28 @@ public static class TinyLoggerOptionsExtensions
 		/// Render messages in plain text to a file with a rolling filename.
 		/// </summary>
 		/// <param name="getFileName">Retrieve a filename to write to, if the value changes a new file with that file name will be created.</param>
-		public TinyLoggerOptions AddRollingFile(Func<string> getFileName)
-		{
-			return options.AddRollingFile(getFileName, LogFileMode.Append);
-		}
-
-		/// <summary>
-		/// Render messages in plain text to a file with a rolling filename.
-		/// </summary>
-		/// <param name="getFileName">Retrieve a filename to write to, if the value changes a new file with that file name will be created.</param>
 		/// <param name="logFileMode">Append or truncate log file</param>
-		public TinyLoggerOptions AddRollingFile(Func<string> getFileName, LogFileMode logFileMode)
+		public TinyLoggerOptions AddRollingFile(Func<string> getFileName, LogFileMode logFileMode = LogFileMode.Append)
 		{
 			ArgumentNullException.ThrowIfNull(options);
 
-			options.Renderers.Add(new FileRenderer(getFileName, logFileMode));
+			options.Renderers.Add(new FileRenderer(PlainTextLogFormatter.Instance, getFileName, logFileMode));
+
+			return options;
+		}
+
+		/// <summary>
+		/// Render messages in to a file with a rolling filename.
+		/// </summary>
+		/// <param name="getFileName">Retrieve a filename to write to, if the value changes a new file with that file name will be created.</param>
+		/// <param name="formatter">The formatter to use when rendering log messages.</param>
+		/// <param name="logFileMode">Append or truncate log file</param>
+		public TinyLoggerOptions AddRollingFile(Func<string> getFileName, ILogFormatter formatter, LogFileMode logFileMode = LogFileMode.Append)
+		{
+			ArgumentNullException.ThrowIfNull(options);
+			ArgumentNullException.ThrowIfNull(formatter);
+
+			options.Renderers.Add(new FileRenderer(formatter, getFileName, logFileMode));
 
 			return options;
 		}
@@ -128,9 +151,21 @@ public static class TinyLoggerOptionsExtensions
 		/// <param name="stream">The Stream to write to.</param>
 		public TinyLoggerOptions AddStream(Stream stream)
 		{
-			ArgumentNullException.ThrowIfNull(options);
+			return AddStream(options, stream, PlainTextLogFormatter.Instance);
+		}
 
-			options.Renderers.Add(new StreamRenderer(stream));
+		/// <summary>
+		/// Render messages to a stream.
+		/// </summary>
+		/// <param name="stream">The Stream to write to.</param>
+		/// <param name="formatter">The formatter to use when rendering log messages.</param>
+		public TinyLoggerOptions AddStream(Stream stream, ILogFormatter formatter)
+		{
+			ArgumentNullException.ThrowIfNull(options);
+			ArgumentNullException.ThrowIfNull(stream);
+			ArgumentNullException.ThrowIfNull(formatter);
+
+			options.Renderers.Add(new StreamRenderer(formatter, stream));
 
 			return options;
 		}
