@@ -10,8 +10,6 @@ namespace Microsoft.Extensions.Logging;
 
 public static class LoggingBuilderExtensions
 {
-	private static bool servicesRegistered;
-
 	extension(ILoggingBuilder logging)
 	{
 		/// <summary>
@@ -100,12 +98,36 @@ public static class LoggingBuilderExtensions
 
 			logging.Services.AddOptions<TinyLoggerOptions>().Configure(configureOptions);
 
-			if (!servicesRegistered)
+			var foundValidator = false;
+			var foundProvider = false;
+
+			// Detect if the options validator and logger provider have already been registered to avoid duplicate registrations,
+			// we do it this way because we can not use TryAddSingleton as that would fail to register the services if there are other services with the same service type.
+			foreach (var service in logging.Services)
+			{
+				if (service.ImplementationType == typeof(TinyLoggerOptionsValidator))
+				{
+					foundValidator = true;
+				}
+				else if (service.ImplementationType == typeof(TinyLoggerProvider))
+				{
+					foundProvider = true;
+				}
+
+				if (foundValidator && foundProvider)
+				{
+					break;
+				}
+			}
+
+			if (!foundValidator)
 			{
 				logging.Services.AddSingleton<IValidateOptions<TinyLoggerOptions>, TinyLoggerOptionsValidator>();
-				logging.Services.AddSingleton<ILoggerProvider, TinyLoggerProvider>();
+			}
 
-				servicesRegistered = true;
+			if (!foundProvider)
+			{
+				logging.Services.AddSingleton<ILoggerProvider, TinyLoggerProvider>();
 			}
 
 			return logging;
