@@ -5,12 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.13" />
-    <PackageVersion Include="Microsoft.Bcl.Memory" Version="10.0.13" />
-    <PackageVersion Include="Microsoft.Bcl.TimeProvider" Version="10.0.13" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.13" />
-    <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="10.0.13" />
-    <PackageVersion Include="System.Threading.Channels" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Bcl.Memory" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Bcl.TimeProvider" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="11.0.0" />
+    <PackageVersion Include="System.Threading.Channels" Version="11.0.0" />
   </ItemGroup>
 
   <ItemGroup>
