@@ -41,7 +41,7 @@ public static class Pooling
 	{
 		public Dictionary<TKey, TValue> Create()
 		{
-			return new Dictionary<TKey, TValue>(capacity);
+			return [with(capacity)];
 		}
 
 		public bool Return(Dictionary<TKey, TValue> obj)
@@ -56,7 +56,7 @@ public static class Pooling
 	{
 		public List<T> Create()
 		{
-			return new List<T>(capacity);
+			return [with(capacity)];
 		}
 
 		public bool Return(List<T> obj)
